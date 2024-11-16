@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:loopa/loopa.dart';
+import 'package:loopa/utils/loopa.dart';
 
 class PlayRecLights extends StatelessWidget {
   final ValueNotifier<LoopaState> loopaStateNotifier;

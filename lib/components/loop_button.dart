@@ -1,14 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:loopa/utils/loopa.dart';
 
 class LoopButton extends StatefulWidget {
   final bool largeState;
-  final VoidCallback updateLoopaState;
+  final Loopa loopa;
 
   const LoopButton({
     super.key,
     this.largeState = true,
-    required this.updateLoopaState
+    required this.loopa
   });
 
   @override
@@ -47,22 +48,9 @@ class _LoopButtonState extends State<LoopButton> {
   Widget build(BuildContext context) {
     return Expanded(
       child: GestureDetector(
-        onPanStart: (_) {
-          setState(() {
-            isBeingPressed = true;
-          });
-        },
-        onPanEnd: (_) {
-          setState(() {
-            isBeingPressed = false;
-          });
-          widget.updateLoopaState();
-        },
-        onPanCancel: () {
-          setState(() {
-            isBeingPressed = false;
-          });
-        },
+        onPanStart: (_) => _handlePanStart(),
+        onPanEnd: (_) => _handlePanEnd(),
+        onPanCancel: () => _handlePanCancel(),
         child: _getImage()
       ),
     );
@@ -78,5 +66,27 @@ class _LoopButtonState extends State<LoopButton> {
           ? smallPressed
           : smallIdle;
     }
+  }
+
+  void _handlePanStart() {
+    setState(() {
+      isBeingPressed = true;
+    });
+    widget.loopa.startLongPressListener();
+  }
+
+  void _handlePanEnd() {
+    widget.loopa.cancelLongPressListener();
+    widget.loopa.updateState();
+    setState(() {
+      isBeingPressed = false;
+    });
+  }
+
+  void _handlePanCancel() {
+    widget.loopa.cancelLongPressListener();
+    setState(() {
+      isBeingPressed = false;
+    });
   }
 }

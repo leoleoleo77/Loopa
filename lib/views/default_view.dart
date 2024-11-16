@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:loopa/components/loop_button.dart';
-import 'package:loopa/components/loop_selection_item.dart';
-import 'package:loopa/components/play_rec_lights.dart';
-import 'package:loopa/loopa.dart';
+import 'package:loopa/components/tool_bar/tool_bar_item.dart';
+import 'package:loopa/utils/loopa.dart';
 
 class DefaultView extends StatelessWidget {
   final VoidCallback onToolbarPressed;
@@ -18,45 +17,13 @@ class DefaultView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _getToolBar(),
-        _getLoopaInstructions(),
-        LoopButton(updateLoopaState: loopa.updateState),
-      ],
-    );
-  }
-
-  Widget _getToolBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: GestureDetector(
-        onTap: onToolbarPressed,
-        child: Container(
-            width: double.infinity,
-            height: 92,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Color.fromRGBO(21, 21, 21, 1),
-                    Color.fromRGBO(24, 24, 24, 1),
-                    Color.fromRGBO(31, 31, 31, 1)
-                  ]
-              ),
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            child: Row(
-              children: [
-                PlayRecLights(
-                  loopaStateNotifier: loopa.getStateNotifier()
-                ),
-                const Spacer(),
-                const LoopSelectionItem()
-              ],
-            )
+        ToolBar(
+          loopa: loopa,
+          onToolbarPressed: onToolbarPressed
         ),
-      ),
+        _getLoopaInstructions(),
+        LoopButton(loopa: loopa),
+      ],
     );
   }
 
@@ -77,7 +44,7 @@ class DefaultView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Image(
-              image: AssetImage('assets/loopa_temp2.png'),
+              image: AssetImage('assets/loopa_temp2.png'), // TODO
               height: 72,
             ),
             const SizedBox(height: 8),

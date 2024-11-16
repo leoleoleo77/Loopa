@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:loopa/components/loop_button.dart';
-import 'package:loopa/loopa.dart';
+import 'package:loopa/utils/loopa.dart';
 
 class ExpandedView extends StatelessWidget {
   final VoidCallback onToolbarPressed;
@@ -20,7 +20,7 @@ class ExpandedView extends StatelessWidget {
         const SizedBox(height: 8),
         LoopButton(
           largeState: false,
-          updateLoopaState: loopa.updateState,
+          loopa: loopa,
         )
       ],
     );

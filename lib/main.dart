@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:loopa/loopa.dart';
+import 'package:loopa/utils/loopa.dart';
 import 'package:loopa/views/default_view.dart';
 import 'package:loopa/views/expanded_view.dart';
 
