@@ -1,5 +1,9 @@
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:loopa/utils/long_press_listener.dart';
+import 'package:loopa/utils/loop_clear_listener.dart';
 import 'package:loopa/utils/tool_bar_animation_controller.dart';
 
 class Loopa {
@@ -9,24 +13,20 @@ class Loopa {
   late int _id;
   late ValueNotifier<LoopaState> _stateNotifier;
   late LongPressListener _longPressListener;
-  late bool _loopWasCleared;
+  late LoopClearListener _loopClearListener;
 
   Loopa() {
     _id = _count;
     _name = _initialiseName();
     _stateNotifier = ValueNotifier(LoopaState.initial);
     _longPressListener = LongPressListener(onFinish: _clearLoop);
-    _loopWasCleared = false;
+    _loopClearListener = LoopClearListener();
     _count++;
   }
 
   // TODO
   String _initialiseName() {
-    if (_id < 10) {
-      return "LOOP_0$_id";
-    } else {
-      return "LOOP_$_id";
-    }
+    return "LOOP_$_id";
   }
 
   /// _clearLoop is called whenever when _longPressTimer finishes
@@ -42,7 +42,7 @@ class Loopa {
       return;
     }
 
-    _loopWasCleared = true;
+    _loopClearListener.flashName();
     if (_stateNotifier.value == LoopaState.recording) {
       // recording cleared
     } else {
@@ -62,13 +62,15 @@ class Loopa {
 
   void updateState() {
 
-    if (_loopWasCleared) {
-      _loopWasCleared = false;
+    if (_loopClearListener.wasCleared()) {
+      _stateNotifier.value = LoopaState.initial;
+      _loopClearListener.setWasCleared(false);
       return;
     }
 
     switch(_stateNotifier.value) {
       case LoopaState.initial:
+        _loopClearListener.cancel();
         _stateNotifier.value = LoopaState.recording;
         break;
       case LoopaState.recording:
@@ -84,20 +86,36 @@ class Loopa {
   }
 
   void startLongPressListener() {
+    if (_stateNotifier.value == LoopaState.initial) return;
     _longPressListener.start();
   }
 
   void cancelLongPressListener() {
+    if (_stateNotifier.value == LoopaState.initial) return;
     _longPressListener.cancel();
   }
 
   ToolBarAnimationController getToolBarAnimationController() {
-    return _longPressListener.toolBarAnimationController;
+    return LongPressListener.toolBarAnimationController;
   }
 
   ValueNotifier<LoopaState> getStateNotifier() => _stateNotifier;
-
   String getName() => _name;
+  LoopClearListener getClearListener() => _loopClearListener;
+  
+  LoopClearListener setNameFlashingMethod(
+      Function(Timer?) function
+  ) {
+    _loopClearListener.onLoopCleared = function;
+    return _loopClearListener;
+  }
+
+  LoopClearListener setNameFlashingOnCancelMethod(
+      Function() function
+  ) {
+    _loopClearListener.onStopFlashing = function;
+    return _loopClearListener;
+  }
 }
 
 enum LoopaState {

@@ -2,15 +2,14 @@ import 'dart:async';
 import 'package:loopa/utils/tool_bar_animation_controller.dart';
 
 class LongPressListener {
- late Timer? _timer;
- late Function() onFinish;
- late final ToolBarAnimationController toolBarAnimationController;
+  late Timer? _timer;
+  late Function() onFinish;
+  static final ToolBarAnimationController toolBarAnimationController =
+    ToolBarAnimationController();
 
- LongPressListener({
+  LongPressListener({
    required this.onFinish,
- }) {
-   toolBarAnimationController = ToolBarAnimationController();
- }
+ });
 
  void start() {
    _timer = Timer(

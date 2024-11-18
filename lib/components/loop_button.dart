@@ -19,29 +19,29 @@ class LoopButton extends StatefulWidget {
 class _LoopButtonState extends State<LoopButton> {
   bool isBeingPressed = false;
 
-  late final Image largePressed;
-  late final Image largeIdle;
-  late final Image smallPressed;
-  late final Image smallIdle;
-
   @override
   void initState() {
     super.initState();
 
-    largePressed = Image.asset('assets/large_pressed.jpg', width: double.infinity, fit: BoxFit.fill);
-    largeIdle = Image.asset('assets/large_idle.jpg', width: double.infinity, fit: BoxFit.fill);
-    smallPressed = Image.asset('assets/small_pressed.jpg', width: double.infinity, fit: BoxFit.fill);
-    smallIdle = Image.asset('assets/small_idle.jpg', width: double.infinity, fit: BoxFit.fill);
+    // Defer precaching until after the widget is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      precacheImage(AssetImage(LoopaImage.largePressed.path), context);
+      precacheImage(AssetImage(LoopaImage.largeIdle.path), context);
+      precacheImage(AssetImage(LoopaImage.smallPressed.path), context);
+      precacheImage(AssetImage(LoopaImage.smallIdle.path), context);
+    });
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
 
-    precacheImage(largePressed.image, context);
-    precacheImage(largeIdle.image, context);
-    precacheImage(smallPressed.image, context);
-    precacheImage(smallIdle.image, context);
+  @override
+  void dispose() {
+    super.dispose();
+
+    // Evict images if they are no longer needed
+    imageCache.evict(AssetImage(LoopaImage.largePressed.path));
+    imageCache.evict(AssetImage(LoopaImage.largeIdle.path));
+    imageCache.evict(AssetImage(LoopaImage.smallPressed.path));
+    imageCache.evict(AssetImage(LoopaImage.smallIdle.path));
   }
 
   @override
@@ -51,20 +51,24 @@ class _LoopButtonState extends State<LoopButton> {
         onPanStart: (_) => _handlePanStart(),
         onPanEnd: (_) => _handlePanEnd(),
         onPanCancel: () => _handlePanCancel(),
-        child: _getImage()
+        child: Image.asset(
+            _getImageAsset(),
+            width: double.infinity,
+            fit: BoxFit.fill
+        )
       ),
     );
   }
 
-  Image _getImage() {
+  String _getImageAsset() {
     if (widget.largeState) {
       return isBeingPressed
-          ? largePressed
-          : largeIdle;
+          ? LoopaImage.largePressed.path
+          : LoopaImage.largeIdle.path;
     } else {
       return isBeingPressed
-          ? smallPressed
-          : smallIdle;
+          ? LoopaImage.smallPressed.path
+          : LoopaImage.smallIdle.path;
     }
   }
 
@@ -89,4 +93,15 @@ class _LoopButtonState extends State<LoopButton> {
       isBeingPressed = false;
     });
   }
+}
+
+enum LoopaImage {
+  largePressed(path: 'assets/large_pressed.jpg'),
+  largeIdle(path: 'assets/large_idle.jpg'),
+  smallPressed(path: 'assets/small_pressed.jpg'),
+  smallIdle(path: 'assets/small_idle.jpg');
+
+  const LoopaImage({required this.path});
+
+  final String path;
 }

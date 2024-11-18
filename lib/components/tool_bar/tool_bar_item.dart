@@ -41,7 +41,7 @@ class _ToolBarState extends State<ToolBar> {
                     children: [
                       PlayRecLights(loopaStateNotifier: widget.loopa.getStateNotifier()),
                       const Spacer(),
-                      const LoopSelectionItem()
+                      LoopSelectionItem(loopa: widget.loopa)
                     ],
                   ),
                 ),

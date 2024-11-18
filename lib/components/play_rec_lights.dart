@@ -42,18 +42,18 @@ class PlayRecLights extends StatelessWidget {
   Widget _getRedCircleAvatar() {
     return ValueListenableBuilder<LoopaState>(
       valueListenable: loopaStateNotifier,
-        builder: (context, loopaState, child) {
-          Color redAccent;
-          if (loopaState == LoopaState.recording) {
-            redAccent = Colors.red;
-          } else {
-            redAccent = Colors.red.withOpacity(0.15);
-          }
+      builder: (context, loopaState, child) {
+        Color redAccent;
+        if (loopaState == LoopaState.recording) {
+          redAccent = Colors.red;
+        } else {
+          redAccent = Colors.red.withOpacity(0.15);
+        }
 
-          return CircleAvatar(
-            radius: 20,
-            backgroundColor: redAccent,
-          );
+        return CircleAvatar(
+          radius: 20,
+          backgroundColor: redAccent,
+        );
       },
     );
   }

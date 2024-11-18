@@ -15,12 +15,16 @@ class ToolBarAnimationController {
     return !startExpandingIsNull && !stopExpandingIsNull;
   }
 
-  ToolBarAnimationController setStartExpanding(Function() function) {
+  ToolBarAnimationController setStartExpanding(
+      Function() function
+  ) {
     startExpanding = function;
     return this;
   }
 
-  ToolBarAnimationController setStopExpanding(Function() function) {
+  ToolBarAnimationController setStopExpanding(
+      Function() function
+  ) {
     stopExpanding = function;
     return this;
   }

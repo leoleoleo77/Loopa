@@ -18,7 +18,7 @@ class ToolBarAnimation extends StatefulWidget {
 class _ToolBarAnimationState extends State<ToolBarAnimation>
     with SingleTickerProviderStateMixin {
 
-  double _containerWidth = 100.0; // Initial width
+  double _containerWidth = 0; // Initial width
 
   late Timer _timer;
 
@@ -27,12 +27,12 @@ class _ToolBarAnimationState extends State<ToolBarAnimation>
 
     _timer = Timer.periodic(
         const Duration(milliseconds: 16), // About 60 fps
-        (timer) {
+        (_) {
           setState(() {
             if (_containerWidth < maxWidth) {
               _containerWidth += 5.0; // Increment width
             } else {
-              timer.cancel(); // Stop if max width is reached
+              _timer.cancel(); // Stop if max width is reached
             }
           });
         });
@@ -40,6 +40,9 @@ class _ToolBarAnimationState extends State<ToolBarAnimation>
 
   void _stopExpanding() {
     _timer.cancel();
+    setState(() {
+      _containerWidth = 0;
+    });
   }
 
   @override
@@ -57,16 +60,11 @@ class _ToolBarAnimationState extends State<ToolBarAnimation>
             .setStartExpanding(() => _startExpanding(maxWidth))
             .setStopExpanding(() => _stopExpanding());
 
-        return AnimatedContainer(
-          duration: Duration(milliseconds: 50),
+        return Container(
           width: _containerWidth,
           height: 50.0,
           color: Colors.blue,
           alignment: Alignment.center,
-          child: Text(
-            "Expanding",
-            style: TextStyle(color: Colors.white),
-          ),
         );
       },
     );

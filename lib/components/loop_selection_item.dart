@@ -1,12 +1,65 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
 
-class LoopSelectionItem extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:loopa/utils/loopa.dart';
+
+class LoopSelectionItem extends StatefulWidget {
+  final Loopa loopa;
   final bool compactView;
 
   const LoopSelectionItem({
     super.key,
-    this.compactView = true
+    required this.loopa,
+    this.compactView = true,
   });
+
+  @override
+  State<LoopSelectionItem> createState() => _LoopSelectionItemState();
+}
+
+class _LoopSelectionItemState extends State<LoopSelectionItem> {
+
+  static const String _noText = "";
+  late String _displayText;
+  bool _textIsVisible = true;
+  Timer? _temp;
+
+  void _startFlashing(Timer? flashTimer) {
+    setState(() {
+      _displayText = "CLEAR";
+      _textIsVisible = !_textIsVisible;
+    });
+    _temp = Timer.periodic(
+      const Duration(milliseconds: 500),
+      (timer) {
+        setState(() {
+          _textIsVisible = !_textIsVisible; // Toggle visibility
+        });
+
+        if (timer.tick == 7) {
+          timer.cancel();
+          _stopFlashing();
+        }
+      },
+    );
+  }
+
+  void _stopFlashing() {
+    if (_temp == null) return;
+    _temp!.cancel();
+    setState(() {
+      _displayText = widget.loopa.getName();
+      _textIsVisible = true;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _displayText = widget.loopa.getName();
+    widget.loopa.setNameFlashingMethod(_startFlashing);
+    widget.loopa.setNameFlashingOnCancelMethod(_stopFlashing);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +77,27 @@ class LoopSelectionItem extends StatelessWidget {
             children: [
               Transform.scale(
                 scaleY: 1.5,
-                child: _getGradientText("LOOP_0", 36)
-              ),
+                child: _getGradientText(
+                    text: _textIsVisible
+                        ? _displayText
+                        : _noText
+                )
+                // ValueListenableBuilder<LoopaState>(
+                //     valueListenable: widget.loopa.getStateNotifier(),
+                //     builder: (context, loopaState, child) {
+                //       if (loopaState == LoopaState.initial) {
+                //         _displayText = "CLEAR";
+                //         _startFlashing(_displayText);
+                //       } else {
+                //         _displayText = widget.loopa.getName();
+                //       }
+                //       return _getGradientText(
+                //           text: _textIsVisible
+                //               ? _displayText
+                //               : _noText
+                //       );
+                //     }
+                )
               // Column(
               //   crossAxisAlignment: CrossAxisAlignment.start,
               //   children: [
@@ -60,10 +132,10 @@ class LoopSelectionItem extends StatelessWidget {
     );
   }
 
-  Widget _getGradientText(
-      String text,
-      double fontSize,
-  ) {
+  Widget _getGradientText({
+    required String text,
+    double fontSize = 36,
+  }) {
     return ShaderMask(
       blendMode: BlendMode.srcIn,
       shaderCallback: (bounds) {
