@@ -23,6 +23,7 @@ class PlayRecLights extends StatelessWidget {
     );
   }
 
+  // TODO: make the progress indicator not affect their color
   Widget _getRecLight() {
     return Column(
       children: [
@@ -40,21 +41,26 @@ class PlayRecLights extends StatelessWidget {
   }
 
   Widget _getRedCircleAvatar() {
-    return ValueListenableBuilder<LoopaState>(
-      valueListenable: loopaStateNotifier,
-      builder: (context, loopaState, child) {
-        Color redAccent;
-        if (loopaState == LoopaState.recording) {
-          redAccent = Colors.red;
-        } else {
-          redAccent = Colors.red.withOpacity(0.15);
-        }
+    return Stack(
+      children: [
+        _getCircleAvatarBackground(),
+        ValueListenableBuilder<LoopaState>(
+          valueListenable: loopaStateNotifier,
+          builder: (context, loopaState, child) {
+            Color redAccent;
+            if (loopaState == LoopaState.recording) {
+              redAccent = Colors.red;
+            } else {
+              redAccent = Colors.red.withOpacity(0.15);
+            }
 
-        return CircleAvatar(
-          radius: 20,
-          backgroundColor: redAccent,
-        );
-      },
+            return CircleAvatar(
+              radius: 20,
+              backgroundColor: redAccent,
+            );
+          },
+        ),
+      ],
     );
   }
 
@@ -75,21 +81,33 @@ class PlayRecLights extends StatelessWidget {
   }
 
   Widget _getGreenCircleAvatar() {
-    return ValueListenableBuilder<LoopaState>(
-      valueListenable: loopaStateNotifier,
-      builder: (context, loopaState, child) {
-        Color redAccent;
-        if (loopaState == LoopaState.playing) {
-          redAccent = Colors.green;
-        } else {
-          redAccent = Colors.green.withOpacity(0.1);
-        }
+    return Stack(
+      children: [
+        _getCircleAvatarBackground(),
+        ValueListenableBuilder<LoopaState>(
+          valueListenable: loopaStateNotifier,
+          builder: (context, loopaState, child) {
+            Color greenAccent;
+            if (loopaState == LoopaState.playing) {
+              greenAccent = Colors.green;
+            } else {
+              greenAccent = Colors.green.withOpacity(0.1);
+            }
 
-        return CircleAvatar(
-          radius: 20,
-          backgroundColor: redAccent,
-        );
-      },
+            return CircleAvatar(
+              radius: 20,
+              backgroundColor: greenAccent,
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _getCircleAvatarBackground() {
+    return const CircleAvatar(
+      radius: 20,
+      backgroundColor: Color.fromRGBO(21, 21, 21, 1),
     );
   }
 }

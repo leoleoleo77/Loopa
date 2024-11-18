@@ -1,34 +1,23 @@
-import 'dart:async';
 
-class LoopClearListener {
-  Timer? _timer;
-  late Function(Timer?)? onLoopCleared;
-  late Function()? onStopFlashing;
+class LoopClearController {
+  late Function() startFlashing;
+  late Function() stopFlashing;
   late bool _loopWasCleared;
   
-  LoopClearListener() {
+  LoopClearController() {
+    startFlashing = () {};
+    stopFlashing = () {};
     _loopWasCleared = false;
   }
 
-  void flashName() {
+  void onStartFlashing() {
     _loopWasCleared = true;
-    if (_methodsInitialized()) {
-      onLoopCleared!(_timer);
-    }
+    startFlashing();
   }
 
-  void cancel() {
-    onStopFlashing!();
-    // if (_methodsInitialized() && _timerIsActive()) {
-    //   onStopFlashing!();
-    //   _timer!.cancel();
-    //   _timer = null;
-    // }
-  }
+  void onStopFlashing() => stopFlashing();
   
   void setWasCleared(bool wasCleared) => _loopWasCleared = wasCleared;
+
   bool wasCleared() => _loopWasCleared;
-  bool _methodsInitialized() => 
-      onLoopCleared != null && onStopFlashing != null;
-  bool _timerIsActive() => _timer?.isActive == true;
 }

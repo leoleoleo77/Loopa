@@ -22,14 +22,14 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
   static const String _noText = "";
   late String _displayText;
   bool _textIsVisible = true;
-  Timer? _temp;
+  Timer? _flashTimer;
 
-  void _startFlashing(Timer? flashTimer) {
+  void _startFlashing() {
     setState(() {
       _displayText = "CLEAR";
       _textIsVisible = !_textIsVisible;
     });
-    _temp = Timer.periodic(
+    _flashTimer = Timer.periodic(
       const Duration(milliseconds: 500),
       (timer) {
         setState(() {
@@ -45,8 +45,8 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
   }
 
   void _stopFlashing() {
-    if (_temp == null) return;
-    _temp!.cancel();
+    if (_flashTimer == null) return;
+    _flashTimer!.cancel();
     setState(() {
       _displayText = widget.loopa.getName();
       _textIsVisible = true;
@@ -57,8 +57,8 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
   void initState() {
     super.initState();
     _displayText = widget.loopa.getName();
-    widget.loopa.setNameFlashingMethod(_startFlashing);
-    widget.loopa.setNameFlashingOnCancelMethod(_stopFlashing);
+    widget.loopa.setStartFlashingMethod(_startFlashing);
+    widget.loopa.setStopFlashingMethod(_stopFlashing);
   }
 
   @override
@@ -139,10 +139,9 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
     return ShaderMask(
       blendMode: BlendMode.srcIn,
       shaderCallback: (bounds) {
-        return LinearGradient(colors: [
-          Colors.lightGreenAccent.shade400,
-          Colors.lightGreenAccent.shade700,
-        ]).createShader(
+        return LinearGradient(
+          colors: _getGradientColor()
+        ).createShader(
           Rect.fromLTWH(0, 0, bounds.width, bounds.height),
         );
       },
@@ -154,5 +153,24 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
           ),
       ),
     );
+  }
+
+  // TODO: find some way to visually tell idle state from initial
+  List<Color> _getGradientColor() {
+    return <Color>[
+      Colors.lightGreenAccent.shade400,
+      Colors.lightGreenAccent.shade700
+    ];
+    // if (widget.loopa.getStateNotifier().value == LoopaState.initial) {
+    //   return <Color>[
+    //     Colors.lightGreenAccent.shade400.withOpacity(0.4),
+    //     Colors.lightGreenAccent.shade400.withOpacity(0.4)
+    //   ];
+    // } else {
+    //   return <Color>[
+    //     Colors.lightGreenAccent.shade400,
+    //     Colors.lightGreenAccent.shade700
+    //   ];
+    // }
   }
 }
