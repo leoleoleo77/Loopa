@@ -1,8 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:loopa/utils/long_press_listener.dart';
 import 'package:loopa/utils/tool_bar_animation_controller.dart';
 
 class ToolBarAnimation extends StatefulWidget {
@@ -20,6 +19,7 @@ class ToolBarAnimation extends StatefulWidget {
 class _ToolBarAnimationState extends State<ToolBarAnimation>
     with SingleTickerProviderStateMixin {
 
+  static const int _tickRate = 16;
   double _containerWidth = 0;
   double _progressIndicatorOpacity = 0;
   bool _showCompletionFlash = false;
@@ -27,27 +27,25 @@ class _ToolBarAnimationState extends State<ToolBarAnimation>
 
   void _startExpanding(double? maxWidth) {
     if (maxWidth == null) return;
-    final double widthPerTick = maxWidth / 120;
+    final double widthPerTick = _getWidthPerTick(maxWidth);
     _timer = Timer.periodic(
-        const Duration(milliseconds: 16), // About 60 fps
-        // TODO: clean this up
-        (_) {
-          setState(() {
-            if (_containerWidth < maxWidth) {
-              _containerWidth += widthPerTick; // Increment width
-            } else {
-              _timer.cancel();
-              // probably pass this as a method
-              // _showCompletionFlash = true;
-              // Timer(const Duration(seconds: 1), () {
-              //   _showCompletionFlash = false;
-              // });
-            }
-            if (_containerWidth > maxWidth / 3) {
-              _progressIndicatorOpacity = 1;
-            }
-          });
-        });
+        const Duration(milliseconds: _tickRate),
+        (_) => _onTick(maxWidth, widthPerTick)
+    );
+  }
+
+  void _onTick(double maxWidth, double widthPerTick) {
+    setState(() {
+      if (_containerWidth < maxWidth) {
+        _containerWidth += widthPerTick;
+      } else {
+        // This is never executed
+        _timer.cancel();
+      }
+      if (_containerWidth > maxWidth / 3) {
+        _progressIndicatorOpacity = 1;
+      }
+    });
   }
 
   void _stopExpanding() {
@@ -58,9 +56,23 @@ class _ToolBarAnimationState extends State<ToolBarAnimation>
     });
   }
 
+  void _onComplete() {
+    _showCompletionFlash = true;
+    Timer(const Duration(seconds: 1), () {
+      setState(() {
+        _showCompletionFlash = false;
+      });
+    });
+  }
+
+  double _getWidthPerTick(double maxWidth) {
+    return maxWidth /
+        (LongPressListener.longPressDurationMilliseconds / _tickRate);
+  }
+
   @override
   void dispose() {
-    _timer.cancel(); // Ensure timer is canceled when widget is disposed
+    _timer.cancel();
     super.dispose();
   }
 
@@ -80,15 +92,16 @@ class _ToolBarAnimationState extends State<ToolBarAnimation>
         double maxWidth = constraints.maxWidth;
         widget.animationController
             .setStartExpanding(() => _startExpanding(maxWidth))
-            .setStopExpanding(() => _stopExpanding());
+            .setStopExpanding(() => _stopExpanding())
+            .setOnComplete(() => _onComplete());
 
         return AnimatedOpacity(
           opacity: _progressIndicatorOpacity,
-          duration: const Duration(milliseconds: 1000),
+          duration: Duration(milliseconds: _getFadeDuration()),
           child: Container(
             width: _containerWidth,
             alignment: Alignment.center,
-            decoration: _getBoxDecoration(),
+            decoration: _getProgressIndicatorBoxDecoration(),
           ),
         );
       },
@@ -101,12 +114,29 @@ class _ToolBarAnimationState extends State<ToolBarAnimation>
       child: Container(
         width: double.infinity,
         height: double.infinity,
-        color: Colors.white,
+        decoration: _getCompletionFlashBoxDecoration(),
       ),
     );
   }
 
-  BoxDecoration _getBoxDecoration() {
+  // TODO: make this nice
+  BoxDecoration _getCompletionFlashBoxDecoration() {
+    return BoxDecoration(
+      gradient: LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: [
+            Colors.grey.withOpacity(0.3),
+            Colors.grey.withOpacity(0.3),
+          ]
+      ),
+      borderRadius: const BorderRadius.horizontal(
+          left: Radius.circular(12.0)
+      ),
+    );
+  }
+
+  BoxDecoration _getProgressIndicatorBoxDecoration() {
     return BoxDecoration(
       gradient: LinearGradient(
           begin: Alignment.centerLeft,
@@ -121,6 +151,10 @@ class _ToolBarAnimationState extends State<ToolBarAnimation>
           left: Radius.circular(12.0)
       ),
     );
+  }
+
+  int _getFadeDuration() {
+    return LongPressListener.longPressDurationMilliseconds ~/ 2;
   }
 }
 

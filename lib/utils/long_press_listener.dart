@@ -6,6 +6,9 @@ class LongPressListener {
   late Function() onFinish;
   static final ToolBarAnimationController toolBarAnimationController =
     ToolBarAnimationController();
+  static const int longPressDurationSeconds = 2;
+  static const int longPressDurationMilliseconds =
+      longPressDurationSeconds * 1000;
 
   LongPressListener({
    required this.onFinish,
@@ -13,7 +16,7 @@ class LongPressListener {
 
  void start() {
    _timer = Timer(
-       const Duration(seconds: 2),
+       const Duration(seconds: longPressDurationSeconds),
        onFinish
    );
 
@@ -28,6 +31,12 @@ class LongPressListener {
 
    if (toolBarAnimationController.isInitialized()) {
      toolBarAnimationController.stopExpanding!();
+   }
+ }
+
+ void onClearComplete() {
+   if (toolBarAnimationController.isInitialized()) {
+     toolBarAnimationController.onComplete!();
    }
  }
 }

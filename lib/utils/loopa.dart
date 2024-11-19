@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:loopa/utils/long_press_listener.dart';
-import 'package:loopa/utils/loop_clear_listener.dart';
+import 'package:loopa/utils/loop_clear_controller.dart';
 import 'package:loopa/utils/tool_bar_animation_controller.dart';
 
 class Loopa {
@@ -11,14 +11,14 @@ class Loopa {
   late int _id;
   late ValueNotifier<LoopaState> _stateNotifier;
   late LongPressListener _longPressListener;
-  late LoopClearController _loopClearListener;
+  late LoopClearController _loopClearController;
 
   Loopa() {
     _id = _count;
     _name = _initialiseName();
     _stateNotifier = ValueNotifier(LoopaState.initial);
     _longPressListener = LongPressListener(onFinish: _clearLoop);
-    _loopClearListener = LoopClearController();
+    _loopClearController = LoopClearController();
     _count++;
   }
 
@@ -39,8 +39,8 @@ class Loopa {
     if (_stateNotifier.value == LoopaState.initial) {
       return;
     }
-
-    _loopClearListener.onStartFlashing();
+    _longPressListener.onClearComplete();
+    _loopClearController.onStartFlashing();
     if (_stateNotifier.value == LoopaState.recording) {
       // recording cleared
     } else {
@@ -60,15 +60,15 @@ class Loopa {
 
   void updateState() {
 
-    if (_loopClearListener.wasCleared()) {
+    if (_loopClearController.wasCleared()) {
       _stateNotifier.value = LoopaState.initial;
-      _loopClearListener.setWasCleared(false);
+      _loopClearController.setWasCleared(false);
       return;
     }
 
     switch(_stateNotifier.value) {
       case LoopaState.initial:
-        _loopClearListener.onStopFlashing();
+        _loopClearController.onStopFlashing();
         _stateNotifier.value = LoopaState.recording;
         break;
       case LoopaState.recording:
@@ -99,14 +99,14 @@ class Loopa {
 
   ValueNotifier<LoopaState> getStateNotifier() => _stateNotifier;
   String getName() => _name;
-  LoopClearController getClearListener() => _loopClearListener;
+  LoopClearController getClearListener() => _loopClearController;
   
   void setStartFlashingMethod(Function() function) {
-    _loopClearListener.startFlashing = function;
+    _loopClearController.startFlashing = function;
   }
 
   void setStopFlashingMethod(Function() function) {
-    _loopClearListener.stopFlashing = function;
+    _loopClearController.stopFlashing = function;
   }
 }
 
