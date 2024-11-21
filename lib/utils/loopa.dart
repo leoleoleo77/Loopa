@@ -6,7 +6,6 @@ import 'package:loopa/utils/tool_bar_animation_controller.dart';
 
 class Loopa {
   static int _count = 0;
-  // TODO: add static time to delete loop constant
   late String _name;
   late int _id;
   late ValueNotifier<LoopaState> _stateNotifier;

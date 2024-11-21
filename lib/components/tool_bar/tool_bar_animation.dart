@@ -57,8 +57,9 @@ class _ToolBarAnimationState extends State<ToolBarAnimation>
   }
 
   void _onComplete() {
+    // Why doesn't this need to be inside a setState? curious.
     _showCompletionFlash = true;
-    Timer(const Duration(seconds: 1), () {
+    Timer(const Duration(milliseconds: 300), () {
       setState(() {
         _showCompletionFlash = false;
       });
@@ -109,8 +110,9 @@ class _ToolBarAnimationState extends State<ToolBarAnimation>
   }
 
   Widget _getCompletionFlash() {
-    return Opacity(
+    return AnimatedOpacity(
       opacity: _showCompletionFlash ? 1.0 : 0.0,
+      duration: const Duration(milliseconds: 200),
       child: Container(
         width: double.infinity,
         height: double.infinity,
@@ -119,14 +121,14 @@ class _ToolBarAnimationState extends State<ToolBarAnimation>
     );
   }
 
-  // TODO: make this nice
   BoxDecoration _getCompletionFlashBoxDecoration() {
     return BoxDecoration(
       gradient: LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
           colors: [
-            Colors.grey.withOpacity(0.3),
+            Colors.grey.withOpacity(0.1),
+            Colors.grey.withOpacity(0.2),
             Colors.grey.withOpacity(0.3),
           ]
       ),
