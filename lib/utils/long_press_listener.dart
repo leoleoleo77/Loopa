@@ -3,7 +3,7 @@ import 'package:loopa/utils/tool_bar_animation_controller.dart';
 
 class LongPressListener {
   late Timer? _timer;
-  late Function() onFinish;
+  late final Function() onFinish;
   static final ToolBarAnimationController toolBarAnimationController =
     ToolBarAnimationController();
   static const int longPressDurationSeconds = 2;
@@ -19,24 +19,17 @@ class LongPressListener {
        const Duration(seconds: longPressDurationSeconds),
        onFinish
    );
-
-   if (toolBarAnimationController.isInitialized()) {
-     toolBarAnimationController.startExpanding!();
-   }
+   toolBarAnimationController.startExpanding!();
  }
 
  void cancel() {
    _timer?.cancel();
    _timer = null; // Reset the timer
+   toolBarAnimationController.stopExpanding!();
 
-   if (toolBarAnimationController.isInitialized()) {
-     toolBarAnimationController.stopExpanding!();
-   }
  }
 
  void onClearComplete() {
-   if (toolBarAnimationController.isInitialized()) {
-     toolBarAnimationController.onComplete!();
-   }
+   toolBarAnimationController.onComplete!();
  }
 }

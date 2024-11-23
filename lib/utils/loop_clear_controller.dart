@@ -10,12 +10,10 @@ class LoopClearController {
     _loopWasCleared = false;
   }
 
-  void onStartFlashing() {
+  void onClearComplete() {
     _loopWasCleared = true;
     startFlashing();
   }
-
-  void onStopFlashing() => stopFlashing();
   
   void setWasCleared(bool wasCleared) => _loopWasCleared = wasCleared;
 

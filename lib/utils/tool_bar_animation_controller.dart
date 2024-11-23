@@ -7,18 +7,13 @@ class ToolBarAnimationController {
     this.startExpanding,
     this.stopExpanding,
     this.onComplete
-  });
+  }) {
+    startExpanding = () {};
+    stopExpanding = () {};
+    onComplete = () {};
+  }
 
   // Cool shit 😎
-
-  bool isInitialized() {
-    bool startExpandingIsNull = startExpanding == null;
-    bool stopExpandingIsNull = stopExpanding == null;
-    bool onCompleteIsNull = onComplete == null;
-    return !startExpandingIsNull &&
-        !stopExpandingIsNull &&
-        !onCompleteIsNull;
-  }
 
   ToolBarAnimationController setStartExpanding(
       Function() function
@@ -36,7 +31,7 @@ class ToolBarAnimationController {
 
   ToolBarAnimationController setOnComplete(
       Function() function
-      ) {
+  ) {
     onComplete = function;
     return this;
   }

@@ -32,7 +32,16 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool expandedState = true;
-  Loopa loopa = Loopa();
+  late Loopa _loopa = Loopa();
+
+
+  // TODO: handle initialization
+  @override
+  void initState() {
+    super.initState();
+    //_loopa = Loopa();
+    Loopa.requestPermissions();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,12 +54,12 @@ class _MyHomePageState extends State<MyHomePage> {
             if (expandedState) {
               return DefaultView(
                 onToolbarPressed: onToolbarPressed,
-                loopa: loopa,
+                loopa: _loopa,
               );
             } else {
               return ExpandedView(
                 onToolbarPressed: onToolbarPressed,
-                loopa: loopa,
+                loopa: _loopa,
               );
             }
           }
