@@ -6,28 +6,51 @@ class AudioController {
   final String loopName;
   late final AudioPlayer _audioPlayer;
   late final AudioRecorder _audioRecorder;
-  late InitState _playerInitState;
-  late InitState _recorderInitState;
+  late InitState _playerInitState; // might be redundant
+  late Future<String> audioPath;
   static const nullPath = "NULL_PATH";
 
   AudioController({
     required this.loopName,
   }) {
+    audioPath = _getAudioPath(); // might be redundant
 
-    _initPlayer();
+    // temporary
+    _audioRecorder = AudioRecorder();
+    _audioPlayer = AudioPlayer();
   }
 
-  Future<void> _initRecorder() async {
-    _audioRecorder = AudioRecorder();
+  Future<void> startRecording() async {
+    // _audioRecorder = AudioRecorder();
+    try {
+      await _audioRecorder.start(
+          const RecordConfig(
+            encoder: AudioEncoder.wav
+          ),
+          path: await audioPath,
+      );
+    } catch(e) {
+      // TODO
+    }
+  }
 
+  Future<void> beginLooping() async {
+    await clearRecording();
+    await _initPlayer();
+    startPlaying();
+  }
+
+  Future<void> clearRecording() async {
+    await _audioRecorder.stop();
+    // _audioRecorder.dispose();
   }
 
   Future<void> _initPlayer() async {
     _playerInitState = InitState.pending;
-    _audioPlayer = AudioPlayer();
-    final String audioPath = await _getPath();
+    // _audioPlayer = AudioPlayer();
     try {
-      await _audioPlayer.setFilePath(audioPath);
+      await _audioPlayer.setFilePath(await audioPath);
+      await _audioPlayer.setLoopMode(LoopMode.one);
       _playerInitState = InitState.complete;
     } catch (e) {
       // TODO: handle error case
@@ -35,24 +58,25 @@ class AudioController {
     }
   }
 
-  void playAudio() {
+  void startPlaying() {
     _audioPlayer.play();
   }
 
   void clearPlayer() {
     _audioPlayer.stop();
-    _audioPlayer.dispose();
+    // _audioPlayer.dispose();
   }
 
   void stopPlayer() {
     _audioPlayer.stop();
+    _audioPlayer.seek(const Duration(seconds: 0)); // TODO
   }
 
   // TODO: get the temp or external dir
-  Future<String> _getPath() async {
+  Future<String> _getAudioPath() async {
     try {
       return await getTemporaryDirectory()
-          .then((tempDir) => "$tempDir/$loopName.wav");
+          .then((tempDir) => "${tempDir.path}/$loopName.wav");
     } catch (e) {
       // TODO: handle error case
       return nullPath;

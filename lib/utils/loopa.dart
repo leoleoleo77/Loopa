@@ -3,13 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:loopa/utils/audio_controller.dart';
 import 'package:loopa/utils/long_press_listener.dart';
 import 'package:loopa/utils/loop_clear_controller.dart';
-import 'package:loopa/utils/permission_handler.dart';
 import 'package:loopa/utils/tool_bar_animation_controller.dart';
 
 class Loopa {
   static int _count = 0;
-  static const PermissionHandler _permissionHandler = PermissionHandler();
-
   late String _name;
   late final int _id;
   late final ValueNotifier<LoopaState> _stateNotifier;
@@ -35,9 +32,9 @@ class Loopa {
   /// _clearLoop is called whenever when _longPressTimer finishes
   /// and has three cases
   /// case 1. The state of the loop is initial so there is no loop to clear
-  /// case 2. The state of the loop is recording so TODO: stop the recording
+  /// case 2. The state of the loop is recording so stop the recording
   /// case 3. The state of the loop is either playing or idle
-  ///         so TODO: inform the user that the loop has been deleted
+  ///         so clear the loop and inform the user
 
   void _clearLoop() {
     cancelLongPressListener();
@@ -46,9 +43,9 @@ class Loopa {
     _longPressListener.onClearComplete();
     _loopClearController.onClearComplete();
     if (_stateNotifier.value == LoopaState.recording) {
-      // recording cleared
+      _audioController.clearRecording();
     } else {
-      //_audioController.clearPlayer();
+      _audioController.clearPlayer();
     }
     _stateNotifier.value = LoopaState.initial;
   }
@@ -75,18 +72,19 @@ class Loopa {
       case LoopaState.initial:
         _stateNotifier.value = LoopaState.recording;
         _loopClearController.stopFlashing();
-        //_audioController.initPlayer();
+        _audioController.startRecording();
         break;
       case LoopaState.recording:
         _stateNotifier.value = LoopaState.playing;
+        _audioController.beginLooping();
         break;
       case LoopaState.playing:
         _stateNotifier.value = LoopaState.idle;
-        //_audioController.stopPlayer();
+        _audioController.stopPlayer();
         break;
       case LoopaState.idle:
-        //_audioPlayer.play();
         _stateNotifier.value = LoopaState.playing;
+        _audioController.startPlaying();
         break;
     }
   }
@@ -115,10 +113,6 @@ class Loopa {
 
   void setStopFlashingMethod(Function() function) {
     _loopClearController.stopFlashing = function;
-  }
-
-  static void requestPermissions() {
-    _permissionHandler.requestAudioPermissions();
   }
 }
 

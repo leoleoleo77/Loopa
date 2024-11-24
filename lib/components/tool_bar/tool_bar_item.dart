@@ -21,7 +21,6 @@ class ToolBar extends StatefulWidget {
 class _ToolBarState extends State<ToolBar> {
   @override
   Widget build(BuildContext context) {
-    //print("${_maxWidth} yoo");
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GestureDetector(
@@ -34,7 +33,7 @@ class _ToolBarState extends State<ToolBar> {
               children: [
                 ToolBarAnimation(
                   animationController: widget.loopa.getToolBarAnimationController(),
-                ),//maxWidth: _maxWidth),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(

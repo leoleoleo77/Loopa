@@ -33,7 +33,7 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
       const Duration(milliseconds: 500),
       (timer) {
         setState(() {
-          _textIsVisible = !_textIsVisible; // Toggle visibility
+          _textIsVisible = !_textIsVisible;
         });
 
         if (timer.tick == 7) {
@@ -155,22 +155,20 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
     );
   }
 
-  // TODO: find some way to visually tell idle state from initial
   List<Color> _getGradientColor() {
-    return <Color>[
-      Colors.lightGreenAccent.shade400,
-      Colors.lightGreenAccent.shade700
-    ];
-    // if (widget.loopa.getStateNotifier().value == LoopaState.initial) {
-    //   return <Color>[
-    //     Colors.lightGreenAccent.shade400.withOpacity(0.4),
-    //     Colors.lightGreenAccent.shade400.withOpacity(0.4)
-    //   ];
-    // } else {
-    //   return <Color>[
-    //     Colors.lightGreenAccent.shade400,
-    //     Colors.lightGreenAccent.shade700
-    //   ];
-    // }
+    // TODO: make this condition a bit clearer
+    if (widget.loopa.getStateNotifier().value == LoopaState.initial
+        && _displayText != "CLEAR"
+    ) {
+      return <Color>[
+        Colors.lightGreenAccent.shade400.withOpacity(0.4),
+        Colors.lightGreenAccent.shade400.withOpacity(0.4)
+      ];
+    } else {
+      return <Color>[
+        Colors.lightGreenAccent.shade400,
+        Colors.lightGreenAccent.shade700
+      ];
+    }
   }
 }

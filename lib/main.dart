@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:loopa/utils/loopa.dart';
+import 'package:loopa/utils/permission_handler.dart';
 import 'package:loopa/views/default_view.dart';
 import 'package:loopa/views/expanded_view.dart';
 
@@ -32,15 +33,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool expandedState = true;
-  late Loopa _loopa = Loopa();
+  Loopa _loopa = Loopa();
 
 
   // TODO: handle initialization
   @override
   void initState() {
     super.initState();
-    //_loopa = Loopa();
-    Loopa.requestPermissions();
+    PermissionHandler.requestPermissions();
   }
 
   @override

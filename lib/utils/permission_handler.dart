@@ -3,13 +3,13 @@ import 'package:permission_handler/permission_handler.dart';
 class PermissionHandler {
   const PermissionHandler();
 
-  Future<bool> requestAudioPermissions() async {
+  static Future<void> _requestAudioPermissions() async {
     // Request microphone permission
     PermissionStatus micStatus = await Permission.microphone.request();
 
     // Check if permissions are granted
     if (micStatus.isGranted) {
-      return true;
+      return;
     }
 
     // TODO: handle this better
@@ -18,6 +18,10 @@ class PermissionHandler {
       openAppSettings(); // Redirect user to app settings
     }
 
-    return false;
+    return;
+  }
+
+  static Future<void> requestPermissions() async {
+    _requestAudioPermissions();
   }
 }
