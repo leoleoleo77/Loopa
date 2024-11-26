@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:loopa/components/loop_selection_item.dart';
+import 'package:loopa/components/loop_selection/loop_selection_item.dart';
 import 'package:loopa/components/play_rec_lights.dart';
 import 'package:loopa/components/tool_bar/tool_bar_animation.dart';
 import 'package:loopa/utils/loopa.dart';
@@ -23,6 +23,7 @@ class _ToolBarState extends State<ToolBar> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
+      // TODO: fix the detector hitbox
       child: GestureDetector(
         onTap: widget.onToolbarPressed,
         child: Container(

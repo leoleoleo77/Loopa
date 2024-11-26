@@ -1,6 +1,6 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:loopa/components/loop_selection/loop_selection_dropdown.dart';
 import 'package:loopa/utils/loopa.dart';
 
 class LoopSelectionItem extends StatefulWidget {
@@ -65,68 +65,30 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0),
-      child: Container(
-        color: Colors.black,
-        width: 124,
-        height: double.infinity,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Transform.scale(
+      child: LoopSelectionDropdown(dropdownBuilder: _getSelectedItem())
+    );
+  }
+
+  Widget _getSelectedItem() {
+    return Container(
+      color: Colors.black,
+      width: 124,
+      height: double.infinity,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Transform.scale(
                 scaleY: 1.5,
                 child: _getGradientText(
                     text: _textIsVisible
                         ? _displayText
                         : _noText
                 )
-                // ValueListenableBuilder<LoopaState>(
-                //     valueListenable: widget.loopa.getStateNotifier(),
-                //     builder: (context, loopaState, child) {
-                //       if (loopaState == LoopaState.initial) {
-                //         _displayText = "CLEAR";
-                //         _startFlashing(_displayText);
-                //       } else {
-                //         _displayText = widget.loopa.getName();
-                //       }
-                //       return _getGradientText(
-                //           text: _textIsVisible
-                //               ? _displayText
-                //               : _noText
-                //       );
-                //     }
-                )
-              // Column(
-              //   crossAxisAlignment: CrossAxisAlignment.start,
-              //   children: [
-              //     Transform.scale(
-              //       scaleY: 2.0,
-              //       child: Text(
-              //           "Memory",
-              //         style: TextStyle(
-              //             fontFamily: 'Jersey25',
-              //             color: Colors.white,
-              //             fontSize: 16
-              //         ),
-              //       ),
-              //     ),
-              //     Transform.scale(
-              //       scaleY: 2.0,
-              //       child: Text(
-              //           "99",
-              //         style: TextStyle(
-              //             fontFamily: 'Jersey25',
-              //             color: Colors.white,
-              //             fontSize: 16
-              //         ),
-              //       ),
-              //     ),
-              //   ],
-              // )
-            ],
-          ),
+            )
+          ],
         ),
       ),
     );
@@ -172,3 +134,31 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
     }
   }
 }
+
+// Column(
+//   crossAxisAlignment: CrossAxisAlignment.start,
+//   children: [
+//     Transform.scale(
+//       scaleY: 2.0,
+//       child: Text(
+//           "Memory",
+//         style: TextStyle(
+//             fontFamily: 'Jersey25',
+//             color: Colors.white,
+//             fontSize: 16
+//         ),
+//       ),
+//     ),
+//     Transform.scale(
+//       scaleY: 2.0,
+//       child: Text(
+//           "99",
+//         style: TextStyle(
+//             fontFamily: 'Jersey25',
+//             color: Colors.white,
+//             fontSize: 16
+//         ),
+//       ),
+//     ),
+//   ],
+// )
