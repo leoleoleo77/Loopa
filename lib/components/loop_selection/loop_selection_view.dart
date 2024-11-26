@@ -1,23 +1,24 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:loopa/components/loop_selection/loop_selection_dropdown.dart';
+import 'package:loopa/components/loop_selection/loop_selection_item/loop_selection_item_model.dart';
 import 'package:loopa/utils/loopa.dart';
 
-class LoopSelectionItem extends StatefulWidget {
+class LoopSelectionView extends StatefulWidget {
   final Loopa loopa;
   final bool compactView;
 
-  const LoopSelectionItem({
+  const LoopSelectionView({
     super.key,
     required this.loopa,
     this.compactView = true,
   });
 
   @override
-  State<LoopSelectionItem> createState() => _LoopSelectionItemState();
+  State<LoopSelectionView> createState() => _LoopSelectionViewState();
 }
 
-class _LoopSelectionItemState extends State<LoopSelectionItem> {
+class _LoopSelectionViewState extends State<LoopSelectionView> {
 
   static const String _noText = "";
   late String _displayText;
@@ -63,9 +64,46 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
 
   @override
   Widget build(BuildContext context) {
+
+    // Mock instances
+    final l1 = LoopSelectionItemModel(
+      name: "LOOP_00",
+      id: "00",
+      state: LoopaState.initial, // Assuming LoopaState has 'active' as a valid state
+    );
+
+    final l2 = LoopSelectionItemModel(
+      name: "LOOP_01",
+      id: "01",
+      state: LoopaState.initial, // Assuming LoopaState has 'inactive' as a valid state
+    );
+
+    final l3 = LoopSelectionItemModel(
+      name: "LOOP_02",
+      id: "02",
+      state: LoopaState.initial, // Assuming LoopaState has 'pending' as a valid state
+    );
+
+    final l4 = LoopSelectionItemModel(
+      name: "LOOP_03",
+      id: "03",
+      state: LoopaState.initial, // Assuming LoopaState has 'completed' as a valid state
+    );
+
+    final l5 = LoopSelectionItemModel(
+      name: "LOOP_04",
+      id: "04",
+      state: LoopaState.initial, // Assuming LoopaState has 'error' as a valid state
+    );
+
+    final List<LoopSelectionItemModel> testList = [l1, l2, l3 ,l4, l5, l5, l5, l5, l5, l5, l4, l4, l4, l4, l4, l4, l4, l4 ,l4, l4, l4, l4, l4];
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0),
-      child: LoopSelectionDropdown(dropdownBuilder: _getSelectedItem())
+      child: LoopSelectionDropdown(
+        dropdownBuilder: _getSelectedItem(),
+        models: testList,
+      )
     );
   }
 
@@ -135,30 +173,5 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
   }
 }
 
-// Column(
-//   crossAxisAlignment: CrossAxisAlignment.start,
-//   children: [
-//     Transform.scale(
-//       scaleY: 2.0,
-//       child: Text(
-//           "Memory",
-//         style: TextStyle(
-//             fontFamily: 'Jersey25',
-//             color: Colors.white,
-//             fontSize: 16
-//         ),
-//       ),
-//     ),
-//     Transform.scale(
-//       scaleY: 2.0,
-//       child: Text(
-//           "99",
-//         style: TextStyle(
-//             fontFamily: 'Jersey25',
-//             color: Colors.white,
-//             fontSize: 16
-//         ),
-//       ),
-//     ),
-//   ],
-// )
+
+

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:loopa/components/loop_selection/loop_selection_item.dart';
+import 'package:loopa/components/loop_selection/loop_selection_view.dart';
 import 'package:loopa/components/play_rec_lights.dart';
 import 'package:loopa/components/tool_bar/tool_bar_animation.dart';
 import 'package:loopa/utils/loopa.dart';
@@ -41,7 +41,7 @@ class _ToolBarState extends State<ToolBar> {
                     children: [
                       PlayRecLights(loopaStateNotifier: widget.loopa.getStateNotifier()),
                       const Spacer(),
-                      LoopSelectionItem(loopa: widget.loopa)
+                      LoopSelectionView(loopa: widget.loopa)
                     ],
                   ),
                 ),

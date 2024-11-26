@@ -1,85 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:loopa/components/loop_selection/loop_selection_item/loop_selection_item.dart';
+
+import 'loop_selection_item/loop_selection_item_model.dart';
 
 class LoopSelectionDropdown extends StatelessWidget {
   final Widget dropdownBuilder;
+  final List<LoopSelectionItemModel> models;
 
   const LoopSelectionDropdown({
     super.key,
-    required this.dropdownBuilder
+    required this.dropdownBuilder,
+    required this.models
   });
 
+  // TODO: fix the ripple effect
   @override
   Widget build(BuildContext context) {
     return DropdownButtonHideUnderline(
       child: DropdownButton2(
         customButton: dropdownBuilder,
-        items: [
-          ...MenuItems.firstItems.map(
-                (item) => DropdownMenuItem<MenuItem>(
-              value: item,
-              child: MenuItems.buildItem(item),
-            ),
-          ),
-          ...MenuItems.secondItems.map(
-                (item) => DropdownMenuItem<MenuItem>(
-              value: item,
-              child: MenuItems.buildItem(item),
-            ),
-          ),
-        ],
+        items: models.map(
+            (model) => DropdownMenuItem<LoopSelectionItemModel>(
+              value: model,
+              child: LoopSelectionItem(model: model),
+             ),
+          ).toList(),
         onChanged: (value) {},
-        dropdownStyleData: const DropdownStyleData(
+        dropdownStyleData: DropdownStyleData(
           direction: DropdownDirection.left,
           width: 264,
-          decoration: BoxDecoration(
+          maxHeight: 444,
+          decoration: const BoxDecoration(
             color: Colors.black,
           ),
+          scrollbarTheme: ScrollbarThemeData(
+            thumbColor: WidgetStateProperty.all(Colors.lightGreenAccent.shade400,),
+          )
+        ),
+        menuItemStyleData: const MenuItemStyleData(
+          height: 80,
         ),
       ),
-    );
-  }
-}
-
-class MenuItem {
-  const MenuItem({
-    required this.text,
-    required this.icon,
-  });
-
-  final String text;
-  final IconData icon;
-}
-
-class MenuItems {
-  static const List<MenuItem> firstItems = [like, share, download];
-  static const List<MenuItem> secondItems = [cancel];
-
-  static const like = MenuItem(text: 'Like', icon: Icons.favorite);
-  static const share = MenuItem(text: 'Share', icon: Icons.share);
-  static const download = MenuItem(text: 'Download', icon: Icons.download);
-  static const cancel = MenuItem(text: 'Cancel', icon: Icons.cancel);
-
-  static Widget buildItem(MenuItem item) {
-    return Row(
-      children: [
-        Icon(
-          item.icon,
-          color: Colors.white,
-          size: 22,
-        ),
-        const SizedBox(
-          width: 10,
-        ),
-        Expanded(
-          child: Text(
-            item.text,
-            style: const TextStyle(
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

@@ -7,6 +7,8 @@ import 'package:loopa/utils/tool_bar_animation_controller.dart';
 
 class Loopa {
   static int _count = 0;
+  static List<Loopa> list = [];
+
   late String _name;
   late final int _id;
   late final ValueNotifier<LoopaState> _stateNotifier;
@@ -21,6 +23,7 @@ class Loopa {
     _longPressListener = LongPressListener(onFinish: _clearLoop);
     _loopClearController = LoopClearController();
     _audioController = AudioController(loopName: _name);
+    list.add(this);
     _count++;
   }
 
