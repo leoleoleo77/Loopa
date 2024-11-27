@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:loopa/components/loop_selection/loop_selection_item/loop_selection_item_model.dart';
 import 'package:loopa/utils/loopa.dart';
 
 class LoopSelectionItem extends StatelessWidget {
-  final LoopSelectionItemModel model;
+  final int id;
 
   const LoopSelectionItem({
     super.key,
-    required this.model
+    required this.id
   });
 
   static const String _memory = "Memory";
@@ -24,10 +23,11 @@ class LoopSelectionItem extends StatelessWidget {
             width: 124,
             child: Transform.scale(
                 scaleY: 1.5,
-                child: _getGradientText(text: model.name)
+                child: _getGradientText(
+                    text: Loopa.getNameFromMap(id)
+                )
             ),
           ),
-          const SizedBox(width: 8),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,7 +42,7 @@ class LoopSelectionItem extends StatelessWidget {
               Transform.scale(
                 scaleY: 1.5,
                 child: _getGradientText(
-                    text: model.id.toString(),
+                    text: id.toString(),
                     fontSize: 20
                 )
               ),
@@ -79,7 +79,7 @@ class LoopSelectionItem extends StatelessWidget {
 
   List<Color> _getGradientColor() {
     // TODO: make this condition a bit clearer
-    if (model.state == LoopaState.initial) {
+    if (Loopa.getStateFromMap(id) == LoopaState.initial) {
       return <Color>[
         Colors.lightGreenAccent.shade400.withOpacity(0.4),
         Colors.lightGreenAccent.shade400.withOpacity(0.4)

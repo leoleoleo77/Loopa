@@ -6,30 +6,29 @@ import 'package:loopa/utils/loop_clear_controller.dart';
 import 'package:loopa/utils/tool_bar_animation_controller.dart';
 
 class Loopa {
-  static int _count = 0;
-  static List<Loopa> list = [];
+  static final Map<int, Loopa> _map = {};
 
+  late final int id;
   late String _name;
-  late final int _id;
   late final ValueNotifier<LoopaState> _stateNotifier;
   late final LongPressListener _longPressListener;
   late final LoopClearController _loopClearController;
   late final AudioController _audioController;
 
-  Loopa() {
-    _id = _count;
+  Loopa({
+    required this.id,
+  }) {
     _name = _initialiseName();
     _stateNotifier = ValueNotifier(LoopaState.initial);
     _longPressListener = LongPressListener(onFinish: _clearLoop);
     _loopClearController = LoopClearController();
     _audioController = AudioController(loopName: _name);
-    list.add(this);
-    _count++;
+    _map[id] = this;
   }
 
   // TODO
   String _initialiseName() {
-    return "LOOP_$_id";
+    return "LOOP_$id";
   }
 
   /// _clearLoop is called whenever when _longPressTimer finishes
@@ -108,6 +107,17 @@ class Loopa {
 
   ValueNotifier<LoopaState> getStateNotifier() => _stateNotifier;
   String getName() => _name;
+
+  static String getNameFromMap(int key) {
+    return _map[key]?._name ?? "LOOP_$key";
+  }
+  static LoopaState getStateFromMap(int key) {
+    return _map[key]?.getStateNotifier().value ?? LoopaState.initial;
+  }
+
+  // static bool mapContains(int key) => _map.containsKey(key);
+  // static Loopa? getLoopa(int key) => _map[key];
+
   LoopClearController getClearListener() => _loopClearController;
   
   void setStartFlashingMethod(Function() function) {

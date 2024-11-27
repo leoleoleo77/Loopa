@@ -33,7 +33,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool expandedState = true;
-  Loopa _loopa = Loopa();
+  Loopa _loopa = Loopa(id: 0);
 
 
   // TODO: handle initialization

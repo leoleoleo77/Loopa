@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:loopa/components/loop_selection/loop_selection_dropdown.dart';
-import 'package:loopa/components/loop_selection/loop_selection_item/loop_selection_item_model.dart';
 import 'package:loopa/utils/loopa.dart';
 
 class LoopSelectionView extends StatefulWidget {
@@ -64,45 +63,10 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
 
   @override
   Widget build(BuildContext context) {
-
-    // Mock instances
-    final l1 = LoopSelectionItemModel(
-      name: "LOOP_00",
-      id: "00",
-      state: LoopaState.initial, // Assuming LoopaState has 'active' as a valid state
-    );
-
-    final l2 = LoopSelectionItemModel(
-      name: "LOOP_01",
-      id: "01",
-      state: LoopaState.initial, // Assuming LoopaState has 'inactive' as a valid state
-    );
-
-    final l3 = LoopSelectionItemModel(
-      name: "LOOP_02",
-      id: "02",
-      state: LoopaState.initial, // Assuming LoopaState has 'pending' as a valid state
-    );
-
-    final l4 = LoopSelectionItemModel(
-      name: "LOOP_03",
-      id: "03",
-      state: LoopaState.initial, // Assuming LoopaState has 'completed' as a valid state
-    );
-
-    final l5 = LoopSelectionItemModel(
-      name: "LOOP_04",
-      id: "04",
-      state: LoopaState.initial, // Assuming LoopaState has 'error' as a valid state
-    );
-
-    final List<LoopSelectionItemModel> testList = [l1, l2, l3 ,l4, l5, l5, l5, l5, l5, l5, l4, l4, l4, l4, l4, l4, l4, l4 ,l4, l4, l4, l4, l4];
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: LoopSelectionDropdown(
         dropdownBuilder: _getSelectedItem(),
-        models: testList,
       )
     );
   }

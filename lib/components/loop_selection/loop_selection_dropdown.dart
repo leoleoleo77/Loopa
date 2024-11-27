@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:loopa/components/loop_selection/loop_selection_item/loop_selection_item.dart';
-
-import 'loop_selection_item/loop_selection_item_model.dart';
+import 'package:loopa/components/loop_selection/loop_selection_item.dart';
 
 class LoopSelectionDropdown extends StatelessWidget {
   final Widget dropdownBuilder;
-  final List<LoopSelectionItemModel> models;
 
   const LoopSelectionDropdown({
     super.key,
     required this.dropdownBuilder,
-    required this.models
   });
 
   // TODO: fix the ripple effect
@@ -20,12 +16,16 @@ class LoopSelectionDropdown extends StatelessWidget {
     return DropdownButtonHideUnderline(
       child: DropdownButton2(
         customButton: dropdownBuilder,
-        items: models.map(
-            (model) => DropdownMenuItem<LoopSelectionItemModel>(
-              value: model,
-              child: LoopSelectionItem(model: model),
-             ),
-          ).toList(),
+        items: List.generate(
+          100, // TODO: make this a constant
+          (index) {
+            return DropdownMenuItem<int>(
+              value: index,
+              child: LoopSelectionItem(id: index)
+            );
+          },
+          growable: false
+        ),
         onChanged: (value) {},
         dropdownStyleData: DropdownStyleData(
           direction: DropdownDirection.left,
@@ -35,7 +35,7 @@ class LoopSelectionDropdown extends StatelessWidget {
             color: Colors.black,
           ),
           scrollbarTheme: ScrollbarThemeData(
-            thumbColor: WidgetStateProperty.all(Colors.lightGreenAccent.shade400,),
+            thumbColor: WidgetStateProperty.all(Colors.lightGreenAccent.shade400),
           )
         ),
         menuItemStyleData: const MenuItemStyleData(
