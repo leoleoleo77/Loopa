@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loopa/utils/constants.dart';
 import 'package:loopa/utils/loopa.dart';
 
 class PlayRecLights extends StatelessWidget {
@@ -27,10 +28,10 @@ class PlayRecLights extends StatelessWidget {
   Widget _getRecLight() {
     return Column(
       children: [
-        Text(
-          'REC',
+        const Text(
+          LoopaText.rec,
           style: TextStyle(
-            color: Colors.white.withOpacity(0.7),
+            color: LoopaColors.softGrey,
             fontSize: 12,
           ),
         ),
@@ -67,10 +68,10 @@ class PlayRecLights extends StatelessWidget {
   Widget _getPlayLight() {
     return Column(
       children: [
-        Text(
-          'PLAY',
+        const Text(
+          LoopaText.play,
           style: TextStyle(
-            color: Colors.white.withOpacity(0.7),
+            color: LoopaColors.softGrey,
             fontSize: 12,
           ),
         ),

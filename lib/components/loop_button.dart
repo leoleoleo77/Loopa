@@ -76,11 +76,11 @@ class _LoopButtonState extends State<LoopButton> {
     setState(() {
       isBeingPressed = true;
     });
-    widget.loopa.startLongPressListener();
+    if (widget.largeState) widget.loopa.startLongPressListener(); // TODO: handle this better
   }
 
   void _handlePanEnd() {
-    widget.loopa.cancelLongPressListener();
+    if (widget.largeState) widget.loopa.cancelLongPressListener(); // ++
     widget.loopa.updateState();
     setState(() {
       isBeingPressed = false;
@@ -88,7 +88,7 @@ class _LoopButtonState extends State<LoopButton> {
   }
 
   void _handlePanCancel() {
-    widget.loopa.cancelLongPressListener();
+    if (widget.largeState) widget.loopa.cancelLongPressListener(); // ++
     setState(() {
       isBeingPressed = false;
     });

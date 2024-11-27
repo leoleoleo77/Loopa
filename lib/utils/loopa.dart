@@ -61,7 +61,6 @@ class Loopa {
   /// has already been updated and updateState needs to simply
   /// reset the _loopWasCleared flag.
 
-  //TODO: fix small state bug
   void updateState() {
 
     if (_loopClearController.wasCleared()) {
