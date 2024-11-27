@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loopa/utils/constants.dart';
 import 'package:loopa/utils/loopa.dart';
 
 class LoopSelectionItem extends StatelessWidget {
@@ -8,8 +9,6 @@ class LoopSelectionItem extends StatelessWidget {
     super.key,
     required this.id
   });
-
-  static const String _memory = "Memory";
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +34,7 @@ class LoopSelectionItem extends StatelessWidget {
               Transform.scale(
                 scaleY: 1.5,
                 child: _getGradientText(
-                    text: _memory,
+                    text: LoopaText.memory,
                     fontSize: 18,
                 )
               ),
@@ -69,7 +68,7 @@ class LoopSelectionItem extends StatelessWidget {
       child: Text(
         text,
         style: TextStyle(
-          fontFamily: 'Jersey25',
+          fontFamily: LoopaFont.retro,
           height: 1,
           fontSize: fontSize,
         ),

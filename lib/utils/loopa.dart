@@ -7,6 +7,7 @@ import 'package:loopa/utils/tool_bar_animation_controller.dart';
 
 class Loopa {
   static final Map<int, Loopa> _map = {};
+  static late ValueNotifier<Loopa> _loopaNotifier;
 
   late final int id;
   late String _name;
@@ -105,17 +106,20 @@ class Loopa {
   }
 
   ValueNotifier<LoopaState> getStateNotifier() => _stateNotifier;
+
   String getName() => _name;
 
   static String getNameFromMap(int key) {
     return _map[key]?._name ?? "LOOP_$key";
   }
+
   static LoopaState getStateFromMap(int key) {
     return _map[key]?.getStateNotifier().value ?? LoopaState.initial;
   }
 
-  // static bool mapContains(int key) => _map.containsKey(key);
-  // static Loopa? getLoopa(int key) => _map[key];
+  static void setLoopaNotifier(ValueNotifier<Loopa> loopaNotifier) {
+    _loopaNotifier = loopaNotifier;
+  }
 
   LoopClearController getClearListener() => _loopClearController;
   
@@ -125,6 +129,13 @@ class Loopa {
 
   void setStopFlashingMethod(Function() function) {
     _loopClearController.stopFlashing = function;
+  }
+
+  static void handleOnLoopaChange(int? id) {
+    if (id == null) return;
+    if (_loopaNotifier.value.id == id) return;
+
+    _loopaNotifier.value = _map[id] ?? Loopa(id: id);
   }
 }
 

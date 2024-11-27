@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:loopa/components/loop_selection/loop_selection_dropdown.dart';
+import 'package:loopa/utils/constants.dart';
 import 'package:loopa/utils/loopa.dart';
 
 class LoopSelectionView extends StatefulWidget {
@@ -19,14 +20,13 @@ class LoopSelectionView extends StatefulWidget {
 
 class _LoopSelectionViewState extends State<LoopSelectionView> {
 
-  static const String _noText = "";
   late String _displayText;
   bool _textIsVisible = true;
   Timer? _flashTimer;
 
   void _startFlashing() {
     setState(() {
-      _displayText = "CLEAR";
+      _displayText = LoopaText.clear;
       _textIsVisible = !_textIsVisible;
     });
     _flashTimer = Timer.periodic(
@@ -56,13 +56,13 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
   @override
   void initState() {
     super.initState();
-    _displayText = widget.loopa.getName();
     widget.loopa.setStartFlashingMethod(_startFlashing);
     widget.loopa.setStopFlashingMethod(_stopFlashing);
   }
 
   @override
   Widget build(BuildContext context) {
+    _displayText = widget.loopa.getName();
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: LoopSelectionDropdown(
@@ -87,7 +87,7 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
                 child: _getGradientText(
                     text: _textIsVisible
                         ? _displayText
-                        : _noText
+                        : LoopaText.noText
                 )
             )
           ],
@@ -112,7 +112,7 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
       child: Text(
           text,
           style: TextStyle(
-              fontFamily: 'Jersey25',
+              fontFamily: LoopaFont.retro,
               fontSize: fontSize,
           ),
       ),
@@ -122,7 +122,7 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
   List<Color> _getGradientColor() {
     // TODO: make this condition a bit clearer
     if (widget.loopa.getStateNotifier().value == LoopaState.initial
-        && _displayText != "CLEAR"
+        && _displayText != LoopaText.clear
     ) {
       return <Color>[
         Colors.lightGreenAccent.shade400.withOpacity(0.4),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:loopa/components/loop_selection/loop_selection_item.dart';
+import 'package:loopa/utils/loopa.dart';
 
 class LoopSelectionDropdown extends StatelessWidget {
   final Widget dropdownBuilder;
@@ -26,7 +27,7 @@ class LoopSelectionDropdown extends StatelessWidget {
           },
           growable: false
         ),
-        onChanged: (value) {},
+        onChanged: (id) => Loopa.handleOnLoopaChange(id),
         dropdownStyleData: DropdownStyleData(
           direction: DropdownDirection.left,
           width: 264,
