@@ -20,22 +20,15 @@ class LoopSelectionView extends StatefulWidget {
 
 class _LoopSelectionViewState extends State<LoopSelectionView> {
 
-  // late String _displayText = widget.loopa.getName();
   bool _textIsVisible = true;
   Timer? _flashTimer;
 
   void _startFlashing() {
-    setState(() {
-      //_displayText = LoopaText.clear;
-      _textIsVisible = !_textIsVisible;
-    });
+    _toggleDisplayTextVisibility();
     _flashTimer = Timer.periodic(
       const Duration(milliseconds: 500),
       (timer) {
-        setState(() {
-          _textIsVisible = !_textIsVisible;
-        });
-
+        _toggleDisplayTextVisibility();
         if (timer.tick == 7) {
           timer.cancel();
           _stopFlashing();
@@ -48,7 +41,6 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
     if (_flashTimer == null) return;
     _flashTimer!.cancel();
     setState(() {
-      //_displayText = widget.loopa.getName();
       _textIsVisible = true;
     });
   }
@@ -133,6 +125,12 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
     } else {
       return LoopaColors.activeGreenGradient;
     }
+  }
+
+  void _toggleDisplayTextVisibility() {
+    setState(() {
+      _textIsVisible = !_textIsVisible;
+    });
   }
 }
 

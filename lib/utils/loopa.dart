@@ -45,12 +45,13 @@ class Loopa {
 
     _longPressListener.onClearComplete();
     _loopClearController.onClearComplete();
-    if (_stateNotifier.value == LoopaState.recording) {
-      _audioController.clearRecording();
-    } else {
-      _audioController.clearPlayer();
-    }
+    _audioController.clearPlayer();
     _stateNotifier.value = LoopaState.initial;
+  }
+
+  bool _stateIsInitialOrRecording() {
+    return _stateNotifier.value == LoopaState.initial
+        || _stateNotifier.value == LoopaState.recording;
   }
 
   /// - Start public methods -
@@ -92,12 +93,12 @@ class Loopa {
   }
 
   void startLongPressListener() {
-    if (_stateNotifier.value == LoopaState.initial) return;
+    if (_stateIsInitialOrRecording()) return;
     _longPressListener.start();
   }
 
   void cancelLongPressListener() {
-    if (_stateNotifier.value == LoopaState.initial) return;
+    if (_stateIsInitialOrRecording()) return;
     _longPressListener.cancel();
   }
 
