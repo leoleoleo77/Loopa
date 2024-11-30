@@ -66,7 +66,7 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
   Widget _getSelectedItem() {
     return Container(
       color: Colors.black,
-      width: 124,
+      width: 132,
       height: double.infinity,
       child: Padding(
         padding: const EdgeInsets.only(top: 8.0),

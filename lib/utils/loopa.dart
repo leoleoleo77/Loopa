@@ -19,7 +19,7 @@ class Loopa {
   Loopa({
     required this.id,
   }) {
-    _name = _initialiseName();
+    _name = _getDefaultName(id);
     _stateNotifier = ValueNotifier(LoopaState.initial);
     _longPressListener = LongPressListener(onFinish: _clearLoop);
     _loopClearController = LoopClearController();
@@ -27,16 +27,12 @@ class Loopa {
     _map[id] = this;
   }
 
-  // TODO
-  String _initialiseName() {
-    return "LOOP_$id";
-  }
+  /// - Start private methods -
 
   /// _clearLoop is called whenever when _longPressTimer finishes
   /// and has three cases
-  /// case 1. The state of the loop is initial so there is no loop to clear
-  /// case 2. The state of the loop is recording so stop the recording
-  /// case 3. The state of the loop is either playing or idle
+  /// either. The state of the loop is initial so there is no loop to clear
+  /// or.     The state of the loop is either playing or idle
   ///         so clear the loop and inform the user
 
   void _clearLoop() {
@@ -46,12 +42,22 @@ class Loopa {
     _longPressListener.onClearComplete();
     _loopClearController.onClearComplete();
     _audioController.clearPlayer();
-    _stateNotifier.value = LoopaState.initial;
   }
 
   bool _stateIsInitialOrRecording() {
     return _stateNotifier.value == LoopaState.initial
         || _stateNotifier.value == LoopaState.recording;
+  }
+
+  bool _isRecording() {
+    return _stateNotifier.value == LoopaState.recording;
+  }
+
+  void _cancelRecording() {
+    if (_isRecording()) {
+      _audioController.clearRecording();
+      _stateNotifier.value = LoopaState.initial;
+    }
   }
 
   /// - Start public methods -
@@ -65,9 +71,9 @@ class Loopa {
 
   void updateState() {
 
-    if (_loopClearController.wasCleared()) {
+    if (_loopClearController.loopWasCleared == true) {
       _stateNotifier.value = LoopaState.initial;
-      _loopClearController.setWasCleared(false);
+      _loopClearController.loopWasCleared = false;
       return;
     }
 
@@ -110,18 +116,6 @@ class Loopa {
 
   String getName() => _name;
 
-  static String getNameFromMap(int key) {
-    return _map[key]?._name ?? "LOOP_$key";
-  }
-
-  static LoopaState getStateFromMap(int key) {
-    return _map[key]?.getStateNotifier().value ?? LoopaState.initial;
-  }
-
-  static void setLoopaNotifier(ValueNotifier<Loopa> loopaNotifier) {
-    _loopaNotifier = loopaNotifier;
-  }
-
   LoopClearController getClearListener() => _loopClearController;
   
   void setStartFlashingMethod(Function() function) {
@@ -132,9 +126,30 @@ class Loopa {
     _loopClearController.stopFlashing = function;
   }
 
+  /// - Start static methods -
+
+  static String _getDefaultName(int i) {
+    return "LOOP_$i";
+  }
+
+  static String getNameFromMap(int key) {
+    return _map[key]?._name ?? _getDefaultName(key);
+  }
+
+  static LoopaState getStateFromMap(int key) {
+    return _map[key]?.getStateNotifier().value ?? LoopaState.initial;
+  }
+
+  static void setLoopaNotifier(ValueNotifier<Loopa> loopaNotifier) {
+    _loopaNotifier = loopaNotifier;
+  }
+
   static void handleOnLoopaChange(int? id) {
     if (id == null) return;
+
     if (_loopaNotifier.value.id == id) return;
+
+    _loopaNotifier.value._cancelRecording();
 
     _loopaNotifier.value = _map[id] ?? Loopa(id: id);
   }
