@@ -1,8 +1,13 @@
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:loopa/utils/constants.dart';
 import 'package:loopa/utils/loopa.dart';
 
-class LoopSelectionItem extends StatelessWidget {
+class LoopSelectionItem extends StatefulWidget {
   final int id;
 
   const LoopSelectionItem({
@@ -13,6 +18,43 @@ class LoopSelectionItem extends StatelessWidget {
   static const double _bigFont = 36;
   static const double _mediumFont = 20;
   static const double _smallFont = 18;
+
+  @override
+  State<LoopSelectionItem> createState() => _LoopSelectionItemState();
+}
+
+class _LoopSelectionItemState extends State<LoopSelectionItem> {
+  late final Timer _dancingNoteTimer;
+  String _noteAsset = LoopaAssets.note1;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeDancingNoteTimer();
+  }
+
+  void _initializeDancingNoteTimer() {
+    if (Loopa.getStateFromMap(widget.id) != LoopaState.playing) return;
+
+    _dancingNoteTimer = Timer.periodic(
+      const Duration(milliseconds: 500),
+      (_) {
+        setState(() {
+          if (_noteAsset == LoopaAssets.note1) {
+            _noteAsset = LoopaAssets.note2;
+          } else {
+            _noteAsset = LoopaAssets.note1;
+          }
+        });
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _dancingNoteTimer.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,32 +68,55 @@ class LoopSelectionItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
-                width: 124,
-                child: _getGradientText(
-                  text: Loopa.getNameFromMap(id),
-                  fontSize: _bigFont,
-                ),
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _getGradientText(
-                      text: LoopaText.memory,
-                      fontSize: _smallFont,
-                  ),
-                  _getGradientText(
-                      text: id.toString(),
-                      fontSize: _mediumFont
-                  ),
-                ],
-              )
+              _getLoopaName(),
+              _getMemoryInfoText(),
+              _getDancingNote()
             ],
           ),
         ],
       ),
     );
+  }
+
+  Widget _getLoopaName() {
+    return SizedBox(
+      width: 124,
+      child: _getGradientText(
+        text: Loopa.getNameFromMap(widget.id),
+        fontSize: LoopSelectionItem._bigFont,
+      ),
+    );
+  }
+
+  Widget _getMemoryInfoText() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _getGradientText(
+          text: LoopaText.memory,
+          fontSize: LoopSelectionItem._smallFont,
+        ),
+        _getGradientText(
+            text: widget.id.toString(),
+            fontSize: LoopSelectionItem._mediumFont
+        ),
+      ],
+    );
+  }
+
+  Widget _getDancingNote() {
+    if (Loopa.getStateFromMap(widget.id) == LoopaState.playing) {
+      return Expanded(
+        child: SvgPicture.asset(
+          _noteAsset,
+          width: 40,
+          height: 40,
+        ),
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
   }
 
   Widget _getGradientText({
@@ -83,7 +148,7 @@ class LoopSelectionItem extends StatelessWidget {
 
   List<Color> _getGradientColor() {
     // TODO: make this condition a bit clearer
-    if (Loopa.getStateFromMap(id) == LoopaState.initial) {
+    if (Loopa.getStateFromMap(widget.id) == LoopaState.initial) {
       return <Color>[
         Colors.lightGreenAccent.shade400.withOpacity(0.4),
         Colors.lightGreenAccent.shade400.withOpacity(0.4)
@@ -97,8 +162,6 @@ class LoopSelectionItem extends StatelessWidget {
   }
 
   // Kinda disgusting but there was a 16px space in each side
-  // where a ripple effect was visible when the user tapped/scrolled the loops
-  // and I think this is the simplest way to solve it.
   Widget _getEdgesCover({required bool leftEdge}) {
     return Align(
       alignment: leftEdge

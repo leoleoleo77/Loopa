@@ -110,9 +110,10 @@ class _ToolBarAnimationState extends State<ToolBarAnimation>
   }
 
   Widget _getCompletionFlash() {
+    // TODO: make this better
     return AnimatedOpacity(
       opacity: _showCompletionFlash ? 1.0 : 0.0,
-      duration: const Duration(milliseconds: 200),
+      duration: _showCompletionFlash ? const Duration(microseconds: 0) : const Duration(milliseconds: 200),
       child: Container(
         width: double.infinity,
         height: double.infinity,

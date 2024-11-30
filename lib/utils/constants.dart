@@ -23,3 +23,16 @@ class LoopaText {
 class LoopaFont {
   static const String retro = 'Jersey25';
 }
+
+class LoopaAssets {
+  static const String note1 = "assets/note1.svg";
+  static const String note2 = "assets/note2.svg";
+  static const String largePressed =  "assets/large_pressed.jpg";
+  static const String largeIdle =  "assets/large_idle.jpg";
+  static const String smallPressed =  "assets/small_pressed.jpg";
+  static const String smallIdle =  "assets/small_idle.jpg";
+}
+
+class LoopaLabels {
+  static const loopButton = "Main loop button. Instructions: press once to record/play audio, press & hold to clear the loop";
+}
