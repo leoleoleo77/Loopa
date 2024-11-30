@@ -2,7 +2,7 @@
 class LoopClearController {
   late Function() startFlashing;
   late Function() stopFlashing;
-  late bool _loopWasCleared;
+  late bool _loopWasCleared; // TODO: make this public
   
   LoopClearController() {
     startFlashing = () {};

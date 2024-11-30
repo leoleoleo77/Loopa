@@ -20,13 +20,13 @@ class LoopSelectionView extends StatefulWidget {
 
 class _LoopSelectionViewState extends State<LoopSelectionView> {
 
-  late String _displayText;
+  // late String _displayText = widget.loopa.getName();
   bool _textIsVisible = true;
   Timer? _flashTimer;
 
   void _startFlashing() {
     setState(() {
-      _displayText = LoopaText.clear;
+      //_displayText = LoopaText.clear;
       _textIsVisible = !_textIsVisible;
     });
     _flashTimer = Timer.periodic(
@@ -48,7 +48,7 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
     if (_flashTimer == null) return;
     _flashTimer!.cancel();
     setState(() {
-      _displayText = widget.loopa.getName();
+      //_displayText = widget.loopa.getName();
       _textIsVisible = true;
     });
   }
@@ -62,7 +62,7 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
 
   @override
   Widget build(BuildContext context) {
-    _displayText = widget.loopa.getName();
+    // _displayText = widget.loopa.getName();
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: LoopSelectionDropdown(
@@ -84,11 +84,7 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
           children: [
             Transform.scale(
                 scaleY: 1.5,
-                child: _getGradientText(
-                    text: _textIsVisible
-                        ? _displayText
-                        : LoopaText.noText
-                )
+                child: _getGradientText()
             )
           ],
         ),
@@ -96,10 +92,19 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
     );
   }
 
-  Widget _getGradientText({
-    required String text,
-    double fontSize = 36,
-  }) {
+  Widget _getGradientText() {
+
+    String displayText;
+    if (_flashTimer?.isActive == true) {
+      if (_textIsVisible) {
+        displayText = LoopaText.clear;
+      } else {
+        displayText = LoopaText.noText;
+      }
+    } else {
+      displayText = widget.loopa.getName();
+    }
+
     return ShaderMask(
       blendMode: BlendMode.srcIn,
       shaderCallback: (bounds) {
@@ -110,29 +115,23 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
         );
       },
       child: Text(
-          text,
-          style: TextStyle(
+          displayText,
+          style: const TextStyle(
               fontFamily: LoopaFont.retro,
-              fontSize: fontSize,
+              fontSize: 36,
           ),
       ),
     );
   }
 
   List<Color> _getGradientColor() {
-    // TODO: make this condition a bit clearer
-    if (widget.loopa.getStateNotifier().value == LoopaState.initial
-        && _displayText != LoopaText.clear
-    ) {
-      return <Color>[
-        Colors.lightGreenAccent.shade400.withOpacity(0.4),
-        Colors.lightGreenAccent.shade400.withOpacity(0.4)
-      ];
+    bool loopaStateIsInitial = widget.loopa.getStateNotifier().value == LoopaState.initial;
+    bool isFlashing = !(_flashTimer?.isActive == true);
+
+    if (loopaStateIsInitial && isFlashing) {
+      return LoopaColors.idleGreenGradient;
     } else {
-      return <Color>[
-        Colors.lightGreenAccent.shade400,
-        Colors.lightGreenAccent.shade700
-      ];
+      return LoopaColors.activeGreenGradient;
     }
   }
 }
