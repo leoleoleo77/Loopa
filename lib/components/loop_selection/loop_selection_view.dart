@@ -39,7 +39,7 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
 
   void _stopFlashing() {
     if (_flashTimer == null) return;
-    _flashTimer!.cancel();
+    _flashTimer?.cancel();
     setState(() {
       _textIsVisible = true;
     });
@@ -48,9 +48,8 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
   @override
   void initState() {
     super.initState();
-    // problem: this get sets up only on loop 0 because of initState
-    widget.loopa.setStartFlashingMethod(_startFlashing);
-    widget.loopa.setStopFlashingMethod(_stopFlashing);
+    Loopa.setStartFlashingMethod(_startFlashing);
+    Loopa.setStopFlashingMethod(_stopFlashing);
   }
 
   @override

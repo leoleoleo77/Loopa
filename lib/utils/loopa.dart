@@ -80,7 +80,7 @@ class Loopa {
     switch(_stateNotifier.value) {
       case LoopaState.initial:
         _stateNotifier.value = LoopaState.recording;
-        _loopClearController.stopFlashing();
+        LoopClearController.stopFlashing();
         _audioController.startRecording();
         break;
       case LoopaState.recording:
@@ -116,17 +116,15 @@ class Loopa {
 
   String getName() => _name;
 
-  LoopClearController getClearListener() => _loopClearController;
-  
-  void setStartFlashingMethod(Function() function) {
-    _loopClearController.startFlashing = function;
-  }
-
-  void setStopFlashingMethod(Function() function) {
-    _loopClearController.stopFlashing = function;
-  }
-
   /// - Start static methods -
+  
+  static void setStartFlashingMethod(Function() function) {
+    LoopClearController.startFlashing = function;
+  }
+
+  static void setStopFlashingMethod(Function() function) {
+    LoopClearController.stopFlashing = function;
+  }
 
   static String _getDefaultName(int i) {
     return "LOOP_$i";
@@ -150,6 +148,7 @@ class Loopa {
     if (_loopaNotifier.value.id == id) return;
 
     _loopaNotifier.value._cancelRecording();
+    LoopClearController.stopFlashing();
 
     _loopaNotifier.value = _map[id] ?? Loopa(id: id);
   }
