@@ -26,7 +26,7 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
   void _startFlashing() {
     _toggleDisplayTextVisibility();
     _flashTimer = Timer.periodic(
-      const Duration(milliseconds: 500),
+      LoopaDuration.milliseconds500,
       (timer) {
         _toggleDisplayTextVisibility();
         if (timer.tick == 7) {
@@ -60,9 +60,8 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
 
   @override
   Widget build(BuildContext context) {
-    // _displayText = widget.loopa.getName();
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      padding: LoopaPadding.vertical12,
       child: LoopSelectionDropdown(
         dropdownBuilder: _getSelectedItem(),
       )
@@ -72,52 +71,66 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
   Widget _getSelectedItem() {
     return Container(
       color: Colors.black,
-      width: 132,
+      width: widget.compactView ? 132 : 200,
       height: double.infinity,
       child: Padding(
-        padding: const EdgeInsets.only(top: 8.0),
+        padding: LoopaPadding.top16,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: widget.compactView ? MainAxisAlignment.center : MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Transform.scale(
-                scaleY: 1.5,
-                child: _getGradientText()
-            )
+            _getGradientText(
+              _getDisplayText(),
+              LoopaFontSize.fontSize36,
+            ),
+            _getMemoryInfoText(),
           ],
         ),
       ),
     );
   }
 
-  Widget _getGradientText() {
+  Widget _getMemoryInfoText() {
+    if (widget.compactView) return const SizedBox.shrink();
 
-    String displayText;
-    if (_flashTimer?.isActive == true) {
-      if (_textIsVisible) {
-        displayText = LoopaText.clear;
-      } else {
-        displayText = LoopaText.noText;
-      }
-    } else {
-      displayText = widget.loopa.getName();
-    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _getGradientText(
+          LoopaText.memory,
+          LoopaFontSize.fontSize18,
+        ),
+        _getGradientText(
+            widget.loopa.id.toString(),
+            LoopaFontSize.fontSize20,
+        ),
+      ],
+    );
+  }
 
-    return ShaderMask(
-      blendMode: BlendMode.srcIn,
-      shaderCallback: (bounds) {
-        return LinearGradient(
-          colors: _getGradientColor()
-        ).createShader(
-          Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-        );
-      },
-      child: Text(
-          displayText,
-          style: const TextStyle(
-              fontFamily: LoopaFont.retro,
-              fontSize: 36,
-          ),
+  Widget _getGradientText(
+      String text,
+      double fontSize,
+  ) {
+    return Transform.scale(
+      scaleY: 1.5,
+      child: ShaderMask(
+        blendMode: BlendMode.srcIn,
+        shaderCallback: (bounds) {
+          return LinearGradient(
+            colors: _getGradientColor()
+          ).createShader(
+            Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+          );
+        },
+        child: Text(
+            text,
+            style: TextStyle(
+                fontFamily: LoopaFont.retro,
+                fontSize: fontSize,
+                height: 1
+            ),
+        ),
       ),
     );
   }
@@ -137,6 +150,18 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
     setState(() {
       _textIsVisible = !_textIsVisible;
     });
+  }
+
+  String _getDisplayText() {
+    if (_flashTimer?.isActive == true) {
+      if (_textIsVisible) {
+        return LoopaText.clear;
+      } else {
+        return LoopaText.noText;
+      }
+    } else {
+      return widget.loopa.getName();
+    }
   }
 }
 

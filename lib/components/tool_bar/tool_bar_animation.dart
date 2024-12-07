@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:loopa/utils/constants.dart';
 import 'package:loopa/utils/long_press_listener.dart';
 import 'package:loopa/utils/tool_bar_animation_controller.dart';
 
@@ -19,7 +20,6 @@ class ToolBarAnimation extends StatefulWidget {
 class _ToolBarAnimationState extends State<ToolBarAnimation>
     with SingleTickerProviderStateMixin {
 
-  static const int _tickRate = 16;
   double _containerWidth = 0;
   double _progressIndicatorOpacity = 0;
   bool _showCompletionFlash = false;
@@ -27,9 +27,10 @@ class _ToolBarAnimationState extends State<ToolBarAnimation>
 
   void _startExpanding(double? maxWidth) {
     if (maxWidth == null) return;
+
     final double widthPerTick = _getWidthPerTick(maxWidth);
     _timer = Timer.periodic(
-        const Duration(milliseconds: _tickRate),
+        LoopaDuration.clearAnimationTickDuration,
         (_) => _onTick(maxWidth, widthPerTick)
     );
   }
@@ -59,16 +60,15 @@ class _ToolBarAnimationState extends State<ToolBarAnimation>
   void _onComplete() {
     // Why doesn't this need to be inside a setState? curious.
     _showCompletionFlash = true;
-    Timer(const Duration(milliseconds: 300), () {
-      setState(() {
-        _showCompletionFlash = false;
-      });
-    });
+    Timer(
+      LoopaDuration.loopClearFlashAnimationDuration,
+      () => setState(() { _showCompletionFlash = false; })
+    );
   }
 
   double _getWidthPerTick(double maxWidth) {
     return maxWidth /
-        (LongPressListener.longPressDurationMilliseconds / _tickRate);
+        (LongPressListener.longPressDurationMilliseconds / LoopaConstants.clearAnimationTick);
   }
 
   @override
@@ -113,7 +113,9 @@ class _ToolBarAnimationState extends State<ToolBarAnimation>
     // TODO: make this better
     return AnimatedOpacity(
       opacity: _showCompletionFlash ? 1.0 : 0.0,
-      duration: _showCompletionFlash ? const Duration(microseconds: 0) : const Duration(milliseconds: 200),
+      duration: _showCompletionFlash ?
+        LoopaDuration.zero :
+        LoopaDuration.loopClearAnimationFadeDuration,
       child: Container(
         width: double.infinity,
         height: double.infinity,
@@ -127,15 +129,9 @@ class _ToolBarAnimationState extends State<ToolBarAnimation>
       gradient: LinearGradient(
           begin: Alignment.bottomCenter,
           end: Alignment.topCenter,
-          colors: [
-            Colors.grey.withOpacity(0.1),
-            Colors.grey.withOpacity(0.2),
-            Colors.grey.withOpacity(0.3),
-          ]
+          colors: LoopaColors.flashAnimationGradient
       ),
-      borderRadius: const BorderRadius.horizontal(
-          left: Radius.circular(12.0)
-      ),
+      borderRadius: LoopaBorderRadius.left12
     );
   }
 
@@ -150,9 +146,7 @@ class _ToolBarAnimationState extends State<ToolBarAnimation>
             Colors.grey.withOpacity(0.3 * _progressIndicatorOpacity),
           ]
       ),
-      borderRadius: const BorderRadius.horizontal(
-          left: Radius.circular(12.0)
-      ),
+      borderRadius: LoopaBorderRadius.left12
     );
   }
 

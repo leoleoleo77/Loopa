@@ -1,8 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:loopa/utils/constants.dart';
 import 'package:loopa/utils/loopa.dart';
@@ -14,10 +12,6 @@ class LoopSelectionItem extends StatefulWidget {
     super.key,
     required this.id
   });
-
-  static const double _bigFont = 36;
-  static const double _mediumFont = 20;
-  static const double _smallFont = 18;
 
   @override
   State<LoopSelectionItem> createState() => _LoopSelectionItemState();
@@ -37,7 +31,7 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
     if (Loopa.getStateFromMap(widget.id) != LoopaState.playing) return;
 
     _dancingNoteTimer = Timer.periodic(
-      const Duration(milliseconds: 500),
+      LoopaDuration.milliseconds500,
       (_) {
         setState(() {
           if (_noteAsset == LoopaAssets.note1) {
@@ -80,10 +74,10 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
 
   Widget _getLoopaName() {
     return SizedBox(
-      width: 124,
+      width: LoopaSpacing.selectionItemNameWidth,
       child: _getGradientText(
         text: Loopa.getNameFromMap(widget.id),
-        fontSize: LoopSelectionItem._bigFont,
+        fontSize: LoopaFontSize.fontSize36,
       ),
     );
   }
@@ -95,11 +89,11 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
       children: [
         _getGradientText(
           text: LoopaText.memory,
-          fontSize: LoopSelectionItem._smallFont,
+          fontSize: LoopaFontSize.fontSize18,
         ),
         _getGradientText(
             text: widget.id.toString(),
-            fontSize: LoopSelectionItem._mediumFont
+            fontSize: LoopaFontSize.fontSize20
         ),
       ],
     );
@@ -110,8 +104,8 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
       return Expanded(
         child: SvgPicture.asset(
           _noteAsset,
-          width: 40,
-          height: 40,
+          width: LoopaSpacing.dancingNoteWidth,
+          height: LoopaSpacing.dancingNoteHeight,
         ),
       );
     } else {

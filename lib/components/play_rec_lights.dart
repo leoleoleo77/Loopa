@@ -13,29 +13,25 @@ class PlayRecLights extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 8),
+      padding: LoopaPadding.top8,
       child: Row(
         children: [
           _getRecLight(),
-          const SizedBox(width: 8),
+          const SizedBox(width: LoopaSpacing.spacing8),
           _getPlayLight(),
         ],
       ),
     );
   }
 
-  // TODO: make the progress indicator not affect their color
   Widget _getRecLight() {
     return Column(
       children: [
         const Text(
           LoopaText.rec,
-          style: TextStyle(
-            color: LoopaColors.softGrey,
-            fontSize: 12,
-          ),
+          style: LoopaTextStyle.menuLabels
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: LoopaSpacing.spacing4),
         _getRedCircleAvatar(),
       ],
     );
@@ -50,13 +46,13 @@ class PlayRecLights extends StatelessWidget {
           builder: (context, loopaState, child) {
             Color redAccent;
             if (loopaState == LoopaState.recording) {
-              redAccent = Colors.red;
+              redAccent = LoopaColors.red;
             } else {
-              redAccent = Colors.red.withOpacity(0.15);
+              redAccent = LoopaColors.inactiveRecLightRed;
             }
 
             return CircleAvatar(
-              radius: 20,
+              radius: LoopaConstants.playRecLightsRadius,
               backgroundColor: redAccent,
             );
           },
@@ -70,12 +66,9 @@ class PlayRecLights extends StatelessWidget {
       children: [
         const Text(
           LoopaText.play,
-          style: TextStyle(
-            color: LoopaColors.softGrey,
-            fontSize: 12,
-          ),
+          style: LoopaTextStyle.menuLabels
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: LoopaSpacing.spacing4),
         _getGreenCircleAvatar()
       ],
     );
@@ -90,13 +83,13 @@ class PlayRecLights extends StatelessWidget {
           builder: (context, loopaState, child) {
             Color greenAccent;
             if (loopaState == LoopaState.playing) {
-              greenAccent = Colors.green;
+              greenAccent = LoopaColors.green;
             } else {
-              greenAccent = Colors.green.withOpacity(0.1);
+              greenAccent = LoopaColors.inactivePlayLightGreen;
             }
 
             return CircleAvatar(
-              radius: 20,
+              radius: LoopaConstants.playRecLightsRadius,
               backgroundColor: greenAccent,
             );
           },
@@ -107,8 +100,8 @@ class PlayRecLights extends StatelessWidget {
 
   Widget _getCircleAvatarBackground() {
     return const CircleAvatar(
-      radius: 20,
-      backgroundColor: Color.fromRGBO(21, 21, 21, 1),
+      radius: LoopaConstants.playRecLightsRadius,
+      backgroundColor: LoopaColors.playRecLightBackground
     );
   }
 }

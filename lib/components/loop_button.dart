@@ -48,16 +48,18 @@ class _LoopButtonState extends State<LoopButton> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: GestureDetector(
-        onPanStart: (_) => _handlePanStart(),
-        onPanEnd: (_) => _handlePanEnd(),
-        onPanCancel: () => _handlePanCancel(),
-        child: Image.asset(
-            _getImageAsset(),
-            width: double.infinity,
-            fit: BoxFit.fill,
-            semanticLabel: LoopaLabels.loopButton,
-        )
+      child: Semantics.fromProperties(
+        properties: LoopaSemantics.loopButtonSemantics,
+        child: GestureDetector(
+          onPanStart: (_) => _handlePanStart(),
+          onPanEnd: (_) => _handlePanEnd(),
+          onPanCancel: () => _handlePanCancel(),
+          child: Image.asset(
+              _getImageAsset(),
+              width: double.infinity,
+              fit: BoxFit.fill,
+          )
+        ),
       ),
     );
   }

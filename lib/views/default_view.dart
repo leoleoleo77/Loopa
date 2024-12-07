@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:loopa/components/loop_button.dart';
 import 'package:loopa/components/tool_bar/tool_bar_item.dart';
+import 'package:loopa/utils/constants.dart';
 import 'package:loopa/utils/loopa.dart';
 
 class DefaultView extends StatelessWidget {
@@ -28,51 +29,37 @@ class DefaultView extends StatelessWidget {
   }
 
   Widget _getLoopaInstructions() {
-    return Padding(
-      padding: const EdgeInsets.only(
-          top: 16.0,
-          bottom: 8.0,
-          left: 16.0,
-          right: 16.0
-      ),
+    return const Padding(
+      padding: LoopaPadding.loopaInstructionsPadding,
       child: SizedBox(
         width: double.infinity,
-        height: 128,
-        //color: Colors.orange,
+        height: LoopaSpacing.loopaInstructionsHeight,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Image(
-              image: AssetImage('assets/loopa_temp2.png'), // TODO
-              height: 72,
+            Image(
+              image: AssetImage(LoopaAssets.loopaLogo), // TODO: fix black borders & add semantics
+              height: LoopaSpacing.loopaLogoHeight,
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: LoopaSpacing.spacing8),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              padding: LoopaPadding.horizontal16,
               child: Text(
-                "CLEAR: PRESS & HOLD",
-                style: _getInstructionsTextStyle(),
+                LoopaText.clearInstruction,
+                style: LoopaTextStyle.instructions
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              padding: LoopaPadding.horizontal16,
               child: Text(
-                "START/STOP: PRESS ONCE",
-                style: _getInstructionsTextStyle(),
+                LoopaText.playStopInstruction,
+                style: LoopaTextStyle.instructions
               ),
             ),
           ],
         ),
       ),
-    );
-  }
-
-  TextStyle _getInstructionsTextStyle() {
-    return const TextStyle(
-        color: Colors.white,
-        fontWeight: FontWeight.bold,
-        fontSize: 14
     );
   }
 }

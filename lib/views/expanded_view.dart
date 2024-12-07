@@ -1,6 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:loopa/components/loop_button.dart';
+import 'package:loopa/components/loop_selection/loop_selection_view.dart';
 import 'package:loopa/components/play_rec_lights.dart';
+import 'package:loopa/components/play_span_slider.dart';
 import 'package:loopa/utils/constants.dart';
 import 'package:loopa/utils/loopa.dart';
 
@@ -14,13 +17,11 @@ class ExpandedView extends StatelessWidget {
     required this.loopa
   });
 
-  static const double _expandedMenuHeight = 600;
-
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _getDropDownToolBar(),
+        _getExpandedMenu(),
         const SizedBox(height: 8),
         LoopButton(
           largeState: false,
@@ -30,28 +31,23 @@ class ExpandedView extends StatelessWidget {
     );
   }
 
-  Widget _getDropDownToolBar() {
+  Widget _getExpandedMenu() {
     return Row(
       children: [
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: LoopaPadding.horizontal8,
             child: Container(
-                height: _expandedMenuHeight,
+                height: LoopaSpacing.expandedMenuHeight,
                 decoration: _getExpandedViewBoxDecoration(),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        PlayRecLights(
-                            loopaStateNotifier: loopa.getStateNotifier()
-                        ),
-                      ],
-                    ),
+                    _getPlayRecLightsAndLoopaSelectionItem(),
+                    RangeSliderExample(),// temp
                     _getToggleExpandButton()
                   ],
-                ) // temp
+                ),
             ),
           ),
         ),
@@ -59,6 +55,28 @@ class ExpandedView extends StatelessWidget {
     );
   }
 
+  Widget _getPlayRecLightsAndLoopaSelectionItem() {
+    return Padding(
+      padding: LoopaPadding.horizontal16,
+      child: SizedBox(
+        height: LoopaSpacing.toolBarHeight,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            PlayRecLights(
+                loopaStateNotifier: loopa.getStateNotifier()
+            ),
+            LoopSelectionView(
+              loopa: loopa,
+              compactView: false,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  // TODO: make this nice and add semantics
   Widget _getToggleExpandButton() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -105,16 +123,10 @@ class ExpandedView extends StatelessWidget {
 
   BoxDecoration _getExpandedViewBoxDecoration() {
     return BoxDecoration(
-      gradient: const LinearGradient(
+      gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            Color.fromRGBO(21, 21, 21, 1),
-            Color.fromRGBO(24, 24, 24, 1),
-            Color.fromRGBO(24, 24, 24, 1),
-            Color.fromRGBO(28, 28, 28, 1),
-            Color.fromRGBO(31, 31, 31, 1)
-          ]
+          colors: LoopaColors.expandedMenuBackgroundGradient,
       ),
       borderRadius: BorderRadius.circular(12.0),
     );
