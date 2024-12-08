@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:loopa/utils/constants.dart';
@@ -58,14 +57,14 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
         children: [
           _getEdgesCover(leftEdge: true),
           _getEdgesCover(leftEdge: false),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              _getLoopaName(),
-              _getMemoryInfoText(),
-              _getDancingNote()
-            ],
+          Align(
+            alignment: Alignment.center,
+            child: Row(
+              children: [
+                _getLoopaName(),
+                _getMemoryInfoTextOrDancingNote()
+              ],
+            ),
           ),
         ],
       ),
@@ -82,35 +81,40 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
     );
   }
 
+  Widget _getMemoryInfoTextOrDancingNote() {
+    if (Loopa.getStateFromMap(widget.id) != LoopaState.playing) {
+      return _getMemoryInfoText();
+    } else {
+      return _getDancingNote();
+    }
+  }
+
   Widget _getMemoryInfoText() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _getGradientText(
-          text: LoopaText.memory,
-          fontSize: LoopaFontSize.fontSize18,
-        ),
-        _getGradientText(
-            text: widget.id.toString(),
-            fontSize: LoopaFontSize.fontSize20
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.only(left: 6.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _getGradientText(
+            text: LoopaText.memory,
+            fontSize: LoopaFontSize.fontSize18,
+          ),
+          _getGradientText(
+              text: widget.id.toString(),
+              fontSize: LoopaFontSize.fontSize20
+          ),
+        ],
+      ),
     );
   }
 
   Widget _getDancingNote() {
-    if (Loopa.getStateFromMap(widget.id) == LoopaState.playing) {
-      return Expanded(
-        child: SvgPicture.asset(
-          _noteAsset,
-          width: LoopaSpacing.dancingNoteWidth,
-          height: LoopaSpacing.dancingNoteHeight,
-        ),
-      );
-    } else {
-      return const SizedBox.shrink();
-    }
+    return SvgPicture.asset(
+      _noteAsset,
+      width: LoopaSpacing.dancingNoteWidth,
+      height: LoopaSpacing.dancingNoteHeight,
+    );
   }
 
   Widget _getGradientText({
@@ -141,21 +145,14 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
   }
 
   List<Color> _getGradientColor() {
-    // TODO: make this condition a bit clearer
     if (Loopa.getStateFromMap(widget.id) == LoopaState.initial) {
-      return <Color>[
-        Colors.lightGreenAccent.shade400.withOpacity(0.4),
-        Colors.lightGreenAccent.shade400.withOpacity(0.4)
-      ];
+      return LoopaColors.idleGreenGradient;
     } else {
-      return <Color>[
-        Colors.lightGreenAccent.shade400,
-        Colors.lightGreenAccent.shade700
-      ];
+      return LoopaColors.activeGreenGradient;
     }
   }
 
-  // Kinda disgusting but there was a 16px space in each side
+  // Kinda disgusting but there was a 16px space in each side that I had to get rid of
   Widget _getEdgesCover({required bool leftEdge}) {
     return Align(
       alignment: leftEdge

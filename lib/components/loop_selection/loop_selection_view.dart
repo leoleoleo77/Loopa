@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:loopa/components/loop_selection/loop_selection_dropdown.dart';
 import 'package:loopa/utils/constants.dart';
+import 'package:loopa/components/loop_selection/custom_text_selection_control.dart';
 import 'package:loopa/utils/loopa.dart';
 
 class LoopSelectionView extends StatefulWidget {
@@ -19,6 +20,9 @@ class LoopSelectionView extends StatefulWidget {
 }
 
 class _LoopSelectionViewState extends State<LoopSelectionView> {
+
+  final FocusNode _textFieldFocusNode = FocusNode();
+  final TextEditingController _controller = TextEditingController();
 
   bool _textIsVisible = true;
   Timer? _flashTimer;
@@ -63,29 +67,70 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
     return Padding(
       padding: LoopaPadding.vertical12,
       child: LoopSelectionDropdown(
-        dropdownBuilder: _getSelectedItem(),
+        dropdownBuilder: _getNameDisplayItem(),
       )
     );
   }
 
-  Widget _getSelectedItem() {
-    return Container(
-      color: Colors.black,
-      width: widget.compactView ? 132 : 200,
-      height: double.infinity,
-      child: Padding(
-        padding: LoopaPadding.top16,
-        child: Row(
-          mainAxisAlignment: widget.compactView ? MainAxisAlignment.center : MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _getGradientText(
-              _getDisplayText(),
-              LoopaFontSize.fontSize36,
+  Widget _getNameDisplayItem() {
+    return GestureDetector(
+      onLongPress: () => _textFieldFocusNode.requestFocus(),
+      child: AbsorbPointer(
+        absorbing: true,
+        child: Container(
+          width: widget.compactView ? 132 : 200,
+          height: double.infinity,
+          color: Colors.black,
+          child: Center(
+            child: Transform.scale(
+              scaleY: 1.5,
+              child: ShaderMask(
+                blendMode: BlendMode.srcIn,
+                shaderCallback: (bounds) {
+                  return LinearGradient(
+                      colors: _getGradientColor()
+                  ).createShader(
+                    Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                  );
+                },
+                child: TextField(
+                  textAlign: TextAlign.center,
+                  focusNode: _textFieldFocusNode,
+                  controller: TextEditingController(text: _getDisplayText()),
+                  selectionControls: CustomTextSelectionControls(),
+                  decoration: const InputDecoration(
+                    border: InputBorder.none, // Removes the underline
+                  ),
+                  style: const TextStyle(
+                      fontFamily: LoopaFont.retro,
+                      fontSize: 36,
+                      height: 1
+                  ),
+                ),
+              ),
             ),
-            _getMemoryInfoText(),
-          ],
+          ),
         ),
+
+        // Container(
+        //   color: Colors.black,
+        //   width: widget.compactView ? 132 : 200,
+        //   height: double.infinity,
+        //   child: Padding(
+        //     padding: LoopaPadding.top16,
+        //     child: Row(
+        //       mainAxisAlignment: widget.compactView ? MainAxisAlignment.center : MainAxisAlignment.spaceEvenly,
+        //       crossAxisAlignment: CrossAxisAlignment.start,
+        //       children: [
+        //         _getGradientText(
+        //           _getDisplayText(),
+        //           LoopaFontSize.fontSize36,
+        //         ),
+        //         _getMemoryInfoText(),
+        //       ],
+        //     ),
+        //   ),
+        // ),
       ),
     );
   }

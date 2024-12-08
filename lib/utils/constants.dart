@@ -117,6 +117,7 @@ class LoopaBorderRadius {
 class LoopaConstants {
   static const double playRecLightsRadius = 20;
   static const double clearAnimationTick = 16;
+  static const int loopaCount = 100;
 }
 
 class LoopaSemantics {
