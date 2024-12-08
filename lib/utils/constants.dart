@@ -69,7 +69,7 @@ class LoopaAssets {
   static const String largeIdle =  "assets/large_idle.jpg";
   static const String smallPressed =  "assets/small_pressed.jpg";
   static const String smallIdle =  "assets/small_idle.jpg";
-  static const String loopaLogo = 'assets/loopa_temp2.png';
+  static const String loopaLogo = 'assets/loopa_logo.png';
 }
 
 class LoopaSpacing {
