@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
         home: Scaffold(
+            resizeToAvoidBottomInset: false,
             body: SafeArea(
                 child: MyHomePage() // todo: add loading state
             )
@@ -46,26 +47,29 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.red,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16.0),
-        child: ValueListenableBuilder<Loopa>(
-          valueListenable: _loopaNotifier,
-           builder: (context, loopaState, child) {
-            if (expandedState) {
-              return DefaultView(
-                onToolbarPressed: onToolbarPressed,
-                loopa: _loopaNotifier.value,
-              );
-            } else {
-              return ExpandedView(
-                onToolbarPressed: onToolbarPressed,
-                loopa: _loopaNotifier.value,
-              );
+    return FocusScope(
+      node: FocusScopeNode(),
+      child: Container(
+        color: Colors.red,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          child: ValueListenableBuilder<Loopa>(
+            valueListenable: _loopaNotifier,
+             builder: (context, loopaState, child) {
+              if (expandedState) {
+                return DefaultView(
+                  onToolbarPressed: onToolbarPressed,
+                  loopa: _loopaNotifier.value,
+                );
+              } else {
+                return ExpandedView(
+                  onToolbarPressed: onToolbarPressed,
+                  loopa: _loopaNotifier.value,
+                );
+              }
             }
-          }
-        )
+          )
+        ),
       ),
     );
   }

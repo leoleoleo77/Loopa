@@ -26,6 +26,7 @@ class ExpandedView extends StatelessWidget {
         LoopButton(
           largeState: false,
           loopa: loopa,
+          isKeyboardActive: false,
         )
       ],
     );
@@ -69,6 +70,7 @@ class ExpandedView extends StatelessWidget {
             LoopSelectionView(
               loopa: loopa,
               compactView: false,
+              toggleKeyboardNotifier: () {  },
             )
           ],
         ),

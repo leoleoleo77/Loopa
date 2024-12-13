@@ -2,17 +2,18 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:loopa/components/loop_selection/loop_selection_dropdown.dart';
 import 'package:loopa/utils/constants.dart';
-import 'package:loopa/components/loop_selection/custom_text_selection_control.dart';
 import 'package:loopa/utils/loopa.dart';
 
 class LoopSelectionView extends StatefulWidget {
   final Loopa loopa;
   final bool compactView;
+  final VoidCallback toggleKeyboardNotifier;
 
   const LoopSelectionView({
     super.key,
     required this.loopa,
     this.compactView = true,
+    required this.toggleKeyboardNotifier,
   });
 
   @override
@@ -74,7 +75,7 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
 
   Widget _getNameDisplayItem() {
     return GestureDetector(
-      onLongPress: () => _textFieldFocusNode.requestFocus(),
+      onLongPress: () => _openKeyboard(),
       child: AbsorbPointer(
         absorbing: true,
         child: Container(
@@ -94,6 +95,7 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
                   );
                 },
                 child: TextField(
+                  onTapOutside: _closeKeyboard,
                   textAlign: TextAlign.center,
                   focusNode: _textFieldFocusNode,
                   controller: TextEditingController(text: _getDisplayText()),
@@ -197,6 +199,16 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
     });
   }
 
+  void _openKeyboard() {
+    _textFieldFocusNode.requestFocus();
+    widget.toggleKeyboardNotifier();
+  }
+
+  void _closeKeyboard(PointerDownEvent e) {
+    FocusScope.of(context).unfocus();
+    widget.toggleKeyboardNotifier();
+  }
+
   String _getDisplayText() {
     if (_flashTimer?.isActive == true) {
       if (_textIsVisible) {
@@ -210,5 +222,27 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
   }
 }
 
+
+class CustomTextSelectionControls extends MaterialTextSelectionControls {
+  @override
+  Widget buildHandle(
+      BuildContext context,
+      TextSelectionHandleType type,
+      double textHeight,
+      [void Function()? onTap]
+      ) {
+    return Container();
+  }
+
+  @override
+  Size getHandleSize(double textLineHeight) {
+    return Size.zero; // No size for the handle
+  }
+
+  @override
+  Offset getHandleAnchor(TextSelectionHandleType type, double textLineHeight) {
+    return Offset.zero; // No anchor needed
+  }
+}
 
 

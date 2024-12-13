@@ -8,11 +8,13 @@ import 'package:loopa/utils/loopa.dart';
 class ToolBar extends StatefulWidget {
   final Loopa loopa;
   final VoidCallback onToolbarPressed;
+  final VoidCallback toggleKeyboardNotifier;
 
   const ToolBar({
     super.key,
     required this.loopa,
-    required this.onToolbarPressed
+    required this.onToolbarPressed,
+    required this.toggleKeyboardNotifier
   });
 
   @override
@@ -44,7 +46,10 @@ class _ToolBarState extends State<ToolBar> {
                       children: [
                         PlayRecLights(loopaStateNotifier: widget.loopa.getStateNotifier()),
                         const Spacer(),
-                        LoopSelectionView(loopa: widget.loopa)
+                        LoopSelectionView(
+                            loopa: widget.loopa,
+                            toggleKeyboardNotifier: widget.toggleKeyboardNotifier,
+                        )
                       ],
                     ),
                   ),

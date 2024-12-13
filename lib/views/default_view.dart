@@ -4,7 +4,7 @@ import 'package:loopa/components/tool_bar/tool_bar_item.dart';
 import 'package:loopa/utils/constants.dart';
 import 'package:loopa/utils/loopa.dart';
 
-class DefaultView extends StatelessWidget {
+class DefaultView extends StatefulWidget {
   final VoidCallback onToolbarPressed;
   final Loopa loopa;
 
@@ -15,15 +15,32 @@ class DefaultView extends StatelessWidget {
   });
 
   @override
+  State<DefaultView> createState() => _DefaultViewState();
+}
+
+class _DefaultViewState extends State<DefaultView> {
+  late bool _isKeyboardActive;
+
+  @override
+  void initState() {
+    super.initState();
+    _isKeyboardActive = false;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         ToolBar(
-          loopa: loopa,
-          onToolbarPressed: onToolbarPressed
+          loopa: widget.loopa,
+          onToolbarPressed: widget.onToolbarPressed,
+          toggleKeyboardNotifier: _toggleKeyboardNotifier,
         ),
         _getLoopaInstructions(),
-        LoopButton(loopa: loopa),
+        LoopButton(
+            loopa: widget.loopa,
+            isKeyboardActive: _isKeyboardActive
+        ),
       ],
     );
   }
@@ -39,7 +56,7 @@ class DefaultView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Image(
-              image: AssetImage(LoopaAssets.loopaLogo), // TODO: fix black borders & add semantics
+              image: AssetImage(LoopaAssets.loopaLogo), // TODO: add semantics
               height: LoopaSpacing.loopaLogoHeight,
             ),
             SizedBox(height: LoopaSpacing.spacing8),
@@ -61,5 +78,11 @@ class DefaultView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _toggleKeyboardNotifier() {
+    setState(() {
+      _isKeyboardActive = !_isKeyboardActive;
+    });
   }
 }

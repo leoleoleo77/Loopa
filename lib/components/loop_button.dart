@@ -6,11 +6,13 @@ import 'package:loopa/utils/loopa.dart';
 class LoopButton extends StatefulWidget {
   final bool largeState;
   final Loopa loopa;
+  final bool isKeyboardActive;
 
   const LoopButton({
     super.key,
     this.largeState = true,
-    required this.loopa
+    required this.loopa,
+    required this.isKeyboardActive
   });
 
   @override
@@ -50,15 +52,18 @@ class _LoopButtonState extends State<LoopButton> {
     return Expanded(
       child: Semantics.fromProperties(
         properties: LoopaSemantics.loopButtonSemantics,
-        child: GestureDetector(
-          onPanStart: (_) => _handlePanStart(),
-          onPanEnd: (_) => _handlePanEnd(),
-          onPanCancel: () => _handlePanCancel(),
-          child: Image.asset(
-              _getImageAsset(),
-              width: double.infinity,
-              fit: BoxFit.fill,
-          )
+        child: AbsorbPointer(
+          absorbing: widget.isKeyboardActive,
+          child: GestureDetector(
+            onPanStart: (_) => _handlePanStart(),
+            onPanEnd: (_) => _handlePanEnd(),
+            onPanCancel: () => _handlePanCancel(),
+            child: Image.asset(
+                _getImageAsset(),
+                width: double.infinity,
+                fit: BoxFit.fill,
+            )
+          ),
         ),
       ),
     );
