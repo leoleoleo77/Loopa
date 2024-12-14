@@ -77,62 +77,36 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
     return GestureDetector(
       onLongPress: () => _openKeyboard(),
       child: AbsorbPointer(
-        absorbing: true,
-        child: Container(
-          width: widget.compactView ? 132 : 200,
-          height: double.infinity,
-          color: Colors.black,
-          child: Center(
-            child: Transform.scale(
-              scaleY: 1.5,
-              child: ShaderMask(
-                blendMode: BlendMode.srcIn,
-                shaderCallback: (bounds) {
-                  return LinearGradient(
-                      colors: _getGradientColor()
-                  ).createShader(
-                    Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                  );
-                },
-                child: TextField(
-                  onTapOutside: _closeKeyboard,
-                  textAlign: TextAlign.center,
-                  focusNode: _textFieldFocusNode,
-                  controller: TextEditingController(text: _getDisplayText()),
-                  selectionControls: CustomTextSelectionControls(),
-                  decoration: const InputDecoration(
-                    border: InputBorder.none, // Removes the underline
-                  ),
-                  style: const TextStyle(
-                      fontFamily: LoopaFont.retro,
-                      fontSize: 36,
-                      height: 1
+        child: Row(
+          children: [
+            Container(
+              width: 132,
+              height: double.infinity,
+              color: Colors.black,
+              child: Center(
+                child: Transform.scale(
+                  scaleY: 1.5,
+                  child: ShaderMask(
+                    blendMode: BlendMode.srcIn,
+                    shaderCallback: _shaderCallback,
+                    child: TextField(
+                      onTapOutside: _closeKeyboard,
+                      textAlign: TextAlign.center,
+                      focusNode: _textFieldFocusNode,
+                      controller: TextEditingController(text: _getDisplayText()),
+                      selectionControls: NoTextSelectionControls(),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                      ),
+                      style: LoopaTextStyle.loopaSelection
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
+            _getMemoryInfoText(),
+          ],
         ),
-
-        // Container(
-        //   color: Colors.black,
-        //   width: widget.compactView ? 132 : 200,
-        //   height: double.infinity,
-        //   child: Padding(
-        //     padding: LoopaPadding.top16,
-        //     child: Row(
-        //       mainAxisAlignment: widget.compactView ? MainAxisAlignment.center : MainAxisAlignment.spaceEvenly,
-        //       crossAxisAlignment: CrossAxisAlignment.start,
-        //       children: [
-        //         _getGradientText(
-        //           _getDisplayText(),
-        //           LoopaFontSize.fontSize36,
-        //         ),
-        //         _getMemoryInfoText(),
-        //       ],
-        //     ),
-        //   ),
-        // ),
       ),
     );
   }
@@ -140,18 +114,26 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
   Widget _getMemoryInfoText() {
     if (widget.compactView) return const SizedBox.shrink();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _getGradientText(
-          LoopaText.memory,
-          LoopaFontSize.fontSize18,
+    return Container(
+      width: 68,
+      height: double.infinity,
+      color: Colors.black,
+      child: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _getGradientText(
+              LoopaText.memory,
+              LoopaFontSize.fontSize18,
+            ),
+            _getGradientText(
+                widget.loopa.id.toString(),
+                LoopaFontSize.fontSize20,
+            ),
+          ],
         ),
-        _getGradientText(
-            widget.loopa.id.toString(),
-            LoopaFontSize.fontSize20,
-        ),
-      ],
+      ),
     );
   }
 
@@ -173,7 +155,7 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
         child: Text(
             text,
             style: TextStyle(
-                fontFamily: LoopaFont.retro,
+                fontFamily: LoopaFontFamily.retro,
                 fontSize: fontSize,
                 height: 1
             ),
@@ -191,6 +173,12 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
     } else {
       return LoopaColors.activeGreenGradient;
     }
+  }
+
+  Shader _shaderCallback(Rect bounds) {
+    return LinearGradient(colors: _getGradientColor())
+        .createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+    );
   }
 
   void _toggleDisplayTextVisibility() {
@@ -223,14 +211,14 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
 }
 
 
-class CustomTextSelectionControls extends MaterialTextSelectionControls {
+class NoTextSelectionControls extends MaterialTextSelectionControls {
   @override
   Widget buildHandle(
       BuildContext context,
       TextSelectionHandleType type,
       double textHeight,
       [void Function()? onTap]
-      ) {
+  ) {
     return Container();
   }
 

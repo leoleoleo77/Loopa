@@ -28,7 +28,6 @@ class _ToolBarState extends State<ToolBar> {
       properties: LoopaSemantics.toolBarSemantics,
       child: Padding(
         padding: LoopaPadding.horizontal16,
-        // TODO: fix the detector hitbox
         child: GestureDetector(
           onTap: widget.onToolbarPressed,
           child: Container(

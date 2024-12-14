@@ -46,7 +46,7 @@ class LoopaText {
   static const String playStopInstruction = "START/STOP: PRESS ONCE";
 }
 
-class LoopaFont {
+class LoopaFontFamily {
   static const String retro = 'Jersey25';
 }
 
@@ -59,6 +59,11 @@ class LoopaTextStyle {
   static const TextStyle menuLabels = TextStyle(
     color: LoopaColors.softGrey,
     fontSize: 12,
+  );
+  static const TextStyle loopaSelection = TextStyle(
+      fontFamily: LoopaFontFamily.retro,
+      fontSize: 36,
+      height: 1
   );
 }
 
@@ -88,6 +93,7 @@ class LoopaPadding {
   static const EdgeInsets horizontal16 =  EdgeInsets.symmetric(horizontal: 16.0);
   static const EdgeInsets horizontal8 =  EdgeInsets.symmetric(horizontal: 8.0);
   static const EdgeInsets vertical12 =  EdgeInsets.symmetric(vertical: 12.0);
+  static const EdgeInsets vertical16 =  EdgeInsets.symmetric(vertical: 16.0);
   static const EdgeInsets top8 =  EdgeInsets.only(top: 8.0);
   static const EdgeInsets top16 =  EdgeInsets.only(top: 16.0);
   static const EdgeInsets loopaInstructionsPadding = EdgeInsets.fromLTRB(16, 16, 16, 8);

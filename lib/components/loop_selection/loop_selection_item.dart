@@ -135,7 +135,7 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
         child: Text(
           text,
           style: TextStyle(
-            fontFamily: LoopaFont.retro,
+            fontFamily: LoopaFontFamily.retro,
             height: 1,
             fontSize: fontSize,
           ),

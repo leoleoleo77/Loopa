@@ -4,6 +4,8 @@ import 'package:loopa/utils/permission_handler.dart';
 import 'package:loopa/views/default_view.dart';
 import 'package:loopa/views/expanded_view.dart';
 
+import 'utils/constants.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -50,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Container(
       color: Colors.red,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16.0),
+        padding: LoopaPadding.vertical16,
         child: ValueListenableBuilder<Loopa>(
           valueListenable: _loopaNotifier,
            builder: (context, loopaState, child) {
