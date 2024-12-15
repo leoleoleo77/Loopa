@@ -76,7 +76,7 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
       width: LoopaSpacing.selectionItemNameWidth,
       child: _getGradientText(
         text: Loopa.getNameFromMap(widget.id),
-        fontSize: LoopaFontSize.fontSize36,
+        textStyle: LoopaTextStyle.loopaSelection
       ),
     );
   }
@@ -91,18 +91,18 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
 
   Widget _getMemoryInfoText() {
     return Padding(
-      padding: const EdgeInsets.only(left: 6.0),
+      padding: LoopaPadding.left4,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _getGradientText(
             text: LoopaText.memory,
-            fontSize: LoopaFontSize.fontSize18,
+            textStyle: LoopaTextStyle.memory,
           ),
           _getGradientText(
               text: widget.id.toString(),
-              fontSize: LoopaFontSize.fontSize20
+              textStyle: LoopaTextStyle.memoryCount,
           ),
         ],
       ),
@@ -110,36 +110,30 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
   }
 
   Widget _getDancingNote() {
-    return SvgPicture.asset(
-      _noteAsset,
-      width: LoopaSpacing.dancingNoteWidth,
-      height: LoopaSpacing.dancingNoteHeight,
+    return Expanded(
+      child: Center(
+        child: Transform.scale(
+          scaleX: LoopaConstants.dancingNoteStretchX,
+          child: SvgPicture.asset(
+            _noteAsset,
+            width: LoopaSpacing.dancingNoteWidth,
+            height: LoopaSpacing.dancingNoteHeight,
+          ),
+        ),
+      ),
     );
   }
 
   Widget _getGradientText({
     required String text,
-    required double fontSize,
+    required TextStyle textStyle,
   }) {
     return Transform.scale(
-      scaleY: 1.5,
+      scaleY: LoopaConstants.loopSelectionTextStretchY,
       child: ShaderMask(
         blendMode: BlendMode.srcIn,
-        shaderCallback: (bounds) {
-          return LinearGradient(
-              colors: _getGradientColor()
-          ).createShader(
-            Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-          );
-        },
-        child: Text(
-          text,
-          style: TextStyle(
-            fontFamily: LoopaFontFamily.retro,
-            height: 1,
-            fontSize: fontSize,
-          ),
-        ),
+        shaderCallback: _shaderCallback,
+        child: Text(text, style: textStyle),
       ),
     );
   }
@@ -169,6 +163,12 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
           color: Colors.black,
         ),
       ),
+    );
+  }
+
+  Shader _shaderCallback(Rect bounds) {
+    return LinearGradient(colors: _getGradientColor())
+        .createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height),
     );
   }
 }

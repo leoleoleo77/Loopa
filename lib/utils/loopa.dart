@@ -42,6 +42,7 @@ class Loopa {
     _longPressListener.onClearComplete();
     _loopClearController.onClearComplete();
     _audioController.clearPlayer();
+    _name = _getDefaultName(id);
   }
 
   bool _stateIsInitialOrRecording() {
@@ -115,6 +116,8 @@ class Loopa {
   ValueNotifier<LoopaState> getStateNotifier() => _stateNotifier;
 
   String getName() => _name;
+
+  void setName(String name) => _name = name;
 
   /// - Start static methods -
   

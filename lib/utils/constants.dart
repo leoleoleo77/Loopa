@@ -65,6 +65,16 @@ class LoopaTextStyle {
       fontSize: 36,
       height: 1
   );
+  static const TextStyle memoryCount = TextStyle(
+      fontFamily: LoopaFontFamily.retro,
+      fontSize: 20,
+      height: 1
+  );
+  static const TextStyle memory = TextStyle(
+      fontFamily: LoopaFontFamily.retro,
+      fontSize: 18,
+      height: 1
+  );
 }
 
 class LoopaAssets {
@@ -87,6 +97,8 @@ class LoopaSpacing {
   static const double loopaLogoHeight = 72;
   static const double spacing8 = 8;
   static const double spacing4 = 4;
+  static const double loopaSelectionCompactViewWidth = 132;
+  static const double loopaSelectionMemoryInfoWidth = 68;
 }
 
 class LoopaPadding {
@@ -96,6 +108,7 @@ class LoopaPadding {
   static const EdgeInsets vertical16 =  EdgeInsets.symmetric(vertical: 16.0);
   static const EdgeInsets top8 =  EdgeInsets.only(top: 8.0);
   static const EdgeInsets top16 =  EdgeInsets.only(top: 16.0);
+  static const EdgeInsets left4 =  EdgeInsets.only(left: 4.0);
   static const EdgeInsets loopaInstructionsPadding = EdgeInsets.fromLTRB(16, 16, 16, 8);
 }
 
@@ -124,6 +137,8 @@ class LoopaConstants {
   static const double playRecLightsRadius = 20;
   static const double clearAnimationTick = 16;
   static const int loopaCount = 100;
+  static const double loopSelectionTextStretchY = 1.5;
+  static const double dancingNoteStretchX = 1.3;
 }
 
 class LoopaSemantics {

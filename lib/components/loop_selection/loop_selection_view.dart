@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:loopa/components/loop_selection/loop_selection_dropdown.dart';
 import 'package:loopa/utils/constants.dart';
@@ -23,10 +24,24 @@ class LoopSelectionView extends StatefulWidget {
 class _LoopSelectionViewState extends State<LoopSelectionView> {
 
   final FocusNode _textFieldFocusNode = FocusNode();
-  final TextEditingController _controller = TextEditingController();
-
+  final TextEditingController _textEditingController = TextEditingController();
+  bool _nameChanged = false;
   bool _textIsVisible = true;
   Timer? _flashTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    Loopa.setStartFlashingMethod(_startFlashing);
+    Loopa.setStopFlashingMethod(_stopFlashing);
+    //_textEditingController.text = _getDisplayText();
+  }
+
+  @override
+  void dispose() {
+    _flashTimer?.cancel();
+    super.dispose();
+  }
 
   void _startFlashing() {
     _toggleDisplayTextVisibility();
@@ -51,19 +66,6 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    Loopa.setStartFlashingMethod(_startFlashing);
-    Loopa.setStopFlashingMethod(_stopFlashing);
-  }
-
-  @override
-  void dispose() {
-    _flashTimer?.cancel();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: LoopaPadding.vertical12,
@@ -79,33 +81,40 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
       child: AbsorbPointer(
         child: Row(
           children: [
-            Container(
-              width: 132,
-              height: double.infinity,
-              color: Colors.black,
-              child: Center(
-                child: Transform.scale(
-                  scaleY: 1.5,
-                  child: ShaderMask(
-                    blendMode: BlendMode.srcIn,
-                    shaderCallback: _shaderCallback,
-                    child: TextField(
-                      onTapOutside: _closeKeyboard,
-                      textAlign: TextAlign.center,
-                      focusNode: _textFieldFocusNode,
-                      controller: TextEditingController(text: _getDisplayText()),
-                      selectionControls: NoTextSelectionControls(),
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                      ),
-                      style: LoopaTextStyle.loopaSelection
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            _getNameDisplay(),
             _getMemoryInfoText(),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _getNameDisplay() {
+    _textEditingController.text = _getDisplayText();
+    return Container(
+      width: LoopaSpacing.loopaSelectionCompactViewWidth,
+      height: double.infinity,
+      color: Colors.black,
+      child: Center(
+        child: Transform.scale(
+          scaleY: LoopaConstants.loopSelectionTextStretchY,
+          child: ShaderMask(
+            blendMode: BlendMode.srcIn,
+            shaderCallback: _shaderCallback,
+            child: TextField(
+              onTapOutside: (_) => _closeKeyboard(),
+              onEditingComplete: () => _closeKeyboard(),
+              textAlign: TextAlign.center,
+              focusNode: _textFieldFocusNode,
+              controller: _textEditingController,
+              selectionControls: NoTextSelectionControls(),
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+              ),
+              style: LoopaTextStyle.loopaSelection,
+              onChanged: _handleOnChanged,
+            ),
+          ),
         ),
       ),
     );
@@ -115,7 +124,7 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
     if (widget.compactView) return const SizedBox.shrink();
 
     return Container(
-      width: 68,
+      width: LoopaSpacing.loopaSelectionMemoryInfoWidth,
       height: double.infinity,
       color: Colors.black,
       child: Center(
@@ -125,11 +134,11 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
           children: [
             _getGradientText(
               LoopaText.memory,
-              LoopaFontSize.fontSize18,
+              LoopaTextStyle.memory,
             ),
             _getGradientText(
                 widget.loopa.id.toString(),
-                LoopaFontSize.fontSize20,
+                LoopaTextStyle.memoryCount
             ),
           ],
         ),
@@ -139,27 +148,14 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
 
   Widget _getGradientText(
       String text,
-      double fontSize,
+      TextStyle textStyle,
   ) {
     return Transform.scale(
-      scaleY: 1.5,
+      scaleY: LoopaConstants.loopSelectionTextStretchY,
       child: ShaderMask(
         blendMode: BlendMode.srcIn,
-        shaderCallback: (bounds) {
-          return LinearGradient(
-            colors: _getGradientColor()
-          ).createShader(
-            Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-          );
-        },
-        child: Text(
-            text,
-            style: TextStyle(
-                fontFamily: LoopaFontFamily.retro,
-                fontSize: fontSize,
-                height: 1
-            ),
-        ),
+        shaderCallback: _shaderCallback,
+        child: Text(text, style: textStyle),
       ),
     );
   }
@@ -181,6 +177,26 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
     );
   }
 
+  void _handleOnChanged(String text) {
+    if (_nameChanged) {
+      widget.loopa.setName(text);
+      return;
+    }
+
+    bool changeWasBackspace = widget.loopa.getName().length > text.length;
+    if (changeWasBackspace) {
+      setState(() {
+        widget.loopa.setName(LoopaText.noText);
+      });
+    } else {
+      String firstLetter = text.substring(text.length - 1, text.length);
+      setState(() {
+        widget.loopa.setName(firstLetter);
+      });
+    }
+    _nameChanged = true;
+  }
+
   void _toggleDisplayTextVisibility() {
     setState(() {
       _textIsVisible = !_textIsVisible;
@@ -192,9 +208,10 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
     widget.toggleKeyboardNotifier();
   }
 
-  void _closeKeyboard(PointerDownEvent e) {
+  void _closeKeyboard() {
     FocusScope.of(context).unfocus();
     widget.toggleKeyboardNotifier();
+    _nameChanged = false;
   }
 
   String _getDisplayText() {
