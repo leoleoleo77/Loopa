@@ -119,6 +119,8 @@ class Loopa {
 
   void setName(String name) => _name = name;
 
+  void setDefaultName() => _name = _getDefaultName(id);
+
   /// - Start static methods -
   
   static void setStartFlashingMethod(Function() function) {

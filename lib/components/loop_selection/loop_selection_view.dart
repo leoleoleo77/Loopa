@@ -209,6 +209,12 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
   }
 
   void _closeKeyboard() {
+    if (widget.loopa.getName() == LoopaText.noText) {
+      setState(() {
+        widget.loopa.setDefaultName();
+      });
+    }
+
     FocusScope.of(context).unfocus();
     widget.toggleKeyboardNotifier();
     _nameChanged = false;
