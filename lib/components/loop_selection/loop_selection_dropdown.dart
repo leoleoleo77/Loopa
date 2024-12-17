@@ -18,31 +18,33 @@ class LoopSelectionDropdown extends StatelessWidget {
       child: DropdownButton2(
         customButton: dropdownBuilder,
         items: List.generate(
-          LoopaConstants.loopaCount,
-          (index) {
-            return DropdownMenuItem<int>(
-              value: index,
-              child: LoopSelectionItem(id: index)
-            );
-          },
+          LoopaConstants.maxNumberOfLoopas,
+          _dropdownMenuItemGenerator,
           growable: false
         ),
         onChanged: (id) => Loopa.handleOnLoopaChange(id),
         dropdownStyleData: DropdownStyleData(
           direction: DropdownDirection.left,
-          width: 224,
-          maxHeight: 444,
+          width: LoopaSpacing.loopaSelectionDropDownWidth,
+          maxHeight: LoopaSpacing.loopaSelectionMaxHeight,
           decoration: const BoxDecoration(
             color: Colors.black,
           ),
           scrollbarTheme: ScrollbarThemeData(
-            thumbColor: WidgetStateProperty.all(Colors.lightGreenAccent.shade400),
+            thumbColor: WidgetStateProperty.all(LoopaColors.neonGreen),
           )
         ),
         menuItemStyleData: const MenuItemStyleData(
-          height: 72 ,
+          height: LoopaSpacing.loopaSelectionItemHeight,
         ),
       ),
+    );
+  }
+
+  DropdownMenuItem<int> _dropdownMenuItemGenerator(int index) {
+    return DropdownMenuItem<int>(
+        value: index,
+        child: LoopSelectionItem(id: index)
     );
   }
 }

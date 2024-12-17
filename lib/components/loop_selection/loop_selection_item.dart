@@ -133,7 +133,11 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
       child: ShaderMask(
         blendMode: BlendMode.srcIn,
         shaderCallback: _shaderCallback,
-        child: Text(text, style: textStyle),
+        child: Text(
+            text,
+            maxLines: 1,
+            style: textStyle
+        ),
       ),
     );
   }

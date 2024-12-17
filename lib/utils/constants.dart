@@ -7,6 +7,7 @@ class LoopaColors {
   static const Color green = Colors.green;
   static Color inactiveRecLightRed = Colors.red.withOpacity(0.15);
   static Color inactivePlayLightGreen = Colors.green.withOpacity(0.1);
+  static Color neonGreen = Colors.lightGreenAccent.shade400;
   static const Color playRecLightBackground = Color.fromRGBO(21, 21, 21, 1);
 
   static List<Color> idleGreenGradient = <Color>[
@@ -99,6 +100,9 @@ class LoopaSpacing {
   static const double spacing4 = 4;
   static const double loopaSelectionCompactViewWidth = 132;
   static const double loopaSelectionMemoryInfoWidth = 68;
+  static const double loopaSelectionDropDownWidth = 224;
+  static const double loopaSelectionMaxHeight = 444;
+  static const double loopaSelectionItemHeight = 72;
 }
 
 class LoopaPadding {
@@ -136,7 +140,7 @@ class LoopaBorderRadius {
 class LoopaConstants {
   static const double playRecLightsRadius = 20;
   static const double clearAnimationTick = 16;
-  static const int loopaCount = 100;
+  static const int maxNumberOfLoopas = 100;
   static const double loopSelectionTextStretchY = 1.5;
   static const double dancingNoteStretchX = 1.3;
 }
