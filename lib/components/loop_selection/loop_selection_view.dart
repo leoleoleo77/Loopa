@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:loopa/components/loop_selection/loop_selection_dropdown.dart';
 import 'package:loopa/utils/constants.dart';
@@ -71,6 +70,7 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
       padding: LoopaPadding.vertical12,
       child: LoopSelectionDropdown(
         dropdownBuilder: _getNameDisplayItem(),
+        loopaStateNotifier: widget.loopa.getStateNotifier(),
       )
     );
   }

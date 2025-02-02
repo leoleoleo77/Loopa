@@ -27,8 +27,6 @@ class Loopa {
     _map[id] = this;
   }
 
-  /// - Start private methods -
-
   /// _clearLoop is called whenever when _longPressTimer finishes
   /// and has three cases
   /// either. The state of the loop is initial so there is no loop to clear
@@ -61,9 +59,6 @@ class Loopa {
     }
   }
 
-  /// - Start public methods -
-
-
   /// updateState is called whenever when the pan gesture ends,
   /// during which if the loop was cleared then _clearLoop was called
   /// and _loopWasCleared was set to true, meaning that the state
@@ -83,19 +78,19 @@ class Loopa {
         _stateNotifier.value = LoopaState.recording;
         LoopClearController.stopFlashing();
         _audioController.startRecording();
-        break;
+        return;
       case LoopaState.recording:
         _stateNotifier.value = LoopaState.playing;
         _audioController.beginLooping();
-        break;
+        return;
       case LoopaState.playing:
         _stateNotifier.value = LoopaState.idle;
         _audioController.stopPlayer();
-        break;
+        return;
       case LoopaState.idle:
         _stateNotifier.value = LoopaState.playing;
         _audioController.startPlaying();
-        break;
+        return;
     }
   }
 
@@ -148,9 +143,7 @@ class Loopa {
   }
 
   static void handleOnLoopaChange(int? id) {
-    if (id == null) return;
-
-    if (_loopaNotifier.value.id == id) return;
+    if (id == null || id == _loopaNotifier.value.id) return;
 
     _loopaNotifier.value._cancelRecording();
     LoopClearController.stopFlashing();

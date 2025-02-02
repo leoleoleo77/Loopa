@@ -5,46 +5,99 @@ import 'package:loopa/utils/constants.dart';
 import 'package:loopa/utils/loopa.dart';
 
 class LoopSelectionDropdown extends StatelessWidget {
+  final ValueNotifier<LoopaState> loopaStateNotifier;
   final Widget dropdownBuilder;
 
   const LoopSelectionDropdown({
     super.key,
     required this.dropdownBuilder,
+    required this.loopaStateNotifier,
   });
+
+  // add two arrays one for playin one for idle fill them while denerating then add them at the end to the rest
 
   @override
   Widget build(BuildContext context) {
     return DropdownButtonHideUnderline(
-      child: DropdownButton2(
-        customButton: dropdownBuilder,
-        items: List.generate(
-          LoopaConstants.maxNumberOfLoopas,
-          _dropdownMenuItemGenerator,
-          growable: false
-        ),
-        onChanged: (id) => Loopa.handleOnLoopaChange(id),
-        dropdownStyleData: DropdownStyleData(
-          direction: DropdownDirection.left,
-          width: LoopaSpacing.loopaSelectionDropDownWidth,
-          maxHeight: LoopaSpacing.loopaSelectionMaxHeight,
-          decoration: const BoxDecoration(
-            color: Colors.black,
-          ),
-          scrollbarTheme: ScrollbarThemeData(
-            thumbColor: WidgetStateProperty.all(LoopaColors.neonGreen),
-          )
-        ),
-        menuItemStyleData: const MenuItemStyleData(
-          height: LoopaSpacing.loopaSelectionItemHeight,
-        ),
+      child: ValueListenableBuilder<LoopaState>(
+          valueListenable: loopaStateNotifier,
+          builder: (context, loopaState, child) {
+            List<LoopSelectionItem> itemList = _getLoopSelectionItemList();
+
+            return DropdownButton2(
+                customButton: dropdownBuilder,
+                items: _getListOfDropdownMenuItems(itemList),
+                onChanged: (id) => _handleLoopaChange(id, itemList),
+                dropdownStyleData: _getDropdownStyleData(),
+                menuItemStyleData: _getMenuItemStyleData());
+          }
       ),
     );
   }
 
-  DropdownMenuItem<int> _dropdownMenuItemGenerator(int index) {
-    return DropdownMenuItem<int>(
-        value: index,
-        child: LoopSelectionItem(id: index)
+  List<LoopSelectionItem> _getLoopSelectionItemList() {
+    int playingCount = 0;
+    int activeCount = 0;
+    List<LoopSelectionItem> itemList = [];
+
+    const int loopaCount = LoopaConstants.maxNumberOfLoopas;
+    for (int key = 0; key < loopaCount; key++) {
+      LoopSelectionItem item = LoopSelectionItem(id: key);
+
+      switch(Loopa.getStateFromMap(key)) {
+        case LoopaState.initial:
+          itemList.add(item);
+        case LoopaState.playing:
+          itemList.insert(playingCount, item);
+          playingCount++;
+        default:
+          int index = playingCount + activeCount;
+          itemList.insert(index, item);
+          activeCount++;
+      }
+    }
+    return itemList;
+  }
+
+  List<DropdownMenuItem<int>>? _getListOfDropdownMenuItems(
+      List<LoopSelectionItem> itemList
+  ) {
+    return List.generate(
+        LoopaConstants.maxNumberOfLoopas,
+            (index) {
+          return DropdownMenuItem<int>(
+              value: index,
+              child: itemList[index]);
+        },
+        growable: false
+    );
+  }
+
+  void _handleLoopaChange(
+      int? key,
+      List<LoopSelectionItem> itemList
+      ) {
+    if (key == null) return;
+    Loopa.handleOnLoopaChange(itemList[key].id);
+  }
+
+  DropdownStyleData _getDropdownStyleData() {
+    return DropdownStyleData(
+        direction: DropdownDirection.left,
+        width: LoopaSpacing.loopaSelectionDropDownWidth,
+        maxHeight: LoopaSpacing.loopaSelectionMaxHeight,
+        decoration: const BoxDecoration(
+          color: Colors.black,
+        ),
+        scrollbarTheme: ScrollbarThemeData(
+          thumbColor: WidgetStateProperty.all(LoopaColors.neonGreen),
+        )
+    );
+  }
+
+  MenuItemStyleData _getMenuItemStyleData() {
+    return const MenuItemStyleData(
+      height: LoopaSpacing.loopaSelectionItemHeight,
     );
   }
 }
