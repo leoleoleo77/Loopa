@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:loopa/components/loop_selection/loop_selection_dropdown_item.dart';
-import 'package:loopa/utils/constants.dart';
-import 'package:loopa/utils/loopa.dart';
+import 'package:loopa/utils/general_utils/constants.dart';
+import 'package:loopa/utils/loopa_utils/loopa.dart';
 
 class LoopSelectionDropdown extends StatelessWidget {
   final ValueNotifier<LoopaState> loopaStateNotifier;

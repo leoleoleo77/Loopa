@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:loopa/utils/constants.dart';
-import 'package:loopa/utils/loopa.dart';
+import 'package:loopa/utils/general_utils/constants.dart';
+import 'package:loopa/utils/loopa_utils/loopa.dart';
 
 class LoopSelectionItem extends StatefulWidget {
   final int id;

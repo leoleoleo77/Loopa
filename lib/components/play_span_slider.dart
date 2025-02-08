@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:loopa/utils/constants.dart';
+import 'package:loopa/utils/general_utils/constants.dart';
 
 class RangeSliderExample extends StatefulWidget {
   const RangeSliderExample({super.key});

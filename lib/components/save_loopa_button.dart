@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:loopa/utils/loopa.dart';
+import 'package:loopa/utils/loopa_utils/loopa.dart';
 
 class SaveLoopaButton extends StatefulWidget {
   final Loopa loopa;
@@ -17,14 +17,15 @@ class _SaveLoopaButtonState extends State<SaveLoopaButton> {
   bool isSaved = false;
 
   void _toggleSave() {
+    if (isSaved) {
+      print("loopa un-saved");
+    } else {
+      widget.loopa.save();
+      print("loopa saved");
+    }
     setState(() {
       isSaved = !isSaved;
     });
-    if (isSaved) {
-
-    } else {
-
-    }
   }
 
   @override

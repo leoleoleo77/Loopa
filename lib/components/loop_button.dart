@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:loopa/utils/constants.dart';
-import 'package:loopa/utils/loopa.dart';
+import 'package:loopa/utils/general_utils/constants.dart';
+import 'package:loopa/utils/loopa_utils/loopa.dart';
 
 class LoopButton extends StatefulWidget {
   final bool largeState;

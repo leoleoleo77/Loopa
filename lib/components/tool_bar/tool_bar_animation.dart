@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:loopa/utils/constants.dart';
-import 'package:loopa/utils/long_press_listener.dart';
-import 'package:loopa/utils/tool_bar_animation_controller.dart';
+import 'package:loopa/utils/general_utils/constants.dart';
+import 'package:loopa/utils/loopa_utils/long_press_listener.dart';
+import 'package:loopa/utils/loopa_utils/tool_bar_animation_controller.dart';
 
 class ToolBarAnimation extends StatefulWidget {
   final ToolBarAnimationController animationController;

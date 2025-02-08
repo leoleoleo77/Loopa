@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:loopa/utils/tool_bar_animation_controller.dart';
+import 'package:loopa/utils/loopa_utils/tool_bar_animation_controller.dart';
 
 class LongPressListener {
   late Timer? _timer;

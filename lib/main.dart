@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:loopa/utils/loopa.dart';
-import 'package:loopa/utils/permission_handler.dart';
-import 'package:loopa/utils/service_locator.dart';
+import 'package:loopa/utils/loopa_utils/loopa.dart';
+import 'package:loopa/utils/general_utils/permission_handler.dart';
+import 'package:loopa/utils/general_utils/service_locator.dart';
 import 'package:loopa/views/default_view.dart';
 import 'package:loopa/views/expanded_view.dart';
 
-import 'utils/constants.dart';
+import 'utils/general_utils/constants.dart';
 
 
 void main() async {
@@ -38,15 +38,16 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool expandedState = true;
-  final ValueNotifier<Loopa> _loopaNotifier =
-    ValueNotifier<Loopa>(Loopa(id: 0));
+  bool _expandedState = true;
+  late final ValueNotifier<Loopa> _loopaNotifier;
 
   // TODO: handle initialization
   @override
   void initState() {
     super.initState();
     PermissionHandler.requestPermissions();
+    Loopa.initializeLoopas();
+    _loopaNotifier = ValueNotifier<Loopa>(Loopa.getLoopa(0));
     Loopa.setLoopaNotifier(_loopaNotifier);
   }
 
@@ -59,14 +60,14 @@ class _MyHomePageState extends State<MyHomePage> {
         child: ValueListenableBuilder<Loopa>(
           valueListenable: _loopaNotifier,
            builder: (context, loopaState, child) {
-            if (expandedState) {
+            if (_expandedState) {
               return DefaultView(
-                onToolbarPressed: onToolbarPressed,
+                onToolbarPressed: _onToolbarPressed,
                 loopa: _loopaNotifier.value,
               );
             } else {
               return ExpandedView(
-                onToolbarPressed: onToolbarPressed,
+                onToolbarPressed: _onToolbarPressed,
                 loopa: _loopaNotifier.value,
               );
             }
@@ -76,9 +77,9 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void onToolbarPressed() {
+  void _onToolbarPressed() {
     setState(() {
-      expandedState = !expandedState;
+      _expandedState = !_expandedState;
     });
   }
 }

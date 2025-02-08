@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:loopa/utils/audio_controller.dart';
-import 'package:loopa/utils/long_press_listener.dart';
-import 'package:loopa/utils/loop_clear_controller.dart';
-import 'package:loopa/utils/tool_bar_animation_controller.dart';
+import 'package:loopa/utils/general_utils/memory_manager.dart';
+import 'package:loopa/utils/loopa_utils/audio_controller.dart';
+import 'package:loopa/utils/loopa_utils/long_press_listener.dart';
+import 'package:loopa/utils/loopa_utils/loop_clear_controller.dart';
+import 'package:loopa/utils/loopa_utils/tool_bar_animation_controller.dart';
 
 class Loopa {
   static final Map<int, Loopa> _map = {};
@@ -26,6 +29,10 @@ class Loopa {
     _audioController = AudioController(loopName: _name);
     _map[id] = this;
   }
+
+  // Loopa.fromJson(String json) {
+  //
+  // }
 
   /// _clearLoop is called whenever when _longPressTimer finishes
   /// and has three cases
@@ -108,6 +115,22 @@ class Loopa {
     return LongPressListener.toolBarAnimationController;
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      "name": _name,
+    };
+  }
+
+  void save() {
+    MemoryManager.saveLoopa(this);
+  }
+
+  void setValuesFromMemory(String data) {
+    Map<String, dynamic> json = jsonDecode(data);
+
+    setName(json["name"]);
+  }
+
   ValueNotifier<LoopaState> getStateNotifier() => _stateNotifier;
 
   String getName() => _name;
@@ -149,6 +172,20 @@ class Loopa {
     LoopClearController.stopFlashing();
 
     _loopaNotifier.value = _map[id] ?? Loopa(id: id);
+  }
+
+  static Loopa getLoopa(int id) {
+    return _map[id] ?? Loopa(id: id);
+  }
+
+  static void initializeLoopas() {
+    for (int key = 0; key < 100; key++) {
+      String? loopaInfo = MemoryManager.getLoopaInfo(key);
+      if (loopaInfo != null) {
+        Loopa(id: key).setValuesFromMemory(loopaInfo);
+        print(loopaInfo);
+      }
+    }
   }
 }
 
