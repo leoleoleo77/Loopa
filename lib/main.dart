@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:loopa/utils/loopa.dart';
 import 'package:loopa/utils/permission_handler.dart';
+import 'package:loopa/utils/service_locator.dart';
 import 'package:loopa/views/default_view.dart';
 import 'package:loopa/views/expanded_view.dart';
 
 import 'utils/constants.dart';
 
 
-void main() => runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await setupLocator();
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

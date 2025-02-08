@@ -4,6 +4,7 @@ import 'package:loopa/components/loop_button.dart';
 import 'package:loopa/components/loop_selection/loop_selection_view.dart';
 import 'package:loopa/components/play_rec_lights.dart';
 import 'package:loopa/components/play_span_slider.dart';
+import 'package:loopa/components/save_loopa_button.dart';
 import 'package:loopa/utils/constants.dart';
 import 'package:loopa/utils/loopa.dart';
 
@@ -45,6 +46,7 @@ class ExpandedView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _getPlayRecLightsAndLoopaSelectionItem(),
+                    SaveLoopaButton(loopa: loopa),
                     RangeSliderExample(),// temp
                     _getToggleExpandButton()
                   ],
