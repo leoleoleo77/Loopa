@@ -33,6 +33,7 @@ class _ToolBarState extends State<ToolBar> {
           child: Container(
               width: double.infinity,
               height: LoopaSpacing.toolBarHeight,
+              padding: LoopaPadding.vertical12,
               decoration: _getBoxDecoration(),
               child: Stack(
                 children: [

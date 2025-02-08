@@ -12,15 +12,12 @@ class PlayRecLights extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: LoopaPadding.top8,
-      child: Row(
-        children: [
-          _getRecLight(),
-          const SizedBox(width: LoopaSpacing.spacing8),
-          _getPlayLight(),
-        ],
-      ),
+    return Row(
+      children: [
+        _getRecLight(),
+        const SizedBox(width: LoopaSpacing.spacing8),
+        _getPlayLight(),
+      ],
     );
   }
 

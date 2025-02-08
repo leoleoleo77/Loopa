@@ -23,7 +23,7 @@ class ExpandedView extends StatelessWidget {
     return Column(
       children: [
         _getExpandedMenu(),
-        const SizedBox(height: 8),
+        const SizedBox(height: LoopaSpacing.spacing8),
         LoopButton(
           largeState: false,
           loopa: loopa,
@@ -45,8 +45,7 @@ class ExpandedView extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _getPlayRecLightsAndLoopaSelectionItem(),
-                    SaveLoopaButton(loopa: loopa),
+                    _getPlayRecLightsAndLoopaSelection(),
                     RangeSliderExample(),// temp
                     _getToggleExpandButton()
                   ],
@@ -58,24 +57,30 @@ class ExpandedView extends StatelessWidget {
     );
   }
 
-  Widget _getPlayRecLightsAndLoopaSelectionItem() {
+  Widget _getPlayRecLightsAndLoopaSelection() {
     return Padding(
-      padding: LoopaPadding.horizontal16,
-      child: SizedBox(
-        height: LoopaSpacing.toolBarHeight,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            PlayRecLights(
-                loopaStateNotifier: loopa.getStateNotifier()
+      padding: LoopaPadding.expandedToolBarPadding,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          SizedBox(
+            height: LoopaSpacing.expandedToolBarHeight,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                PlayRecLights(
+                    loopaStateNotifier: loopa.getStateNotifier()
+                ),
+                LoopSelectionView(
+                  loopa: loopa,
+                  compactView: false,
+                  toggleKeyboardNotifier: () {},
+                )
+              ],
             ),
-            LoopSelectionView(
-              loopa: loopa,
-              compactView: false,
-              toggleKeyboardNotifier: () {  },
-            )
-          ],
-        ),
+          ),
+          SaveLoopaButton(loopa: loopa)
+        ],
       ),
     );
   }
@@ -132,7 +137,7 @@ class ExpandedView extends StatelessWidget {
           end: Alignment.bottomCenter,
           colors: LoopaColors.expandedMenuBackgroundGradient,
       ),
-      borderRadius: BorderRadius.circular(12.0),
+      borderRadius: LoopaBorderRadius.circularBorder12
     );
   }
 }

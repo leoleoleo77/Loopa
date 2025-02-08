@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:loopa/utils/general_utils/constants.dart';
 import 'package:loopa/utils/general_utils/memory_manager.dart';
 import 'package:loopa/utils/loopa_utils/audio_controller.dart';
 import 'package:loopa/utils/loopa_utils/long_press_listener.dart';
@@ -30,10 +31,6 @@ class Loopa {
     _map[id] = this;
   }
 
-  // Loopa.fromJson(String json) {
-  //
-  // }
-
   /// _clearLoop is called whenever when _longPressTimer finishes
   /// and has three cases
   /// either. The state of the loop is initial so there is no loop to clear
@@ -47,7 +44,7 @@ class Loopa {
     _longPressListener.onClearComplete();
     _loopClearController.onClearComplete();
     _audioController.clearPlayer();
-    _name = _getDefaultName(id);
+    _name = getNameFromMap(id);
   }
 
   bool _stateIsInitialOrRecording() {
@@ -117,7 +114,7 @@ class Loopa {
 
   Map<String, dynamic> toJson() {
     return {
-      "name": _name,
+      LoopaJson.name: _name,
     };
   }
 
@@ -128,7 +125,7 @@ class Loopa {
   void setValuesFromMemory(String data) {
     Map<String, dynamic> json = jsonDecode(data);
 
-    setName(json["name"]);
+    setName(json[LoopaJson.name]);
   }
 
   ValueNotifier<LoopaState> getStateNotifier() => _stateNotifier;
@@ -179,11 +176,10 @@ class Loopa {
   }
 
   static void initializeLoopas() {
-    for (int key = 0; key < 100; key++) {
+    for (int key = 0; key < LoopaConstants.maxNumberOfLoopas; key++) {
       String? loopaInfo = MemoryManager.getLoopaInfo(key);
       if (loopaInfo != null) {
         Loopa(id: key).setValuesFromMemory(loopaInfo);
-        print(loopaInfo);
       }
     }
   }

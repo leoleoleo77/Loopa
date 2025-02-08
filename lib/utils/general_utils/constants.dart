@@ -90,6 +90,7 @@ class LoopaAssets {
 
 class LoopaSpacing {
   static const double toolBarHeight = 92;
+  static const double expandedToolBarHeight = 68;
   static const double expandedMenuHeight = 600;
   static const double selectionItemNameWidth = 124;
   static const double dancingNoteWidth = 40;
@@ -116,6 +117,7 @@ class LoopaPadding {
   static const EdgeInsets left2 =  EdgeInsets.only(left: 2.0);
   static const EdgeInsets right4 =  EdgeInsets.only(right: 4.0);
   static const EdgeInsets loopaInstructionsPadding = EdgeInsets.fromLTRB(16, 16, 16, 8);
+  static const EdgeInsets expandedToolBarPadding = EdgeInsets.fromLTRB(16, 12, 16, 0);
 }
 
 class LoopaDuration {
@@ -157,4 +159,8 @@ class LoopaSemantics {
     label: "Loopa's toolbar",
     button: true,
   );
+}
+
+class LoopaJson {
+  static const String name = "name";
 }
