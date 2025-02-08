@@ -95,24 +95,27 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
       width: LoopaSpacing.loopaSelectionCompactViewWidth,
       height: double.infinity,
       color: Colors.black,
-      child: Center(
-        child: Transform.scale(
-          scaleY: LoopaConstants.loopSelectionTextStretchY,
-          child: ShaderMask(
-            blendMode: BlendMode.srcIn,
-            shaderCallback: _shaderCallback,
-            child: TextField(
-              onTapOutside: (_) => _closeKeyboard(),
-              onEditingComplete: () => _closeKeyboard(),
-              textAlign: TextAlign.center,
-              focusNode: _textFieldFocusNode,
-              controller: _textEditingController,
-              selectionControls: NoTextSelectionControls(),
-              decoration: const InputDecoration(
-                border: InputBorder.none,
+      child: Padding(
+        padding: LoopaPadding.left2,
+        child: Center(
+          child: Transform.scale(
+            scaleY: LoopaConstants.loopSelectionTextStretchY,
+            child: ShaderMask(
+              blendMode: BlendMode.srcIn,
+              shaderCallback: _shaderCallback,
+              child: TextField(
+                onTapOutside: (_) => _closeKeyboard(),
+                onEditingComplete: () => _closeKeyboard(),
+                textAlign: TextAlign.center,
+                focusNode: _textFieldFocusNode,
+                controller: _textEditingController,
+                selectionControls: NoTextSelectionControls(),
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                ),
+                style: LoopaTextStyle.loopaSelection,
+                onChanged: _handleOnChanged,
               ),
-              style: LoopaTextStyle.loopaSelection,
-              onChanged: _handleOnChanged,
             ),
           ),
         ),
@@ -127,20 +130,23 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
       width: LoopaSpacing.loopaSelectionMemoryInfoWidth,
       height: double.infinity,
       color: Colors.black,
-      child: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _getGradientText(
-              LoopaText.memory,
-              LoopaTextStyle.memory,
-            ),
-            _getGradientText(
-                widget.loopa.id.toString(),
-                LoopaTextStyle.memoryCount
-            ),
-          ],
+      child: Padding(
+        padding: LoopaPadding.right4,
+        child: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _getGradientText(
+                LoopaText.memory,
+                LoopaTextStyle.memory,
+              ),
+              _getGradientText(
+                  widget.loopa.id.toString(),
+                  LoopaTextStyle.memoryCount
+              ),
+            ],
+          ),
         ),
       ),
     );

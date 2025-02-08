@@ -98,8 +98,8 @@ class LoopaSpacing {
   static const double loopaLogoHeight = 72;
   static const double spacing8 = 8;
   static const double spacing4 = 4;
-  static const double loopaSelectionCompactViewWidth = 132;
-  static const double loopaSelectionMemoryInfoWidth = 68;
+  static const double loopaSelectionCompactViewWidth = 128;
+  static const double loopaSelectionMemoryInfoWidth = 64;
   static const double loopaSelectionDropDownWidth = 224;
   static const double loopaSelectionMaxHeight = 444;
   static const double loopaSelectionItemHeight = 72;
@@ -113,6 +113,8 @@ class LoopaPadding {
   static const EdgeInsets top8 =  EdgeInsets.only(top: 8.0);
   static const EdgeInsets top16 =  EdgeInsets.only(top: 16.0);
   static const EdgeInsets left4 =  EdgeInsets.only(left: 4.0);
+  static const EdgeInsets left2 =  EdgeInsets.only(left: 2.0);
+  static const EdgeInsets right4 =  EdgeInsets.only(right: 4.0);
   static const EdgeInsets loopaInstructionsPadding = EdgeInsets.fromLTRB(16, 16, 16, 8);
 }
 

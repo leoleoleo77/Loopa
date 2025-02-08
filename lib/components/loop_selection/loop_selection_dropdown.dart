@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:loopa/components/loop_selection/loop_selection_item.dart';
+import 'package:loopa/components/loop_selection/loop_selection_dropdown_item.dart';
 import 'package:loopa/utils/constants.dart';
 import 'package:loopa/utils/loopa.dart';
 
@@ -14,7 +14,14 @@ class LoopSelectionDropdown extends StatelessWidget {
     required this.loopaStateNotifier,
   });
 
-  // add two arrays one for playin one for idle fill them while denerating then add them at the end to the rest
+  // Basically what's going here is that the drop down list
+  // widget listens to the state of the current loopa and
+  // is rebuilt everytime it changes.
+  //
+  // The way in which the loopas are sorted is the following:
+  // playing -> recording/idle -> initial
+  // loopas in the same category are sorted based
+  // on their id in descending order
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +29,7 @@ class LoopSelectionDropdown extends StatelessWidget {
       child: ValueListenableBuilder<LoopaState>(
           valueListenable: loopaStateNotifier,
           builder: (context, loopaState, child) {
+            // this shit works for some reason
             List<LoopSelectionItem> itemList = _getLoopSelectionItemList();
 
             return DropdownButton2(
@@ -37,7 +45,7 @@ class LoopSelectionDropdown extends StatelessWidget {
 
   List<LoopSelectionItem> _getLoopSelectionItemList() {
     int playingCount = 0;
-    int activeCount = 0;
+    int recordingAndIdleCount = 0;
     List<LoopSelectionItem> itemList = [];
 
     const int loopaCount = LoopaConstants.maxNumberOfLoopas;
@@ -51,9 +59,9 @@ class LoopSelectionDropdown extends StatelessWidget {
           itemList.insert(playingCount, item);
           playingCount++;
         default:
-          int index = playingCount + activeCount;
+          int index = playingCount + recordingAndIdleCount;
           itemList.insert(index, item);
-          activeCount++;
+          recordingAndIdleCount++;
       }
     }
     return itemList;
@@ -64,7 +72,7 @@ class LoopSelectionDropdown extends StatelessWidget {
   ) {
     return List.generate(
         LoopaConstants.maxNumberOfLoopas,
-            (index) {
+        (index) {
           return DropdownMenuItem<int>(
               value: index,
               child: itemList[index]);
@@ -76,7 +84,7 @@ class LoopSelectionDropdown extends StatelessWidget {
   void _handleLoopaChange(
       int? key,
       List<LoopSelectionItem> itemList
-      ) {
+  ) {
     if (key == null) return;
     Loopa.handleOnLoopaChange(itemList[key].id);
   }
