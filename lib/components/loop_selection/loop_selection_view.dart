@@ -76,14 +76,11 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
     return GestureDetector(
       onLongPress: () => _openKeyboard(),
       child: AbsorbPointer(
-        child: Container(
-          decoration: _getBordersDecoration(),
-          child: Row(
-            children: [
-              _getNameDisplay(),
-              _getMemoryInfoText(),
-            ],
-          ),
+        child: Row(
+          children: [
+            _getNameDisplay(),
+            _getMemoryInfoText(),
+          ],
         ),
       ),
     );
@@ -141,31 +138,20 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
                 LoopaText.memory,
                 LoopaTextStyle.memory,
               ),
-              _getGradientText(
-                  widget.loopa.id.toString(),
-                  LoopaTextStyle.memoryCount
+              ValueListenableBuilder(
+                valueListenable: widget.loopa.saveNotifier,
+                builder: (BuildContext context, bool value, Widget? child) {
+                  return _getGradientText(
+                      widget.loopa.memoryCountValue,
+                      LoopaTextStyle.memoryCount
+                  );
+                },
               ),
             ],
           ),
         ),
       ),
     );
-  }
-
-  // todo add the logic to toggle this
-  BoxDecoration _getBordersDecoration() {
-    return BoxDecoration(
-       border: Border.symmetric(
-         vertical: BorderSide(
-           color: LoopaColors.neonGreen,  // Color of top and bottom borders
-           width: 4,              // Thickness of top and bottom borders
-         ),
-         horizontal: BorderSide(
-           color: LoopaColors.neonGreen,  // Color of left and right borders
-           width: 2,              // Thickness of left and right borders
-         ),
-       ),
-     );
   }
 
   Widget _getGradientText(

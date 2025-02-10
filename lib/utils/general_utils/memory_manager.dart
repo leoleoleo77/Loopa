@@ -8,20 +8,16 @@ class MemoryManager {
   static final SharedPreferences _prefs = mGetIt.get<SharedPreferences>();
 
   static Future<bool> saveLoopa(Loopa loopa) async {
-    String id = loopa.id.toString();
+    int id = loopa.id;
     String jsonLoopa = jsonEncode(loopa.toJson());
-    await _prefs.setString(id, jsonLoopa);
-    print(getLoopaInfo(loopa.id));
-    return true;
+    if (jsonLoopa == getLoopaInfo(loopa.id)) return false;
+
+    return await _prefs.setString(id.toString(), jsonLoopa);
   }
 
-  // static List<String> getSavedIds() {
-  //   return List.generate(
-  //       LoopaConstants.maxNumberOfLoopas,
-  //       (key) => key.toString())
-  //         .where((key) => _prefs.containsKey(key))
-  //         .toList();
-  // }
+  static Future<bool> deleteLoopa(Loopa loopa) async {
+    return await _prefs.remove(loopa.id.toString());
+  }
 
   static String? getLoopaInfo(int key) => _prefs.getString(key.toString());
 }

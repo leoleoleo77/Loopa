@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
 import 'package:loopa/utils/loopa_utils/loopa.dart';
 
-class SaveLoopaButton extends StatefulWidget {
+class SaveLoopaButton extends StatelessWidget {
   final Loopa loopa;
 
   const SaveLoopaButton({
@@ -11,62 +11,54 @@ class SaveLoopaButton extends StatefulWidget {
   });
 
   @override
-  State<SaveLoopaButton> createState() => _SaveLoopaButtonState();
-}
-
-class _SaveLoopaButtonState extends State<SaveLoopaButton> {
-  bool isSaved = false;
-
-  void _toggleSave() {
-    if (isSaved) {
-      print("loopa un-saved");
-    } else {
-      widget.loopa.save();
-      print("loopa saved");
-    }
-    setState(() {
-      isSaved = !isSaved;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 200,
-      height: 60,
-      decoration: _getBordersDecoration(),
-      child: InkWell(
-        onTap: _toggleSave,
-        // style: OutlinedButton.styleFrom(
-        //   backgroundColor: isSaved ? Colors.red : LoopaColors.neonGreen, // Toggle color
-        //   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        //   shape: RoundedRectangleBorder(
-        //     borderRadius: BorderRadius.circular(0),
-        //   ),
-        //   side: BorderSide(
-        //     color: LoopaColors.neonGreen,   // Outline color// Outline thickness
-        //   ),
-        // ),
-        child: Text(
-          isSaved ? 'Unsave' : 'Save',
-          style: TextStyle(
-              fontSize: 16,
-              color: Colors.black,
+    return ValueListenableBuilder(
+      valueListenable: loopa.saveNotifier,
+      builder: (context, isSaved, child) {
+        return Container(
+          width: LoopaSpacing.saveButtonWidth,
+          height: LoopaSpacing.saveButtonHeight,
+          decoration: _getBordersDecoration(isSaved),
+          child: InkWell(
+            onTap: loopa.handleSave,
+            child: Center(
+              child: Text(
+                  isSaved ? LoopaText.saved : LoopaText.save,
+                  style: isSaved
+                      ? LoopaTextStyle.savedLabel : LoopaTextStyle.saveLabel
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
-  // todo add the logic to toggle this
-  BoxDecoration _getBordersDecoration() {
+  BoxDecoration _getBordersDecoration(bool isSaved) {
     return BoxDecoration(
-      color: LoopaColors.neonGreen,
-      // border: Border.all(
-      //     color: LoopaColors.neonGreen,  // Color of left and right borders
-      //     width: 2,              // Thickness of left and right borders
-      //   ),
+        gradient: _getButtonGradient(isSaved),
+        border: _getButtonBorders(isSaved));
+  }
 
-    );
+  LinearGradient _getButtonGradient(bool isSaved) {
+    if (isSaved) {
+      return const LinearGradient(
+          begin: Alignment.bottomRight,
+          end: Alignment.topLeft,
+          colors: LoopaColors.savedButtonGradient);
+    } else {
+      return const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: LoopaColors.saveButtonGradient);
+    }
+  }
+
+  Border _getButtonBorders(bool isSaved) {
+    if (isSaved) {
+      return LoopaBorders.savedButtonBorders;
+    } else {
+      return LoopaBorders.saveButtonBorders;
+    }
   }
 }

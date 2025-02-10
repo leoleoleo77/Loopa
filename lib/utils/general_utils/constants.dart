@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 
 class LoopaColors {
   static const Color softGrey = Colors.white70;
+  static Color softGreyFaded = Colors.white70.withOpacity(0.5);
   static const Color red = Colors.red;
   static const Color green = Colors.green;
   static Color inactiveRecLightRed = Colors.red.withOpacity(0.15);
@@ -35,12 +36,25 @@ class LoopaColors {
     Colors.grey.withOpacity(0.2),
     Colors.grey.withOpacity(0.3),
   ];
+  static const List<Color> savedButtonGradient = [
+    Color.fromRGBO(18, 18, 18, 1),
+    Color.fromRGBO(16, 16, 16, 1),
+    Color.fromRGBO(14, 14, 14, 1)
+  ];
+  static const List<Color> saveButtonGradient = [
+    Color.fromRGBO(22, 22, 22, 1),
+    Color.fromRGBO(20, 20, 20, 1),
+    Color.fromRGBO(18, 18, 18, 1),
+    Color.fromRGBO(16, 16, 16, 1)
+  ];
 }
 
 class LoopaText {
   static const String play = "PLAY";
   static const String rec = "REC";
   static const String clear = "CLEAR";
+  static const String save = "SAVE";
+  static const String saved = "SAVED";
   static const String noText = "";
   static const String memory = "Memory";
   static const String clearInstruction = "CLEAR: PRESS & HOLD";
@@ -76,6 +90,14 @@ class LoopaTextStyle {
       fontSize: 18,
       height: 1
   );
+  static const TextStyle saveLabel = TextStyle(
+      color: LoopaColors.softGrey,
+      fontSize: 14
+  );
+  static TextStyle savedLabel = TextStyle(
+      color: LoopaColors.softGreyFaded,
+      fontSize: 14
+  );
 }
 
 class LoopaAssets {
@@ -104,6 +126,8 @@ class LoopaSpacing {
   static const double loopaSelectionDropDownWidth = 224;
   static const double loopaSelectionMaxHeight = 444;
   static const double loopaSelectionItemHeight = 72;
+  static const double saveButtonWidth = 192;
+  static const double saveButtonHeight = 64;
 }
 
 class LoopaPadding {
@@ -118,6 +142,19 @@ class LoopaPadding {
   static const EdgeInsets right4 =  EdgeInsets.only(right: 4.0);
   static const EdgeInsets loopaInstructionsPadding = EdgeInsets.fromLTRB(16, 16, 16, 8);
   static const EdgeInsets expandedToolBarPadding = EdgeInsets.fromLTRB(16, 12, 16, 0);
+}
+
+class LoopaBorders {
+  static const Border savedButtonBorders = Border(
+    top: BorderSide(color: Colors.black, width: 4),
+    left: BorderSide(color: Colors.black, width: 4),
+    right: BorderSide(color: Color.fromRGBO(26, 26, 26, 1), width: 1),
+    bottom: BorderSide(color: Color.fromRGBO(26, 26, 26, 1), width: 1));
+  static const Border saveButtonBorders = Border(
+      top: BorderSide(color: Color.fromRGBO(26, 26, 26, 1), width: 1),
+      left: BorderSide(color: Color.fromRGBO(32, 32, 32, 1), width: 1),
+      right: BorderSide(color: Colors.black, width: 4),
+      bottom: BorderSide(color: Colors.black, width: 4));
 }
 
 class LoopaDuration {

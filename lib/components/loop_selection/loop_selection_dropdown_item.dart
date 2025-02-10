@@ -101,7 +101,7 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
             textStyle: LoopaTextStyle.memory,
           ),
           _getGradientText(
-              text: widget.id.toString(),
+              text: Loopa.getMemoryCountValueFromMap(widget.id),
               textStyle: LoopaTextStyle.memoryCount,
           ),
         ],

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:loopa/utils/general_utils/app_log.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
 import 'package:loopa/utils/general_utils/memory_manager.dart';
 import 'package:loopa/utils/loopa_utils/audio_controller.dart';
@@ -16,6 +17,7 @@ class Loopa {
   late final int id;
   late String _name;
   late final ValueNotifier<LoopaState> _stateNotifier;
+  late final ValueNotifier<bool> _saveNotifier;
   late final LongPressListener _longPressListener;
   late final LoopClearController _loopClearController;
   late final AudioController _audioController;
@@ -25,6 +27,7 @@ class Loopa {
   }) {
     _name = _getDefaultName(id);
     _stateNotifier = ValueNotifier(LoopaState.initial);
+    _saveNotifier = ValueNotifier(false);
     _longPressListener = LongPressListener(onFinish: _clearLoop);
     _loopClearController = LoopClearController();
     _audioController = AudioController(loopName: _name);
@@ -118,12 +121,19 @@ class Loopa {
     };
   }
 
-  void save() {
-    MemoryManager.saveLoopa(this);
+  Future<void> handleSave() async {
+    if (_saveNotifier.value == false) {
+      _saveNotifier.value = await MemoryManager.saveLoopa(this);
+      AppLog.info("Saved Loopa ${getName()} = ${_saveNotifier.value}");
+    } else {
+      _saveNotifier.value = !await MemoryManager.deleteLoopa(this);
+      AppLog.info("Deleted Loopa ${getName()} = ${!_saveNotifier.value}");
+    }
   }
 
   void setValuesFromMemory(String data) {
     Map<String, dynamic> json = jsonDecode(data);
+    saveNotifier.value = true;
 
     setName(json[LoopaJson.name]);
   }
@@ -135,6 +145,14 @@ class Loopa {
   void setName(String name) => _name = name;
 
   void setDefaultName() => _name = _getDefaultName(id);
+
+  ValueNotifier<bool> get saveNotifier => _saveNotifier;
+
+  bool get isSaved => _saveNotifier.value;
+
+  String get memoryCountValue {
+    return isSaved ? "$id*" : "$id";
+  }
 
   /// - Start static methods -
   
@@ -156,6 +174,10 @@ class Loopa {
 
   static LoopaState getStateFromMap(int key) {
     return _map[key]?.getStateNotifier().value ?? LoopaState.initial;
+  }
+
+  static String getMemoryCountValueFromMap(int key) {
+    return _map[key]?.memoryCountValue ?? key.toString();
   }
 
   static void setLoopaNotifier(ValueNotifier<Loopa> loopaNotifier) {
