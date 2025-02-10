@@ -33,7 +33,6 @@ class _ToolBarState extends State<ToolBar> {
           child: Container(
               width: double.infinity,
               height: LoopaSpacing.toolBarHeight,
-              padding: LoopaPadding.vertical12,
               decoration: _getBoxDecoration(),
               child: Stack(
                 children: [
@@ -41,7 +40,7 @@ class _ToolBarState extends State<ToolBar> {
                     animationController: widget.loopa.getToolBarAnimationController(),
                   ),
                   Padding(
-                    padding: LoopaPadding.horizontal16,
+                    padding: LoopaPadding.defaultToolBarPadding,
                     child: Row(
                       children: [
                         PlayRecLights(loopaStateNotifier: widget.loopa.getStateNotifier()),

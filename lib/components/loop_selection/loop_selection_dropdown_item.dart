@@ -17,7 +17,7 @@ class LoopSelectionItem extends StatefulWidget {
 }
 
 class _LoopSelectionItemState extends State<LoopSelectionItem> {
-  late final Timer _dancingNoteTimer;
+  late final Timer? _dancingNoteTimer;
   String _noteAsset = LoopaAssets.note1;
 
   @override
@@ -27,7 +27,10 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
   }
 
   void _initializeDancingNoteTimer() {
-    if (Loopa.getStateFromMap(widget.id) != LoopaState.playing) return;
+    if (Loopa.getStateFromMap(widget.id) != LoopaState.playing) {
+      _dancingNoteTimer = null;
+      return;
+    }
 
     _dancingNoteTimer = Timer.periodic(
       LoopaDuration.milliseconds500,
@@ -45,7 +48,7 @@ class _LoopSelectionItemState extends State<LoopSelectionItem> {
 
   @override
   void dispose() {
-    _dancingNoteTimer.cancel();
+    _dancingNoteTimer?.cancel();
     super.dispose();
   }
 

@@ -23,7 +23,7 @@ class _ToolBarAnimationState extends State<ToolBarAnimation>
   double _containerWidth = 0;
   double _progressIndicatorOpacity = 0;
   bool _showCompletionFlash = false;
-  late Timer _timer;
+  Timer? _timer;
 
   void _startExpanding(double? maxWidth) {
     if (maxWidth == null) return;
@@ -41,7 +41,7 @@ class _ToolBarAnimationState extends State<ToolBarAnimation>
         _containerWidth += widthPerTick;
       } else {
         // This is never executed
-        _timer.cancel();
+        _timer?.cancel();
       }
       if (_containerWidth > maxWidth / 3) {
         _progressIndicatorOpacity = 1;
@@ -50,7 +50,7 @@ class _ToolBarAnimationState extends State<ToolBarAnimation>
   }
 
   void _stopExpanding() {
-    _timer.cancel();
+    _timer?.cancel();
     setState(() {
       _containerWidth = 0;
       _progressIndicatorOpacity = 0;
@@ -73,7 +73,7 @@ class _ToolBarAnimationState extends State<ToolBarAnimation>
 
   @override
   void dispose() {
-    _timer.cancel();
+    _timer?.cancel();
     super.dispose();
   }
 

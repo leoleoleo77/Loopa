@@ -142,6 +142,7 @@ class LoopaPadding {
   static const EdgeInsets right4 =  EdgeInsets.only(right: 4.0);
   static const EdgeInsets loopaInstructionsPadding = EdgeInsets.fromLTRB(16, 16, 16, 8);
   static const EdgeInsets expandedToolBarPadding = EdgeInsets.fromLTRB(16, 12, 16, 0);
+  static const EdgeInsets defaultToolBarPadding = EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0);
 }
 
 class LoopaBorders {
