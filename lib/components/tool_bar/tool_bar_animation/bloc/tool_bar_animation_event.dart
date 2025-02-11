@@ -32,3 +32,4 @@ class ToolBarAnimationOnTickEvent extends ToolBarAnimationEvent {
     required this.animationOpacity
   });
 }
+

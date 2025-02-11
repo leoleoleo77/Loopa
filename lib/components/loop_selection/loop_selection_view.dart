@@ -2,16 +2,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:loopa/components/loop_selection/loop_selection_dropdown.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
+import 'package:loopa/utils/general_utils/service_locator.dart';
 import 'package:loopa/utils/loopa_utils/loopa.dart';
 
 class LoopSelectionView extends StatefulWidget {
-  final Loopa loopa;
+  // final Loopa loopa;
   final bool compactView;
   final VoidCallback toggleKeyboardNotifier;
 
   const LoopSelectionView({
     super.key,
-    required this.loopa,
+    // required this.loopa,
     this.compactView = true,
     required this.toggleKeyboardNotifier,
   });
@@ -21,7 +22,7 @@ class LoopSelectionView extends StatefulWidget {
 }
 
 class _LoopSelectionViewState extends State<LoopSelectionView> {
-
+  // todo: add bloc
   final FocusNode _textFieldFocusNode = FocusNode();
   final TextEditingController _textEditingController = TextEditingController();
   bool _nameChanged = false;
@@ -68,7 +69,7 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
   Widget build(BuildContext context) {
     return LoopSelectionDropdown(
       dropdownBuilder: _getNameDisplayItem(),
-      loopaStateNotifier: widget.loopa.getStateNotifier(),
+      loopaStateNotifier: mGetIt.get<ValueNotifier<Loopa>>().value.getStateNotifier(),
     );
   }
 
@@ -139,10 +140,10 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
                 LoopaTextStyle.memory,
               ),
               ValueListenableBuilder(
-                valueListenable: widget.loopa.saveNotifier,
+                valueListenable: mGetIt.get<ValueNotifier<Loopa>>().value.saveNotifier,
                 builder: (BuildContext context, bool value, Widget? child) {
                   return _getGradientText(
-                      widget.loopa.memoryCountValue,
+                      mGetIt.get<ValueNotifier<Loopa>>().value.memoryCountValue,
                       LoopaTextStyle.memoryCount
                   );
                 },
@@ -169,7 +170,7 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
   }
 
   List<Color> _getGradientColor() {
-    bool loopaStateIsInitial = widget.loopa.getStateNotifier().value == LoopaState.initial;
+    bool loopaStateIsInitial = mGetIt.get<ValueNotifier<Loopa>>().value.getStateNotifier().value == LoopaState.initial;
     bool isFlashing = !(_flashTimer?.isActive == true);
 
     if (loopaStateIsInitial && isFlashing) {
@@ -187,19 +188,19 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
 
   void _handleOnChanged(String text) {
     if (_nameChanged) {
-      widget.loopa.setName(text);
+      mGetIt.get<ValueNotifier<Loopa>>().value.setName(text);
       return;
     }
 
-    bool changeWasBackspace = widget.loopa.getName().length > text.length;
+    bool changeWasBackspace = mGetIt.get<ValueNotifier<Loopa>>().value.getName().length > text.length;
     if (changeWasBackspace) {
       setState(() {
-        widget.loopa.setName(LoopaText.noText);
+        mGetIt.get<ValueNotifier<Loopa>>().value.setName(LoopaText.noText);
       });
     } else {
       String firstLetter = text.substring(text.length - 1, text.length);
       setState(() {
-        widget.loopa.setName(firstLetter);
+        mGetIt.get<ValueNotifier<Loopa>>().value.setName(firstLetter);
       });
     }
     _nameChanged = true;
@@ -217,9 +218,9 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
   }
 
   void _closeKeyboard() {
-    if (widget.loopa.getName() == LoopaText.noText) {
+    if (mGetIt.get<ValueNotifier<Loopa>>().value.getName() == LoopaText.noText) {
       setState(() {
-        widget.loopa.setDefaultName();
+        mGetIt.get<ValueNotifier<Loopa>>().value.setDefaultName();
       });
     }
 
@@ -236,7 +237,7 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
         return LoopaText.noText;
       }
     } else {
-      return widget.loopa.getName();
+      return mGetIt.get<ValueNotifier<Loopa>>().value.getName();
     }
   }
 }

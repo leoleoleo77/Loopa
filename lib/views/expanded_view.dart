@@ -11,12 +11,10 @@ import 'package:loopa/utils/loopa_utils/loopa.dart';
 
 class ExpandedView extends StatelessWidget {
   final VoidCallback onToolbarPressed;
-  final Loopa loopa;
 
   const ExpandedView({
     super.key,
     required this.onToolbarPressed,
-    required this.loopa
   });
 
   @override
@@ -27,7 +25,6 @@ class ExpandedView extends StatelessWidget {
         const SizedBox(height: LoopaSpacing.spacing8),
         LoopButton(
           largeState: false,
-          loopa: loopa,
           isKeyboardActive: false,
         )
       ],
@@ -75,18 +72,15 @@ class ExpandedView extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    PlayRecLights(
-                        loopaStateNotifier: loopa.getStateNotifier()
-                    ),
+                    PlayRecLights(),
                     LoopSelectionView(
-                      loopa: loopa,
                       compactView: false,
                       toggleKeyboardNotifier: () {},
                     )
                   ],
                 ),
               ),
-              SaveLoopaButton(loopa: loopa)
+              SaveLoopaButton()
             ],
           ),
         ),

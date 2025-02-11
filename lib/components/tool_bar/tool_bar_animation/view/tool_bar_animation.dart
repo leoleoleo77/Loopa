@@ -19,8 +19,8 @@ class ToolBarAnimation extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        return BlocProvider(
-          create: (context) => mGetIt.get<ToolBarAnimationBloc>()
+        return BlocProvider.value(
+          value: mGetIt.get<ToolBarAnimationBloc>()
               ..add(ToolBarAnimationInitialEvent(
                   maxWidth: constraints.maxWidth)),
           child: BlocBuilder<ToolBarAnimationBloc, ToolBarAnimationState>(
@@ -60,7 +60,7 @@ class ToolBarAnimation extends StatelessWidget {
     );
   }
 
-  // TODO: make expanded animation look good
+  // TODO: clean up the code
   BoxDecoration _getProgressIndicatorBoxDecoration(
       ToolBarAnimationState state
   ) {

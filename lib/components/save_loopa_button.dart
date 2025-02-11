@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
+import 'package:loopa/utils/general_utils/service_locator.dart';
 import 'package:loopa/utils/loopa_utils/loopa.dart';
 
 class SaveLoopaButton extends StatelessWidget {
-  final Loopa loopa;
 
   const SaveLoopaButton({
     super.key,
-    required this.loopa
   });
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-      valueListenable: loopa.saveNotifier,
+      valueListenable: mGetIt.get<ValueNotifier<Loopa>>().value.saveNotifier,
       builder: (context, isSaved, child) {
         return Container(
           width: LoopaSpacing.saveButtonWidth,
           height: LoopaSpacing.saveButtonHeight,
           decoration: _getBordersDecoration(isSaved),
           child: InkWell(
-            onTap: loopa.handleSave,
+            onTap: mGetIt.get<ValueNotifier<Loopa>>().value.handleSave,
             child: Center(
               child: Text(
                   isSaved ? LoopaText.saved : LoopaText.save,

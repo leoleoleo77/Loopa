@@ -15,7 +15,7 @@ import 'package:loopa/utils/loopa_utils/tool_bar_animation_controller.dart';
 
 class Loopa {
   static final Map<int, Loopa> _map = {};
-  static late ValueNotifier<Loopa> _loopaNotifier;
+  //static late ValueNotifier<Loopa> _loopaNotifier;
 
   late final int id;
   late String _name;
@@ -24,6 +24,7 @@ class Loopa {
   // late final LongPressListener _longPressListener;
   // late final LoopClearController _loopClearController;
   late final AudioController _audioController;
+  bool? _wasLoopaCleared = false;
 
   Loopa({
     required this.id,
@@ -43,17 +44,20 @@ class Loopa {
   /// or.     The state of the loop is either playing or idle
   ///         so clear the loop and inform the user
 
-  void _clearLoop() {
-    cancelLongPressListener();
+  void clearLoop() {
+    //cancelLongPressListener();
     if (_stateNotifier.value == LoopaState.initial) return;
 
     // _longPressListener.onClearComplete();
     // _loopClearController.onClearComplete();
     _audioController.clearPlayer();
     _name = getNameFromMap(id);
+    _wasLoopaCleared = true;
+    updateState();
+    _wasLoopaCleared = true;
   }
 
-  bool _stateIsInitialOrRecording() {
+  bool get isStateInitialOrRecording {
     return _stateNotifier.value == LoopaState.initial
         || _stateNotifier.value == LoopaState.recording;
   }
@@ -77,16 +81,16 @@ class Loopa {
 
   void updateState() {
 
-    // if (_loopClearController.loopWasCleared == true) {
-    //   _stateNotifier.value = LoopaState.initial;
-    //   _loopClearController.loopWasCleared = false;
-    //   return;
-    // }
+    if (_wasLoopaCleared == true) {
+      _stateNotifier.value = LoopaState.initial;
+      _wasLoopaCleared = false;
+      return;
+    }
 
     switch(_stateNotifier.value) {
       case LoopaState.initial:
         _stateNotifier.value = LoopaState.recording;
-        LoopClearController.stopFlashing();
+        //LoopClearController.stopFlashing();
         _audioController.startRecording();
         return;
       case LoopaState.recording:
@@ -104,19 +108,19 @@ class Loopa {
     }
   }
 
-  void startLongPressListener() {
-    if (_stateIsInitialOrRecording()) return;
-    //_longPressListener.start();
-    mGetIt.get<ToolBarAnimationBloc>()
-      .add(ToolBarAnimationLongPressStartedEvent());
-  }
-
-  void cancelLongPressListener() {
-    if (_stateIsInitialOrRecording()) return;
-    //_longPressListener.cancel();
-    mGetIt.get<ToolBarAnimationBloc>()
-        .add(ToolBarAnimationLongPressCanceledEvent());
-  }
+  // void startLongPressListener() {
+  //   if (_stateIsInitialOrRecording()) return;
+  //   //_longPressListener.start();
+  //   mGetIt.get<ToolBarAnimationBloc>()
+  //     .add(ToolBarAnimationLongPressStartedEvent());
+  // }
+  //
+  // void cancelLongPressListener() {
+  //   if (_stateIsInitialOrRecording()) return;
+  //   //_longPressListener.cancel();
+  //   mGetIt.get<ToolBarAnimationBloc>()
+  //       .add(ToolBarAnimationLongPressCanceledEvent());
+  // }
 
   ToolBarAnimationController getToolBarAnimationController() {
     return LongPressListener.toolBarAnimationController;
@@ -187,21 +191,21 @@ class Loopa {
     return _map[key]?.memoryCountValue ?? key.toString();
   }
 
-  static void setLoopaNotifier(ValueNotifier<Loopa> loopaNotifier) {
-    _loopaNotifier = loopaNotifier;
-  }
+  // static void setLoopaNotifier(ValueNotifier<Loopa> loopaNotifier) {
+  //   _loopaNotifier = loopaNotifier;
+  // }
 
   static void handleOnLoopaChange(int? id) {
-    if (id == null || id == _loopaNotifier.value.id) return;
+    if (id == null || id == mGetIt.get<ValueNotifier<Loopa>>().value.id) return;
 
-    _loopaNotifier.value._cancelRecording();
+    mGetIt.get<ValueNotifier<Loopa>>().value._cancelRecording();
     LoopClearController.stopFlashing();
 
-    _loopaNotifier.value = _map[id] ?? Loopa(id: id);
+    mGetIt.get<ValueNotifier<Loopa>>().value = _map[id] ?? Loopa(id: id);
   }
 
-  static Loopa getLoopa(int id) {
-    return _map[id] ?? Loopa(id: id);
+  static Loopa getLoopaFromMap(int key) {
+    return _map[key] ?? Loopa(id: key);
   }
 
   static void initializeLoopas() {

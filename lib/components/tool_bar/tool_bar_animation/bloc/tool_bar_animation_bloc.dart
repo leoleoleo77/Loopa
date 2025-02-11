@@ -1,9 +1,12 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:loopa/components/tool_bar/tool_bar_animation/bloc/tool_bar_animation_event.dart';
 import 'package:loopa/components/tool_bar/tool_bar_animation/bloc/tool_bar_animation_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
+import 'package:loopa/utils/general_utils/service_locator.dart';
+import 'package:loopa/utils/loopa_utils/loopa.dart';
 
 class ToolBarAnimationBloc extends Bloc<ToolBarAnimationEvent, ToolBarAnimationState> {
   static const double _fullOpacity = 1;
@@ -31,6 +34,8 @@ class ToolBarAnimationBloc extends Bloc<ToolBarAnimationEvent, ToolBarAnimationS
       ToolBarAnimationLongPressStartedEvent event,
       Emitter<ToolBarAnimationState> emit
   ) async {
+    if (mGetIt.get<ValueNotifier<Loopa>>().value.isStateInitialOrRecording) return;
+
     double? maxWidth = _maxWidth;
     if (maxWidth == null) return;
 
@@ -43,8 +48,9 @@ class ToolBarAnimationBloc extends Bloc<ToolBarAnimationEvent, ToolBarAnimationS
           if (animationWidth < maxWidth) {
             animationWidth += widthPerTick;
           } else {
-            // This is never executed
             _animationTimer?.cancel();
+            add(ToolBarAnimationLongPressCompletedEvent());
+            return;
           }
           if (animationWidth > maxWidth / 3) {
             animationOpacity = _fullOpacity;
@@ -72,17 +78,22 @@ class ToolBarAnimationBloc extends Bloc<ToolBarAnimationEvent, ToolBarAnimationS
       ToolBarAnimationLongPressCanceledEvent event,
       Emitter<ToolBarAnimationState> emit
   ) async {
+    if (mGetIt.get<ValueNotifier<Loopa>>().value.isStateInitialOrRecording) return;
+
     _animationTimer?.cancel();
-    emit(const ToolBarAnimationIdleState());
+    if (state.animationInProgress) {
+      emit(const ToolBarAnimationIdleState());
+    }
   }
 
   Future<void> _handleCompletedEvent(
       ToolBarAnimationLongPressCompletedEvent event,
       Emitter<ToolBarAnimationState> emit
   ) async {
-    _animationTimer?.cancel();
     double? maxWidth = _maxWidth;
     if (maxWidth == null) return;
+
+    mGetIt.get<ValueNotifier<Loopa>>().value.clearLoop();
 
     emit(ToolBarAnimationExpandingState(
         animationWidth: maxWidth,
@@ -90,10 +101,8 @@ class ToolBarAnimationBloc extends Bloc<ToolBarAnimationEvent, ToolBarAnimationS
         animationDuration: LoopaDuration.loopClearAnimationFadeDuration,
         animationInProgress: false
     ));
-
-    Timer(
-        LoopaDuration.loopClearFlashAnimationDuration,
-        () => emit(const ToolBarAnimationIdleState()));
+    await Future.delayed(LoopaDuration.loopClearFlashAnimationDuration)
+        .whenComplete(() => emit(const ToolBarAnimationIdleState()));
   }
 
   double _getWidthPerTick(double maxWidth) {

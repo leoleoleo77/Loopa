@@ -1,17 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:loopa/components/tool_bar/tool_bar_animation/bloc/tool_bar_animation_event.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
+import 'package:loopa/utils/general_utils/service_locator.dart';
 import 'package:loopa/utils/loopa_utils/loopa.dart';
+
+import 'tool_bar/tool_bar_animation/bloc/tool_bar_animation_bloc.dart';
 
 class LoopButton extends StatefulWidget {
   final bool largeState;
-  final Loopa loopa;
   final bool isKeyboardActive;
 
   const LoopButton({
     super.key,
     this.largeState = true,
-    required this.loopa,
     required this.isKeyboardActive
   });
 
@@ -82,24 +84,26 @@ class _LoopButtonState extends State<LoopButton> {
   }
 
   void _handlePanStart() {
-    setState(() {
-      isBeingPressed = true;
-    });
-    widget.loopa.startLongPressListener(); // TODO: handle this better
+    setState(() => isBeingPressed = true);
+
+    mGetIt.get<ToolBarAnimationBloc>()
+      .add(ToolBarAnimationLongPressStartedEvent());
   }
 
   void _handlePanEnd() {
-    widget.loopa.cancelLongPressListener();
-    widget.loopa.updateState();
-    setState(() {
-      isBeingPressed = false;
-    });
+    setState(() => isBeingPressed = false);
+
+    mGetIt.get<ValueNotifier<Loopa>>()
+        .value.updateState();
+
+    mGetIt.get<ToolBarAnimationBloc>()
+        .add(ToolBarAnimationLongPressCanceledEvent());
   }
 
   void _handlePanCancel() {
-    widget.loopa.cancelLongPressListener();
-    setState(() {
-      isBeingPressed = false;
-    });
+    setState(() => isBeingPressed = false);
+
+    mGetIt.get<ToolBarAnimationBloc>()
+        .add(ToolBarAnimationLongPressCanceledEvent());
   }
 }
