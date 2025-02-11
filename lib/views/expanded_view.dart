@@ -5,6 +5,7 @@ import 'package:loopa/components/loop_selection/loop_selection_view.dart';
 import 'package:loopa/components/play_rec_lights.dart';
 import 'package:loopa/components/play_span_slider.dart';
 import 'package:loopa/components/save_loopa_button.dart';
+import 'package:loopa/components/tool_bar/tool_bar_animation.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
 import 'package:loopa/utils/loopa_utils/loopa.dart';
 
@@ -58,30 +59,39 @@ class ExpandedView extends StatelessWidget {
   }
 
   Widget _getPlayRecLightsAndLoopaSelection() {
-    return Padding(
-      padding: LoopaPadding.expandedToolBarPadding,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          SizedBox(
-            height: LoopaSpacing.expandedToolBarHeight,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                PlayRecLights(
-                    loopaStateNotifier: loopa.getStateNotifier()
+    return Stack(
+      children: [
+        SizedBox(
+          height: 96,
+            child: ToolBarAnimation(
+                animationController: loopa.getToolBarAnimationController(),
+            expandedState: true,)),
+        Padding(
+          padding: LoopaPadding.expandedToolBarPadding,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              SizedBox(
+                height: LoopaSpacing.expandedToolBarHeight,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    PlayRecLights(
+                        loopaStateNotifier: loopa.getStateNotifier()
+                    ),
+                    LoopSelectionView(
+                      loopa: loopa,
+                      compactView: false,
+                      toggleKeyboardNotifier: () {},
+                    )
+                  ],
                 ),
-                LoopSelectionView(
-                  loopa: loopa,
-                  compactView: false,
-                  toggleKeyboardNotifier: () {},
-                )
-              ],
-            ),
+              ),
+              SaveLoopaButton(loopa: loopa)
+            ],
           ),
-          SaveLoopaButton(loopa: loopa)
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -96,6 +106,12 @@ class ExpandedView extends StatelessWidget {
           width: double.infinity,
           child: Container(
             decoration: const BoxDecoration(
+              border: Border(
+                  top: BorderSide(color: Color.fromRGBO(32, 32, 32, 1), width: 4),
+                  left: BorderSide(color: Color.fromRGBO(28, 28, 28, 1), width: 8),
+                  right: BorderSide(color: Color.fromRGBO(28, 28, 28, 1), width: 8),
+                  bottom: BorderSide(color: Color.fromRGBO(16, 16, 16, 1), width: 4)
+              ),
               color: Color.fromRGBO(24, 24, 24, 1),
                 // boxShadow: [
                 //   BoxShadow(
@@ -114,15 +130,15 @@ class ExpandedView extends StatelessWidget {
                 //       Color.fromRGBO(21, 21, 21, 1),
                 //     ]
                 // ),
-                borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(4),
-                    bottom: Radius.circular(8)
-                )
+                // borderRadius: BorderRadius.vertical(
+                //     top: Radius.circular(4),
+                //     bottom: Radius.circular(8)
+                // )
             ),
-            child: const Icon(
+            child: Icon(
               Icons.menu_rounded,
               size: 32,
-              color: LoopaColors.softGrey
+              color: LoopaColors.softGreyFaded
             ),
           ),
         ),

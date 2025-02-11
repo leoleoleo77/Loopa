@@ -7,10 +7,12 @@ import 'package:loopa/utils/loopa_utils/tool_bar_animation_controller.dart';
 
 class ToolBarAnimation extends StatefulWidget {
   final ToolBarAnimationController animationController;
+  final bool expandedState;
 
   const ToolBarAnimation({
     super.key,
-    required this.animationController
+    required this.animationController,
+    this.expandedState = false
   });
 
   @override
@@ -135,19 +137,36 @@ class _ToolBarAnimationState extends State<ToolBarAnimation>
     );
   }
 
+  // TODO: make expanded animation look good
   BoxDecoration _getProgressIndicatorBoxDecoration() {
-    return BoxDecoration(
-      gradient: LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [
-            Colors.grey.withOpacity(0.1 * _progressIndicatorOpacity),
-            Colors.grey.withOpacity(0.2 * _progressIndicatorOpacity),
-            Colors.grey.withOpacity(0.3 * _progressIndicatorOpacity),
-          ]
-      ),
-      borderRadius: LoopaBorderRadius.left12
-    );
+    if (widget.expandedState) {
+      return BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.grey.withOpacity(0.2 * _progressIndicatorOpacity),
+                Colors.grey.withOpacity(0.1 * _progressIndicatorOpacity),
+                Colors.grey.withOpacity(0.05 * _progressIndicatorOpacity),
+                Colors.grey.withOpacity(0.025 * _progressIndicatorOpacity),
+                Colors.grey.withOpacity(0.01 * _progressIndicatorOpacity),
+              ]),
+          // borderRadius: LoopaBorderRadius.left12
+      );
+    } else {
+      return BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [
+                Colors.grey.withOpacity(0.1 * _progressIndicatorOpacity),
+                Colors.grey.withOpacity(0.2 * _progressIndicatorOpacity),
+                Colors.grey.withOpacity(0.3 * _progressIndicatorOpacity),
+              ]
+          ),
+          borderRadius: LoopaBorderRadius.left12
+      );
+    }
   }
 
   int _getFadeDuration() {
