@@ -6,12 +6,10 @@ import 'package:loopa/utils/loopa_utils/loopa.dart';
 
 class DefaultView extends StatefulWidget {
   final VoidCallback onToolbarPressed;
-  // final Loopa loopa;
 
   const DefaultView({
     super.key,
     required this.onToolbarPressed,
-    // required this.loopa
   });
 
   @override
@@ -33,15 +31,11 @@ class _DefaultViewState extends State<DefaultView> {
     return Column(
       children: [
         ToolBar(
-          // loopa: widget.loopa,
           onToolbarPressed: widget.onToolbarPressed,
-          toggleKeyboardNotifier: _toggleKeyboardNotifier,
-        ),
+          toggleKeyboardNotifier: _toggleKeyboardNotifier),
         _getLoopaInstructions(),
         LoopButton(
-            //loopa: widget.loopa,
-            isKeyboardActive: _isKeyboardActive
-        ),
+            isKeyboardActive: _isKeyboardActive),
       ],
     );
   }

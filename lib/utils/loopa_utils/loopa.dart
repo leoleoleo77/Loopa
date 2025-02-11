@@ -202,6 +202,7 @@ class Loopa {
     LoopClearController.stopFlashing();
 
     mGetIt.get<ValueNotifier<Loopa>>().value = _map[id] ?? Loopa(id: id);
+    MemoryManager.saveLastVisitedKey(id.toString()); // todo: temp
   }
 
   static Loopa getLoopaFromMap(int key) {
@@ -213,6 +214,19 @@ class Loopa {
       String? loopaInfo = MemoryManager.getLoopaInfo(key);
       if (loopaInfo != null) {
         Loopa(id: key).setValuesFromMemory(loopaInfo);
+      }
+    }
+  }
+
+  static int get getLastVisitedLoopaKey {
+    if (MemoryManager.getLastVisitedKey == null) {
+      return 0;
+    } else {
+      try {
+        return int.parse(MemoryManager.getLastVisitedKey as String);
+      } catch (e) {
+        AppLog.info(e);
+        return 0;
       }
     }
   }

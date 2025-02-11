@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:loopa/utils/general_utils/constants.dart';
 import 'package:loopa/utils/loopa_utils/loopa.dart';
 import 'package:loopa/utils/general_utils/service_locator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,4 +21,11 @@ class MemoryManager {
   }
 
   static String? getLoopaInfo(int key) => _prefs.getString(key.toString());
-}
+
+  static Future<bool> saveLastVisitedKey(String key) async {
+    return await _prefs.setString(LoopaKeys.lastVisited, key);
+  }
+
+  static String? get getLastVisitedKey =>
+      _prefs.getString(LoopaKeys.lastVisited);
+ }

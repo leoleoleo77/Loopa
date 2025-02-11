@@ -44,7 +44,7 @@ class ExpandedView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _getPlayRecLightsAndLoopaSelection(),
-                    RangeSliderExample(),// temp
+                    // RangeSliderExample(),// temp
                     _getToggleExpandButton()
                   ],
                 ),

@@ -41,7 +41,6 @@ class ToolBarAnimation extends StatelessWidget {
       duration: state.animationDuration,
       child: Container(
         width: state.animationWidth,
-        alignment: Alignment.center,
         decoration: state.animationInProgress
             ? _getProgressIndicatorBoxDecoration(state)
             : _getCompletionFlashBoxDecoration(),

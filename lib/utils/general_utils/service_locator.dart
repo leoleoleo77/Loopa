@@ -13,5 +13,7 @@ Future<void> setupLocator() async {
 
   mGetIt.registerSingleton<ToolBarAnimationBloc>(ToolBarAnimationBloc());
 
-  mGetIt.registerSingleton<ValueNotifier<Loopa>>(ValueNotifier<Loopa>(Loopa.getLoopaFromMap(0)));
+  // Register ValueNotifier<Loopa> as a singleton and initialize it with the last visited loopa key
+  mGetIt.registerSingleton<ValueNotifier<Loopa>>(
+      ValueNotifier<Loopa>(Loopa.getLoopaFromMap(Loopa.getLastVisitedLoopaKey)));
 }
