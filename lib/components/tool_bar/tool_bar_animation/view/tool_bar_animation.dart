@@ -1,7 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loopa/components/tool_bar/tool_bar_animation/bloc/tool_bar_animation_bloc.dart';
+import 'package:loopa/components/tool_bar/tool_bar_animation/bloc/tool_bar_animation_state.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
+import 'package:loopa/utils/general_utils/service_locator.dart';
 import 'package:loopa/utils/loopa_utils/long_press_listener.dart';
 import 'package:loopa/utils/loopa_utils/tool_bar_animation_controller.dart';
 
@@ -81,11 +85,16 @@ class _ToolBarAnimationState extends State<ToolBarAnimation>
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        _getClearProgressIndicator(),
-        _getCompletionFlash()
-      ],
+    return BlocProvider(
+      create: (context) => mGetIt.get<ToolBarAnimationBloc>(),
+      child: BlocBuilder<ToolBarAnimationBloc, ToolBarAnimationState>(
+        builder: (context, state) {
+          return Stack(
+            children: [
+              _getClearProgressIndicator(),
+              _getCompletionFlash()]);
+        },
+      ),
     );
   }
 
