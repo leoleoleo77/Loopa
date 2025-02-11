@@ -164,6 +164,9 @@ class LoopaDuration {
   static const Duration zero = Duration.zero;
   static const Duration loopClearAnimationFadeDuration = Duration(milliseconds: 200);
   static const Duration loopClearFlashAnimationDuration = Duration(milliseconds: 300);
+  static const int longPressDurationSeconds = 2;
+  static const int longPressDurationMilliseconds =
+      longPressDurationSeconds * 1000;
 }
 
 class LoopaFontSize {

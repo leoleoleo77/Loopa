@@ -36,9 +36,7 @@ class _ToolBarState extends State<ToolBar> {
               decoration: _getBoxDecoration(),
               child: Stack(
                 children: [
-                  ToolBarAnimation(
-                    animationController: widget.loopa.getToolBarAnimationController(),
-                  ),
+                  const ToolBarAnimation(),
                   Padding(
                     padding: LoopaPadding.defaultToolBarPadding,
                     child: Row(

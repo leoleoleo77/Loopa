@@ -64,7 +64,6 @@ class ExpandedView extends StatelessWidget {
         SizedBox(
           height: 96,
             child: ToolBarAnimation(
-                animationController: loopa.getToolBarAnimationController(),
             expandedState: true,)),
         Padding(
           padding: LoopaPadding.expandedToolBarPadding,

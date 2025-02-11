@@ -1,136 +1,50 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loopa/components/tool_bar/tool_bar_animation/bloc/tool_bar_animation_bloc.dart';
+import 'package:loopa/components/tool_bar/tool_bar_animation/bloc/tool_bar_animation_event.dart';
 import 'package:loopa/components/tool_bar/tool_bar_animation/bloc/tool_bar_animation_state.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
 import 'package:loopa/utils/general_utils/service_locator.dart';
-import 'package:loopa/utils/loopa_utils/long_press_listener.dart';
-import 'package:loopa/utils/loopa_utils/tool_bar_animation_controller.dart';
 
-class ToolBarAnimation extends StatefulWidget {
-  final ToolBarAnimationController animationController;
+class ToolBarAnimation extends StatelessWidget {
   final bool expandedState;
 
   const ToolBarAnimation({
     super.key,
-    required this.animationController,
     this.expandedState = false
   });
 
   @override
-  State<ToolBarAnimation> createState() => _ToolBarAnimationState();
-}
-
-class _ToolBarAnimationState extends State<ToolBarAnimation>
-    with SingleTickerProviderStateMixin {
-
-  double _containerWidth = 0;
-  double _progressIndicatorOpacity = 0;
-  bool _showCompletionFlash = false;
-  Timer? _timer;
-
-  void _startExpanding(double? maxWidth) {
-    if (maxWidth == null) return;
-
-    final double widthPerTick = _getWidthPerTick(maxWidth);
-    _timer = Timer.periodic(
-        LoopaDuration.clearAnimationTickDuration,
-        (_) => _onTick(maxWidth, widthPerTick)
-    );
-  }
-
-  void _onTick(double maxWidth, double widthPerTick) {
-    setState(() {
-      if (_containerWidth < maxWidth) {
-        _containerWidth += widthPerTick;
-      } else {
-        // This is never executed
-        _timer?.cancel();
-      }
-      if (_containerWidth > maxWidth / 3) {
-        _progressIndicatorOpacity = 1;
-      }
-    });
-  }
-
-  void _stopExpanding() {
-    _timer?.cancel();
-    setState(() {
-      _containerWidth = 0;
-      _progressIndicatorOpacity = 0;
-    });
-  }
-
-  void _onComplete() {
-    // Why doesn't this need to be inside a setState? curious.
-    _showCompletionFlash = true;
-    Timer(
-      LoopaDuration.loopClearFlashAnimationDuration,
-      () => setState(() { _showCompletionFlash = false; })
-    );
-  }
-
-  double _getWidthPerTick(double maxWidth) {
-    return maxWidth /
-        (LongPressListener.longPressDurationMilliseconds / LoopaConstants.clearAnimationTick);
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => mGetIt.get<ToolBarAnimationBloc>(),
-      child: BlocBuilder<ToolBarAnimationBloc, ToolBarAnimationState>(
-        builder: (context, state) {
-          return Stack(
-            children: [
-              _getClearProgressIndicator(),
-              _getCompletionFlash()]);
-        },
-      ),
-    );
-  }
-
-  Widget _getClearProgressIndicator() {
     return LayoutBuilder(
       builder: (context, constraints) {
-        double maxWidth = constraints.maxWidth;
-        widget.animationController
-            .setStartExpanding(() => _startExpanding(maxWidth))
-            .setStopExpanding(() => _stopExpanding())
-            .setOnComplete(() => _onComplete());
-
-        return AnimatedOpacity(
-          opacity: _progressIndicatorOpacity,
-          duration: Duration(milliseconds: _getFadeDuration()),
-          child: Container(
-            width: _containerWidth,
-            alignment: Alignment.center,
-            decoration: _getProgressIndicatorBoxDecoration(),
+        return BlocProvider(
+          create: (context) => mGetIt.get<ToolBarAnimationBloc>()
+              ..add(ToolBarAnimationInitialEvent(
+                  maxWidth: constraints.maxWidth)),
+          child: BlocBuilder<ToolBarAnimationBloc, ToolBarAnimationState>(
+            builder: (context, state) {
+              return _getAnimationContainer(state);
+            },
           ),
         );
-      },
+      }
     );
   }
 
-  Widget _getCompletionFlash() {
-    // TODO: make this better
+  Widget _getAnimationContainer(
+      ToolBarAnimationState state
+  ) {
     return AnimatedOpacity(
-      opacity: _showCompletionFlash ? 1.0 : 0.0,
-      duration: _showCompletionFlash ?
-        LoopaDuration.zero :
-        LoopaDuration.loopClearAnimationFadeDuration,
+      opacity: state.animationOpacity,
+      duration: state.animationDuration,
       child: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: _getCompletionFlashBoxDecoration(),
+        width: state.animationWidth,
+        alignment: Alignment.center,
+        decoration: state.animationInProgress
+            ? _getProgressIndicatorBoxDecoration(state)
+            : _getCompletionFlashBoxDecoration(),
       ),
     );
   }
@@ -147,18 +61,20 @@ class _ToolBarAnimationState extends State<ToolBarAnimation>
   }
 
   // TODO: make expanded animation look good
-  BoxDecoration _getProgressIndicatorBoxDecoration() {
-    if (widget.expandedState) {
+  BoxDecoration _getProgressIndicatorBoxDecoration(
+      ToolBarAnimationState state
+  ) {
+    if (expandedState) {
       return BoxDecoration(
           gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Colors.grey.withOpacity(0.2 * _progressIndicatorOpacity),
-                Colors.grey.withOpacity(0.1 * _progressIndicatorOpacity),
-                Colors.grey.withOpacity(0.05 * _progressIndicatorOpacity),
-                Colors.grey.withOpacity(0.025 * _progressIndicatorOpacity),
-                Colors.grey.withOpacity(0.01 * _progressIndicatorOpacity),
+                Colors.grey.withOpacity(0.2 * state.animationOpacity),
+                Colors.grey.withOpacity(0.1 * state.animationOpacity),
+                Colors.grey.withOpacity(0.05 * state.animationOpacity),
+                Colors.grey.withOpacity(0.025 * state.animationOpacity),
+                Colors.grey.withOpacity(0.01 * state.animationOpacity),
               ]),
           // borderRadius: LoopaBorderRadius.left12
       );
@@ -168,18 +84,14 @@ class _ToolBarAnimationState extends State<ToolBarAnimation>
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
               colors: [
-                Colors.grey.withOpacity(0.1 * _progressIndicatorOpacity),
-                Colors.grey.withOpacity(0.2 * _progressIndicatorOpacity),
-                Colors.grey.withOpacity(0.3 * _progressIndicatorOpacity),
+                Colors.grey.withOpacity(0.1 * state.animationOpacity),
+                Colors.grey.withOpacity(0.2 * state.animationOpacity),
+                Colors.grey.withOpacity(0.3 * state.animationOpacity),
               ]
           ),
           borderRadius: LoopaBorderRadius.left12
       );
     }
-  }
-
-  int _getFadeDuration() {
-    return LongPressListener.longPressDurationMilliseconds ~/ 2;
   }
 }
 
