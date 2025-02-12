@@ -9,7 +9,8 @@ import 'package:loopa/utils/general_utils/service_locator.dart';
 import 'package:loopa/utils/loopa_utils/loopa.dart';
 
 class ToolBarAnimationBloc extends Bloc<ToolBarAnimationEvent, ToolBarAnimationState> {
-  static const double _fullOpacity = 1;
+  static const double _fullyVisible = 1;
+  static const double _fullyTransparent = 0;
 
   double? _maxWidth;
   Timer? _animationTimer;
@@ -17,8 +18,8 @@ class ToolBarAnimationBloc extends Bloc<ToolBarAnimationEvent, ToolBarAnimationS
   ToolBarAnimationBloc() : super(const ToolBarAnimationIdleState()) {
     on<ToolBarAnimationInitialEvent>(_handleInitialEvent);
     on<ToolBarAnimationLongPressStartedEvent>(_handleStartedEvent);
-    on<ToolBarAnimationLongPressCanceledEvent>(_handleCanceledEvent);
-    on<ToolBarAnimationLongPressCompletedEvent>(_handleCompletedEvent);
+    on<ToolBarAnimationLongPressEndedEvent>(_handleEndedEvent);
+    on<ToolBarAnimationDeleteCompletedEvent>(_handleDeleteCompletedEvent);
     on<ToolBarAnimationOnTickEvent>(_handleOnTickEvent);
   }
 
@@ -49,11 +50,11 @@ class ToolBarAnimationBloc extends Bloc<ToolBarAnimationEvent, ToolBarAnimationS
             animationWidth += widthPerTick;
           } else {
             _animationTimer?.cancel();
-            add(ToolBarAnimationLongPressCompletedEvent());
+            add(ToolBarAnimationDeleteCompletedEvent());
             return;
           }
           if (animationWidth > maxWidth / 3) {
-            animationOpacity = _fullOpacity;
+            animationOpacity = _fullyVisible;
           }
           add(ToolBarAnimationOnTickEvent(
               animationWidth: animationWidth,
@@ -70,14 +71,18 @@ class ToolBarAnimationBloc extends Bloc<ToolBarAnimationEvent, ToolBarAnimationS
         animationWidth: event.animationWidth,
         animationOpacity: event.animationOpacity,
         animationDuration: _getFadeDuration(),
-        animationInProgress: true
-    ));
+        animationInProgress: true));
   }
 
-  Future<void> _handleCanceledEvent(
-      ToolBarAnimationLongPressCanceledEvent event,
+  Future<void> _handleEndedEvent(
+      ToolBarAnimationLongPressEndedEvent event,
       Emitter<ToolBarAnimationState> emit
   ) async {
+
+    if (!event.isCancelEvent) {
+      mGetIt.get<ValueNotifier<Loopa>>().value.updateState();
+    }
+
     if (mGetIt.get<ValueNotifier<Loopa>>().value.isStateInitialOrRecording) return;
 
     _animationTimer?.cancel();
@@ -86,23 +91,36 @@ class ToolBarAnimationBloc extends Bloc<ToolBarAnimationEvent, ToolBarAnimationS
     }
   }
 
-  Future<void> _handleCompletedEvent(
-      ToolBarAnimationLongPressCompletedEvent event,
+  Future<void> _handleDeleteCompletedEvent(
+      ToolBarAnimationDeleteCompletedEvent event,
       Emitter<ToolBarAnimationState> emit
   ) async {
     double? maxWidth = _maxWidth;
     if (maxWidth == null) return;
-
     mGetIt.get<ValueNotifier<Loopa>>().value.clearLoop();
+    mGetIt.get<ValueNotifier<Loopa>>().value.emitInitialState();
 
     emit(ToolBarAnimationExpandingState(
         animationWidth: maxWidth,
-        animationOpacity: _fullOpacity,
+        animationOpacity: _fullyVisible,
         animationDuration: LoopaDuration.loopClearAnimationFadeDuration,
-        animationInProgress: false
-    ));
-    await Future.delayed(LoopaDuration.loopClearFlashAnimationDuration)
-        .whenComplete(() => emit(const ToolBarAnimationIdleState()));
+        animationInProgress: false));
+
+    // Wait a little before starting fade-out
+    await Future.delayed(LoopaDuration.loopClearFlashAnimationDuration);
+
+    // Emit fade-out state
+    emit(ToolBarAnimationExpandingState(
+      animationWidth: maxWidth,
+      animationOpacity: _fullyTransparent,
+      animationDuration: LoopaDuration.loopClearAnimationFadeDuration,
+      animationInProgress: false));
+
+    // Wait for animation to complete before setting to idle
+    await Future.delayed(LoopaDuration.loopClearAnimationFadeDuration);
+
+    // Now emit the idle state
+    emit(const ToolBarAnimationIdleState());
   }
 
   double _getWidthPerTick(double maxWidth) {

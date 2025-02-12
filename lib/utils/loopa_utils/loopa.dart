@@ -24,7 +24,7 @@ class Loopa {
   // late final LongPressListener _longPressListener;
   // late final LoopClearController _loopClearController;
   late final AudioController _audioController;
-  bool? _wasLoopaCleared = false;
+  bool _wasLoopaCleared = false;
 
   Loopa({
     required this.id,
@@ -36,25 +36,6 @@ class Loopa {
     // _loopClearController = LoopClearController();
     _audioController = AudioController(loopName: _name);
     _map[id] = this;
-  }
-
-  /// _clearLoop is called whenever when _longPressTimer finishes
-  /// and has three cases
-  /// either. The state of the loop is initial so there is no loop to clear
-  /// or.     The state of the loop is either playing or idle
-  ///         so clear the loop and inform the user
-
-  void clearLoop() {
-    //cancelLongPressListener();
-    if (_stateNotifier.value == LoopaState.initial) return;
-
-    // _longPressListener.onClearComplete();
-    // _loopClearController.onClearComplete();
-    _audioController.clearPlayer();
-    _name = getNameFromMap(id);
-    _wasLoopaCleared = true;
-    updateState();
-    _wasLoopaCleared = true;
   }
 
   bool get isStateInitialOrRecording {
@@ -73,16 +54,21 @@ class Loopa {
     }
   }
 
-  /// updateState is called whenever when the pan gesture ends,
-  /// during which if the loop was cleared then _clearLoop was called
-  /// and _loopWasCleared was set to true, meaning that the state
-  /// has already been updated and updateState needs to simply
-  /// reset the _loopWasCleared flag.
+  void clearLoop() {
+    //cancelLongPressListener();
+    if (_stateNotifier.value == LoopaState.initial) return;
+
+    // _longPressListener.onClearComplete();
+    // _loopClearController.onClearComplete();
+    _audioController.clearPlayer();
+    _name = getNameFromMap(id);
+    _wasLoopaCleared = true;
+  }
+
+  void emitInitialState() => _stateNotifier.value = LoopaState.initial;
 
   void updateState() {
-
-    if (_wasLoopaCleared == true) {
-      _stateNotifier.value = LoopaState.initial;
+    if (_wasLoopaCleared) {
       _wasLoopaCleared = false;
       return;
     }
@@ -164,6 +150,8 @@ class Loopa {
   String get memoryCountValue {
     return isSaved ? "$id*" : "$id";
   }
+
+  bool get wasLoopaCleared => _wasLoopaCleared;
 
   /// - Start static methods -
   

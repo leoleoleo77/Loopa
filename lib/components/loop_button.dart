@@ -93,17 +93,14 @@ class _LoopButtonState extends State<LoopButton> {
   void _handlePanEnd() {
     setState(() => isBeingPressed = false);
 
-    mGetIt.get<ValueNotifier<Loopa>>()
-        .value.updateState();
-
     mGetIt.get<ToolBarAnimationBloc>()
-        .add(ToolBarAnimationLongPressCanceledEvent());
+        .add(ToolBarAnimationLongPressEndedEvent());
   }
 
   void _handlePanCancel() {
     setState(() => isBeingPressed = false);
 
     mGetIt.get<ToolBarAnimationBloc>()
-        .add(ToolBarAnimationLongPressCanceledEvent());
+        .add(ToolBarAnimationLongPressEndedEvent(isCancelEvent: true));
   }
 }

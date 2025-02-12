@@ -11,16 +11,19 @@ class ToolBarAnimationLongPressStartedEvent
   ToolBarAnimationLongPressStartedEvent();
 }
 
-class ToolBarAnimationLongPressCanceledEvent
+class ToolBarAnimationLongPressEndedEvent
     extends ToolBarAnimationEvent {
+  final bool isCancelEvent;
 
-  ToolBarAnimationLongPressCanceledEvent();
+  ToolBarAnimationLongPressEndedEvent({
+    this.isCancelEvent = false
+  });
 }
 
-class ToolBarAnimationLongPressCompletedEvent
+class ToolBarAnimationDeleteCompletedEvent
     extends ToolBarAnimationEvent {
 
-  ToolBarAnimationLongPressCompletedEvent();
+  ToolBarAnimationDeleteCompletedEvent();
 }
 
 class ToolBarAnimationOnTickEvent extends ToolBarAnimationEvent {
