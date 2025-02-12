@@ -4,6 +4,7 @@ import 'package:loopa/components/loop_selection/loop_selection_dropdown.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
 import 'package:loopa/utils/general_utils/service_locator.dart';
 import 'package:loopa/utils/loopa_utils/loopa.dart';
+import 'package:loopa/utils/misc_utils/custom_selection_controls.dart';
 
 class LoopSelectionView extends StatefulWidget {
   // final Loopa loopa;
@@ -144,8 +145,7 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
                 builder: (BuildContext context, bool value, Widget? child) {
                   return _getGradientText(
                       mGetIt.get<ValueNotifier<Loopa>>().value.memoryCountValue,
-                      LoopaTextStyle.memoryCount
-                  );
+                      LoopaTextStyle.memoryCount);
                 },
               ),
             ],
@@ -239,29 +239,6 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
     } else {
       return mGetIt.get<ValueNotifier<Loopa>>().value.getName();
     }
-  }
-}
-
-
-class NoTextSelectionControls extends MaterialTextSelectionControls {
-  @override
-  Widget buildHandle(
-      BuildContext context,
-      TextSelectionHandleType type,
-      double textHeight,
-      [void Function()? onTap]
-  ) {
-    return Container();
-  }
-
-  @override
-  Size getHandleSize(double textLineHeight) {
-    return Size.zero; // No size for the handle
-  }
-
-  @override
-  Offset getHandleAnchor(TextSelectionHandleType type, double textLineHeight) {
-    return Offset.zero; // No anchor needed
   }
 }
 

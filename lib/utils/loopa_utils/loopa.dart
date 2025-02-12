@@ -2,13 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:loopa/utils/general_utils/app_log.dart';
+import 'package:loopa/utils/misc_utils/app_log.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
 import 'package:loopa/utils/general_utils/memory_manager.dart';
 import 'package:loopa/utils/general_utils/service_locator.dart';
 import 'package:loopa/utils/loopa_utils/audio_controller.dart';
 import 'package:loopa/utils/loopa_utils/loop_clear_controller.dart';
-import 'package:loopa/utils/loopa_utils/tool_bar_animation_controller.dart';
 
 class Loopa {
   static final Map<int, Loopa> _map = {};
@@ -182,7 +181,7 @@ class Loopa {
       try {
         return int.parse(MemoryManager.getLastVisitedKey as String);
       } catch (e) {
-        AppLog.info(e);
+        AppLog.error(e);
         return 0;
       }
     }
