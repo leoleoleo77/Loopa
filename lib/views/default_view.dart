@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:loopa/components/loop_button.dart';
 import 'package:loopa/components/tool_bar/tool_bar_item.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
-import 'package:loopa/utils/loopa_utils/loopa.dart';
 
 class DefaultView extends StatefulWidget {
   final VoidCallback onToolbarPressed;

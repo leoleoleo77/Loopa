@@ -1,7 +1,10 @@
+import 'package:flutter/material.dart';
+
 class KeyboardController {
   KeyboardController();
+  final ValueNotifier<bool> _keyboardNotifier = ValueNotifier<bool>(false);
 
-  bool isKeyboardActive = false;
-
-  void toggleKeyboard() => isKeyboardActive = !isKeyboardActive;
+  ValueNotifier<bool> get keyboardNotifier => _keyboardNotifier;
+  bool get isKeyboardActive => _keyboardNotifier.value;
+  set isKeyboardActive(bool value) => _keyboardNotifier.value = value;
 }

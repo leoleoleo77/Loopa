@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 
 /// source: https://stackoverflow.com/a/78452373/14656077

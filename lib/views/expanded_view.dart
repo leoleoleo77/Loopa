@@ -67,7 +67,7 @@ class ExpandedView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     PlayRecLights(),
-                    LoopSelectionView(compactView: false )
+                    LoopSelectionView(isCompactView: false )
                   ],
                 ),
               ),

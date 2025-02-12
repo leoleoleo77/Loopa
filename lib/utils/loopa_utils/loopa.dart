@@ -2,32 +2,31 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:loopa/components/loop_selection/loop_selection_item/bloc/loop_selection_item_bloc.dart';
+import 'package:loopa/components/loop_selection/loop_selection_item/bloc/loop_selection_item_event.dart';
 import 'package:loopa/utils/misc_utils/app_log.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
 import 'package:loopa/utils/general_utils/memory_manager.dart';
 import 'package:loopa/utils/general_utils/service_locator.dart';
 import 'package:loopa/utils/loopa_utils/audio_controller.dart';
-import 'package:loopa/utils/loopa_utils/loop_clear_controller.dart';
 
 class Loopa {
   static final Map<int, Loopa> _map = {};
 
   late final int id;
-  late String _name;
+  late String name;
   late final ValueNotifier<LoopaState> _stateNotifier;
   late final ValueNotifier<bool> _saveNotifier;
-  late final LoopClearController _loopClearController;
   late final AudioController _audioController;
   bool _wasLoopaCleared = false;
 
   Loopa({
     required this.id,
   }) {
-    _name = _getDefaultName(id);
+    name = _getDefaultName(id);
     _stateNotifier = ValueNotifier(LoopaState.initial);
     _saveNotifier = ValueNotifier(false);
-    _loopClearController = LoopClearController();
-    _audioController = AudioController(loopName: _name);
+    _audioController = AudioController(loopName: name);
     _map[id] = this;
   }
 
@@ -35,6 +34,8 @@ class Loopa {
     return _stateNotifier.value == LoopaState.initial
         || _stateNotifier.value == LoopaState.recording;
   }
+
+  bool get isStateInitial => _stateNotifier.value == LoopaState.initial;
 
   bool _isRecording() {
     return _stateNotifier.value == LoopaState.recording;
@@ -50,14 +51,16 @@ class Loopa {
   void clearLoop() {
     if (_stateNotifier.value == LoopaState.initial) return;
 
-    _loopClearController.onClearComplete();
+    mGetIt.get<LoopSelectionItemBloc>()
+        .add(LoopSelectionItemStartFlashingEvent());
     _audioController.clearPlayer();
-    _name = getNameFromMap(id);
+    name = getNameFromMap(id);
     _wasLoopaCleared = true;
     _stateNotifier.value = LoopaState.initial;
   }
 
   void updateState() {
+
     if (_wasLoopaCleared) {
       _wasLoopaCleared = false;
       return;
@@ -66,8 +69,9 @@ class Loopa {
     switch(_stateNotifier.value) {
       case LoopaState.initial:
         _stateNotifier.value = LoopaState.recording;
-        LoopClearController.stopFlashing();
         _audioController.startRecording();
+        mGetIt.get<LoopSelectionItemBloc>()
+            .add(LoopSelectionItemStopFlashingEvent());
         return;
       case LoopaState.recording:
         _stateNotifier.value = LoopaState.playing;
@@ -86,34 +90,32 @@ class Loopa {
 
   Map<String, dynamic> toJson() {
     return {
-      LoopaJson.name: _name,
+      LoopaJson.name: name,
     };
   }
 
   Future<void> handleSave() async {
     if (_saveNotifier.value == false) {
       _saveNotifier.value = await MemoryManager.saveLoopa(this);
-      AppLog.info("Saved Loopa ${getName()} = ${_saveNotifier.value}");
+      AppLog.info("Saved Loopa $name = ${_saveNotifier.value}");
     } else {
       _saveNotifier.value = !await MemoryManager.deleteLoopa(this);
-      AppLog.info("Deleted Loopa ${getName()} = ${!_saveNotifier.value}");
+      AppLog.info("Deleted Loopa $name = ${!_saveNotifier.value}");
     }
+    mGetIt.get<LoopSelectionItemBloc>()
+        .add(LoopSelectionItemToggleMemoryIdAsteriskEvent());
   }
 
   void setValuesFromMemory(String data) {
     Map<String, dynamic> json = jsonDecode(data);
     saveNotifier.value = true;
 
-    setName(json[LoopaJson.name]);
+    name = (json[LoopaJson.name]);
   }
 
   ValueNotifier<LoopaState> getStateNotifier() => _stateNotifier;
 
-  String getName() => _name;
-
-  void setName(String name) => _name = name;
-
-  void setDefaultName() => _name = _getDefaultName(id);
+  void setDefaultName() => name = _getDefaultName(id);
 
   ValueNotifier<bool> get saveNotifier => _saveNotifier;
 
@@ -126,21 +128,13 @@ class Loopa {
   bool get wasLoopaCleared => _wasLoopaCleared;
 
   /// - Start static methods -
-  
-  static void setStartFlashingMethod(Function() function) {
-    LoopClearController.startFlashing = function;
-  }
-
-  static void setStopFlashingMethod(Function() function) {
-    LoopClearController.stopFlashing = function;
-  }
 
   static String _getDefaultName(int i) {
     return "LOOP_$i";
   }
 
   static String getNameFromMap(int key) {
-    return _map[key]?._name ?? _getDefaultName(key);
+    return _map[key]?.name ?? _getDefaultName(key);
   }
 
   static LoopaState getStateFromMap(int key) {
@@ -155,13 +149,14 @@ class Loopa {
     if (id == null || id == mGetIt.get<ValueNotifier<Loopa>>().value.id) return;
 
     mGetIt.get<ValueNotifier<Loopa>>().value._cancelRecording();
-    LoopClearController.stopFlashing();
+    mGetIt.get<LoopSelectionItemBloc>()
+        .add(LoopSelectionItemStopFlashingEvent());
 
-    mGetIt.get<ValueNotifier<Loopa>>().value = _map[id] ?? Loopa(id: id);
+    mGetIt.get<ValueNotifier<Loopa>>().value = getLoopaFromMap(key: id);
     MemoryManager.saveLastVisitedKey(id.toString()); // todo: temp
   }
 
-  static Loopa getLoopaFromMap(int key) {
+  static Loopa getLoopaFromMap({required int key}) {
     return _map[key] ?? Loopa(id: key);
   }
 

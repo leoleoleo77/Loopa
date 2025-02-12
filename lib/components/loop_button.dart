@@ -4,18 +4,15 @@ import 'package:loopa/components/tool_bar/tool_bar_animation/bloc/tool_bar_anima
 import 'package:loopa/utils/general_utils/constants.dart';
 import 'package:loopa/utils/general_utils/keyboard_controller.dart';
 import 'package:loopa/utils/general_utils/service_locator.dart';
-import 'package:loopa/utils/loopa_utils/loopa.dart';
 
 import 'tool_bar/tool_bar_animation/bloc/tool_bar_animation_bloc.dart';
 
 class LoopButton extends StatefulWidget {
   final bool largeState;
-  // final bool isKeyboardActive;
 
   const LoopButton({
     super.key,
     this.largeState = true,
-    // required this.isKeyboardActive
   });
 
   @override
@@ -55,18 +52,23 @@ class _LoopButtonState extends State<LoopButton> {
     return Expanded(
       child: Semantics.fromProperties(
         properties: LoopaSemantics.loopButtonSemantics,
-        child: AbsorbPointer(
-          absorbing: mGetIt.get<KeyboardController>().isKeyboardActive,
-          child: GestureDetector(
-            onPanStart: (_) => _handlePanStart(),
-            onPanEnd: (_) => _handlePanEnd(),
-            onPanCancel: () => _handlePanCancel(),
-            child: Image.asset(
-                _getImageAsset(),
-                width: double.infinity,
-                fit: BoxFit.fill,
-            )
-          ),
+        child: ValueListenableBuilder<bool>(
+          valueListenable: mGetIt.get<KeyboardController>().keyboardNotifier,
+          builder: (context, isKeyboardActive, child) {
+            return AbsorbPointer(
+              absorbing: isKeyboardActive,
+              child: GestureDetector(
+                onPanStart: (_) => _handlePanStart(),
+                onPanEnd: (_) => _handlePanEnd(),
+                onPanCancel: () => _handlePanCancel(),
+                child: Image.asset(
+                    _getImageAsset(),
+                    width: double.infinity,
+                    fit: BoxFit.fill,
+                )
+              ),
+            );
+          }
         ),
       ),
     );

@@ -11,6 +11,7 @@ class SaveLoopaButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // todo: add bloc
     return ValueListenableBuilder(
       valueListenable: mGetIt.get<ValueNotifier<Loopa>>().value.saveNotifier,
       builder: (context, isSaved, child) {

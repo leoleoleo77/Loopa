@@ -17,6 +17,7 @@ class ToolBarAnimation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // todo: remove layout builder
     return LayoutBuilder(
       builder: (context, constraints) {
         return BlocProvider.value(
