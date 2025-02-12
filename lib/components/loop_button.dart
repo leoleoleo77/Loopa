@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:loopa/components/tool_bar/tool_bar_animation/bloc/tool_bar_animation_event.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
+import 'package:loopa/utils/general_utils/keyboard_controller.dart';
 import 'package:loopa/utils/general_utils/service_locator.dart';
 import 'package:loopa/utils/loopa_utils/loopa.dart';
 
@@ -9,12 +10,12 @@ import 'tool_bar/tool_bar_animation/bloc/tool_bar_animation_bloc.dart';
 
 class LoopButton extends StatefulWidget {
   final bool largeState;
-  final bool isKeyboardActive;
+  // final bool isKeyboardActive;
 
   const LoopButton({
     super.key,
     this.largeState = true,
-    required this.isKeyboardActive
+    // required this.isKeyboardActive
   });
 
   @override
@@ -55,7 +56,7 @@ class _LoopButtonState extends State<LoopButton> {
       child: Semantics.fromProperties(
         properties: LoopaSemantics.loopButtonSemantics,
         child: AbsorbPointer(
-          absorbing: widget.isKeyboardActive,
+          absorbing: mGetIt.get<KeyboardController>().isKeyboardActive,
           child: GestureDetector(
             onPanStart: (_) => _handlePanStart(),
             onPanEnd: (_) => _handlePanEnd(),

@@ -3,25 +3,15 @@ import 'package:loopa/components/loop_selection/loop_selection_item/view/loop_se
 import 'package:loopa/components/play_rec_lights.dart';
 import 'package:loopa/components/tool_bar/tool_bar_animation/view/tool_bar_animation.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
-import 'package:loopa/utils/loopa_utils/loopa.dart';
 
-class ToolBar extends StatefulWidget {
-  // final Loopa loopa;
+class ToolBar extends StatelessWidget {
   final VoidCallback onToolbarPressed;
-  final VoidCallback toggleKeyboardNotifier;
 
   const ToolBar({
     super.key,
-    // required this.loopa,
     required this.onToolbarPressed,
-    required this.toggleKeyboardNotifier
   });
 
-  @override
-  State<ToolBar> createState() => _ToolBarState();
-}
-
-class _ToolBarState extends State<ToolBar> {
   @override
   Widget build(BuildContext context) {
     return Semantics.fromProperties(
@@ -29,26 +19,21 @@ class _ToolBarState extends State<ToolBar> {
       child: Padding(
         padding: LoopaPadding.horizontal16,
         child: GestureDetector(
-          onTap: widget.onToolbarPressed,
+          onTap: onToolbarPressed,
           child: Container(
               width: double.infinity,
               height: LoopaSpacing.toolBarHeight,
               decoration: _getBoxDecoration(),
-              child: Stack(
+              child: const Stack(
                 children: [
-                  const ToolBarAnimation(),
+                  ToolBarAnimation(),
                   Padding(
                     padding: LoopaPadding.defaultToolBarPadding,
                     child: Row(
                       children: [
-                        PlayRecLights(
-                            // loopaStateNotifier: widget.loopa.getStateNotifier()
-                        ),
-                        const Spacer(),
-                        LoopSelectionView(
-                            // loopa: widget.loopa,
-                            toggleKeyboardNotifier: widget.toggleKeyboardNotifier,
-                        )
+                        PlayRecLights(),
+                        Spacer(),
+                        LoopSelectionView()
                       ],
                     ),
                   ),

@@ -18,12 +18,12 @@ class DefaultView extends StatefulWidget {
 
 class _DefaultViewState extends State<DefaultView> {
   // TODO: register this as a singleton
-  late bool _isKeyboardActive;
+  //late bool _isKeyboardActive;
 
   @override
   void initState() {
     super.initState();
-    _isKeyboardActive = false;
+    //_isKeyboardActive = false;
   }
 
   @override
@@ -32,10 +32,12 @@ class _DefaultViewState extends State<DefaultView> {
       children: [
         ToolBar(
           onToolbarPressed: widget.onToolbarPressed,
-          toggleKeyboardNotifier: _toggleKeyboardNotifier),
+          // toggleKeyboardNotifier: _toggleKeyboardNotifier
+        ),
         _getLoopaInstructions(),
         LoopButton(
-            isKeyboardActive: _isKeyboardActive),
+            // isKeyboardActive: _isKeyboardActive
+        ),
       ],
     );
   }
@@ -75,9 +77,9 @@ class _DefaultViewState extends State<DefaultView> {
     );
   }
 
-  void _toggleKeyboardNotifier() {
-    setState(() {
-      _isKeyboardActive = !_isKeyboardActive;
-    });
-  }
+  // void _toggleKeyboardNotifier() {
+  //   setState(() {
+  //     _isKeyboardActive = !_isKeyboardActive;
+  //   });
+  // }
 }

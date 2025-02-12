@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:loopa/components/loop_selection/loop_selection_item/bloc/loop_selection_item_bloc.dart';
 import 'package:loopa/components/tool_bar/tool_bar_animation/bloc/tool_bar_animation_bloc.dart';
+import 'package:loopa/utils/general_utils/keyboard_controller.dart';
 import 'package:loopa/utils/loopa_utils/loopa.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,7 +17,10 @@ Future<void> setupLocator() async {
 
   mGetIt.registerSingleton<LoopSelectionItemBloc>(LoopSelectionItemBloc());
 
+
   // Register ValueNotifier<Loopa> as a singleton and initialize it with the last visited loopa key
   mGetIt.registerSingleton<ValueNotifier<Loopa>>(
       ValueNotifier<Loopa>(Loopa.getLoopaFromMap(Loopa.getLastVisitedLoopaKey)));
+
+  mGetIt.registerSingleton<KeyboardController>(KeyboardController());
 }

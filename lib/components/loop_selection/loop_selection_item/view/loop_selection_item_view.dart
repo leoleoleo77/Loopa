@@ -2,20 +2,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:loopa/components/loop_selection/loop_selection_dropdown.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
+import 'package:loopa/utils/general_utils/keyboard_controller.dart';
 import 'package:loopa/utils/general_utils/service_locator.dart';
 import 'package:loopa/utils/loopa_utils/loopa.dart';
 import 'package:loopa/utils/misc_utils/custom_selection_controls.dart';
 
 class LoopSelectionView extends StatefulWidget {
-  // final Loopa loopa;
   final bool compactView;
-  final VoidCallback toggleKeyboardNotifier;
 
   const LoopSelectionView({
     super.key,
-    // required this.loopa,
     this.compactView = true,
-    required this.toggleKeyboardNotifier,
   });
 
   @override
@@ -35,7 +32,6 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
     super.initState();
     Loopa.setStartFlashingMethod(_startFlashing);
     Loopa.setStopFlashingMethod(_stopFlashing);
-    //_textEditingController.text = _getDisplayText();
   }
 
   @override
@@ -214,7 +210,7 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
 
   void _openKeyboard() {
     _textFieldFocusNode.requestFocus();
-    widget.toggleKeyboardNotifier();
+    mGetIt.get<KeyboardController>().toggleKeyboard();
   }
 
   void _closeKeyboard() {
@@ -225,7 +221,7 @@ class _LoopSelectionViewState extends State<LoopSelectionView> {
     }
 
     FocusScope.of(context).unfocus();
-    widget.toggleKeyboardNotifier();
+    mGetIt.get<KeyboardController>().toggleKeyboard();
     _nameChanged = false;
   }
 
