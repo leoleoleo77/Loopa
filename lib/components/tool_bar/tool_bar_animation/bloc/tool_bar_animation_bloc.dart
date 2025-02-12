@@ -42,7 +42,7 @@ class ToolBarAnimationBloc extends Bloc<ToolBarAnimationEvent, ToolBarAnimationS
 
     final double widthPerTick = _getWidthPerTick(maxWidth);
     double animationWidth = 0;
-    double animationOpacity = 0;
+    double animationOpacity = _fullyTransparent;
     _animationTimer = Timer.periodic(
         LoopaDuration.clearAnimationTickDuration,
         (_) {
@@ -98,7 +98,6 @@ class ToolBarAnimationBloc extends Bloc<ToolBarAnimationEvent, ToolBarAnimationS
     double? maxWidth = _maxWidth;
     if (maxWidth == null) return;
     mGetIt.get<ValueNotifier<Loopa>>().value.clearLoop();
-    mGetIt.get<ValueNotifier<Loopa>>().value.emitInitialState();
 
     emit(ToolBarAnimationExpandingState(
         animationWidth: maxWidth,
