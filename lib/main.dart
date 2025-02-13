@@ -39,16 +39,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool _expandedState = true;
-  late final ValueNotifier<Loopa> _loopaNotifier;
 
   // TODO: handle initialization
+  // TODO: wrap main inside a bloc
   @override
   void initState() {
     super.initState();
     PermissionHandler.requestPermissions();
     Loopa.initializeLoopas();
-    _loopaNotifier = ValueNotifier<Loopa>(Loopa.getLoopa(0));
-    Loopa.setLoopaNotifier(_loopaNotifier);
   }
 
   @override
@@ -58,18 +56,14 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Padding(
         padding: LoopaPadding.vertical16,
         child: ValueListenableBuilder<Loopa>(
-          valueListenable: _loopaNotifier,
-           builder: (context, loopaState, child) {
+          valueListenable: mGetIt.get<ValueNotifier<Loopa>>(),
+           builder: (context, loopa, child) {
             if (_expandedState) {
               return DefaultView(
-                onToolbarPressed: _onToolbarPressed,
-                loopa: _loopaNotifier.value,
-              );
+                onToolbarPressed: _onToolbarPressed);
             } else {
               return ExpandedView(
-                onToolbarPressed: _onToolbarPressed,
-                loopa: _loopaNotifier.value,
-              );
+                onToolbarPressed: _onToolbarPressed);
             }
           }
         )

@@ -2,58 +2,42 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:loopa/utils/general_utils/app_log.dart';
+import 'package:loopa/components/loop_selection/loop_selection_item/bloc/loop_selection_item_bloc.dart';
+import 'package:loopa/components/loop_selection/loop_selection_item/bloc/loop_selection_item_event.dart';
+import 'package:loopa/components/save_loopa_button/bloc/save_loopa_button_bloc.dart';
+import 'package:loopa/components/save_loopa_button/bloc/save_loopa_button_event.dart';
+import 'package:loopa/utils/misc_utils/app_log.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
 import 'package:loopa/utils/general_utils/memory_manager.dart';
+import 'package:loopa/utils/general_utils/service_locator.dart';
 import 'package:loopa/utils/loopa_utils/audio_controller.dart';
-import 'package:loopa/utils/loopa_utils/long_press_listener.dart';
-import 'package:loopa/utils/loopa_utils/loop_clear_controller.dart';
-import 'package:loopa/utils/loopa_utils/tool_bar_animation_controller.dart';
 
 class Loopa {
   static final Map<int, Loopa> _map = {};
-  static late ValueNotifier<Loopa> _loopaNotifier;
 
   late final int id;
-  late String _name;
+  late String name;
   late final ValueNotifier<LoopaState> _stateNotifier;
   late final ValueNotifier<bool> _saveNotifier;
-  late final LongPressListener _longPressListener;
-  late final LoopClearController _loopClearController;
   late final AudioController _audioController;
+  bool _wasLoopaCleared = false;
 
   Loopa({
     required this.id,
   }) {
-    _name = _getDefaultName(id);
+    name = _getDefaultName(id);
     _stateNotifier = ValueNotifier(LoopaState.initial);
     _saveNotifier = ValueNotifier(false);
-    _longPressListener = LongPressListener(onFinish: _clearLoop);
-    _loopClearController = LoopClearController();
-    _audioController = AudioController(loopName: _name);
+    _audioController = AudioController(loopName: name);
     _map[id] = this;
   }
 
-  /// _clearLoop is called whenever when _longPressTimer finishes
-  /// and has three cases
-  /// either. The state of the loop is initial so there is no loop to clear
-  /// or.     The state of the loop is either playing or idle
-  ///         so clear the loop and inform the user
-
-  void _clearLoop() {
-    cancelLongPressListener();
-    if (_stateNotifier.value == LoopaState.initial) return;
-
-    _longPressListener.onClearComplete();
-    _loopClearController.onClearComplete();
-    _audioController.clearPlayer();
-    _name = getNameFromMap(id);
-  }
-
-  bool _stateIsInitialOrRecording() {
+  bool get isStateInitialOrRecording {
     return _stateNotifier.value == LoopaState.initial
         || _stateNotifier.value == LoopaState.recording;
   }
+
+  bool get isStateInitial => _stateNotifier.value == LoopaState.initial;
 
   bool _isRecording() {
     return _stateNotifier.value == LoopaState.recording;
@@ -66,25 +50,30 @@ class Loopa {
     }
   }
 
-  /// updateState is called whenever when the pan gesture ends,
-  /// during which if the loop was cleared then _clearLoop was called
-  /// and _loopWasCleared was set to true, meaning that the state
-  /// has already been updated and updateState needs to simply
-  /// reset the _loopWasCleared flag.
+  void clearLoop() {
+    if (_stateNotifier.value == LoopaState.initial) return;
+
+    mGetIt.get<LoopSelectionItemBloc>()
+        .add(LoopSelectionItemStartFlashingEvent());
+    _audioController.clearPlayer();
+    name = getNameFromMap(id);
+    _wasLoopaCleared = true;
+    _stateNotifier.value = LoopaState.initial;
+  }
 
   void updateState() {
 
-    if (_loopClearController.loopWasCleared == true) {
-      _stateNotifier.value = LoopaState.initial;
-      _loopClearController.loopWasCleared = false;
+    if (_wasLoopaCleared) {
+      _wasLoopaCleared = false;
       return;
     }
 
     switch(_stateNotifier.value) {
       case LoopaState.initial:
         _stateNotifier.value = LoopaState.recording;
-        LoopClearController.stopFlashing();
         _audioController.startRecording();
+        mGetIt.get<LoopSelectionItemBloc>()
+            .add(LoopSelectionItemStopFlashingEvent());
         return;
       case LoopaState.recording:
         _stateNotifier.value = LoopaState.playing;
@@ -101,50 +90,34 @@ class Loopa {
     }
   }
 
-  void startLongPressListener() {
-    if (_stateIsInitialOrRecording()) return;
-    _longPressListener.start();
-  }
-
-  void cancelLongPressListener() {
-    if (_stateIsInitialOrRecording()) return;
-    _longPressListener.cancel();
-  }
-
-  ToolBarAnimationController getToolBarAnimationController() {
-    return LongPressListener.toolBarAnimationController;
-  }
-
   Map<String, dynamic> toJson() {
     return {
-      LoopaJson.name: _name,
+      LoopaJson.name: name,
     };
   }
 
   Future<void> handleSave() async {
     if (_saveNotifier.value == false) {
       _saveNotifier.value = await MemoryManager.saveLoopa(this);
-      AppLog.info("Saved Loopa ${getName()} = ${_saveNotifier.value}");
+      AppLog.info("Saved Loopa $name = ${_saveNotifier.value}");
     } else {
       _saveNotifier.value = !await MemoryManager.deleteLoopa(this);
-      AppLog.info("Deleted Loopa ${getName()} = ${!_saveNotifier.value}");
+      AppLog.info("Deleted Loopa $name = ${!_saveNotifier.value}");
     }
+    mGetIt.get<LoopSelectionItemBloc>()
+        .add(LoopSelectionItemToggleMemoryIdAsteriskEvent());
   }
 
   void setValuesFromMemory(String data) {
     Map<String, dynamic> json = jsonDecode(data);
     saveNotifier.value = true;
 
-    setName(json[LoopaJson.name]);
+    name = (json[LoopaJson.name]);
   }
 
   ValueNotifier<LoopaState> getStateNotifier() => _stateNotifier;
 
-  String getName() => _name;
-
-  void setName(String name) => _name = name;
-
-  void setDefaultName() => _name = _getDefaultName(id);
+  void setDefaultName() => name = _getDefaultName(id);
 
   ValueNotifier<bool> get saveNotifier => _saveNotifier;
 
@@ -154,22 +127,16 @@ class Loopa {
     return isSaved ? "$id*" : "$id";
   }
 
-  /// - Start static methods -
-  
-  static void setStartFlashingMethod(Function() function) {
-    LoopClearController.startFlashing = function;
-  }
+  bool get wasLoopaCleared => _wasLoopaCleared;
 
-  static void setStopFlashingMethod(Function() function) {
-    LoopClearController.stopFlashing = function;
-  }
+  /// - Start static methods -
 
   static String _getDefaultName(int i) {
     return "LOOP_$i";
   }
 
   static String getNameFromMap(int key) {
-    return _map[key]?._name ?? _getDefaultName(key);
+    return _map[key]?.name ?? _getDefaultName(key);
   }
 
   static LoopaState getStateFromMap(int key) {
@@ -180,21 +147,22 @@ class Loopa {
     return _map[key]?.memoryCountValue ?? key.toString();
   }
 
-  static void setLoopaNotifier(ValueNotifier<Loopa> loopaNotifier) {
-    _loopaNotifier = loopaNotifier;
-  }
-
   static void handleOnLoopaChange(int? id) {
-    if (id == null || id == _loopaNotifier.value.id) return;
+    if (id == null || id == mGetIt.get<ValueNotifier<Loopa>>().value.id) return;
 
-    _loopaNotifier.value._cancelRecording();
-    LoopClearController.stopFlashing();
+    mGetIt.get<ValueNotifier<Loopa>>().value._cancelRecording();
 
-    _loopaNotifier.value = _map[id] ?? Loopa(id: id);
+    mGetIt.get<LoopSelectionItemBloc>().add(LoopSelectionItemStopFlashingEvent());
+
+    mGetIt.get<ValueNotifier<Loopa>>().value = getLoopaFromMap(key: id);
+
+    mGetIt.get<SaveLoopaButtonBloc>().add(SaveLoopaButtonLoopaChangedEvent());
+
+    MemoryManager.saveLastVisitedKey(id.toString()); // todo: temp
   }
 
-  static Loopa getLoopa(int id) {
-    return _map[id] ?? Loopa(id: id);
+  static Loopa getLoopaFromMap({required int key}) {
+    return _map[key] ?? Loopa(id: key);
   }
 
   static void initializeLoopas() {
@@ -202,6 +170,19 @@ class Loopa {
       String? loopaInfo = MemoryManager.getLoopaInfo(key);
       if (loopaInfo != null) {
         Loopa(id: key).setValuesFromMemory(loopaInfo);
+      }
+    }
+  }
+
+  static int get getLastVisitedLoopaKey {
+    if (MemoryManager.getLastVisitedKey == null) {
+      return 0;
+    } else {
+      try {
+        return int.parse(MemoryManager.getLastVisitedKey as String);
+      } catch (e) {
+        AppLog.error(e);
+        return 0;
       }
     }
   }

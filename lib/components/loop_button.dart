@@ -1,18 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:loopa/components/tool_bar/tool_bar_animation/bloc/tool_bar_animation_event.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
-import 'package:loopa/utils/loopa_utils/loopa.dart';
+import 'package:loopa/utils/general_utils/keyboard_controller.dart';
+import 'package:loopa/utils/general_utils/service_locator.dart';
+
+import 'tool_bar/tool_bar_animation/bloc/tool_bar_animation_bloc.dart';
 
 class LoopButton extends StatefulWidget {
   final bool largeState;
-  final Loopa loopa;
-  final bool isKeyboardActive;
 
   const LoopButton({
     super.key,
     this.largeState = true,
-    required this.loopa,
-    required this.isKeyboardActive
   });
 
   @override
@@ -52,18 +52,23 @@ class _LoopButtonState extends State<LoopButton> {
     return Expanded(
       child: Semantics.fromProperties(
         properties: LoopaSemantics.loopButtonSemantics,
-        child: AbsorbPointer(
-          absorbing: widget.isKeyboardActive,
-          child: GestureDetector(
-            onPanStart: (_) => _handlePanStart(),
-            onPanEnd: (_) => _handlePanEnd(),
-            onPanCancel: () => _handlePanCancel(),
-            child: Image.asset(
-                _getImageAsset(),
-                width: double.infinity,
-                fit: BoxFit.fill,
-            )
-          ),
+        child: ValueListenableBuilder<bool>(
+          valueListenable: mGetIt.get<KeyboardController>().keyboardNotifier,
+          builder: (context, isKeyboardActive, child) {
+            return AbsorbPointer(
+              absorbing: isKeyboardActive,
+              child: GestureDetector(
+                onPanStart: (_) => _handlePanStart(),
+                onPanEnd: (_) => _handlePanEnd(),
+                onPanCancel: () => _handlePanCancel(),
+                child: Image.asset(
+                    _getImageAsset(),
+                    width: double.infinity,
+                    fit: BoxFit.fill,
+                )
+              ),
+            );
+          }
         ),
       ),
     );
@@ -82,24 +87,23 @@ class _LoopButtonState extends State<LoopButton> {
   }
 
   void _handlePanStart() {
-    setState(() {
-      isBeingPressed = true;
-    });
-    widget.loopa.startLongPressListener(); // TODO: handle this better
+    setState(() => isBeingPressed = true);
+
+    mGetIt.get<ToolBarAnimationBloc>()
+      .add(ToolBarAnimationLongPressStartedEvent());
   }
 
   void _handlePanEnd() {
-    widget.loopa.cancelLongPressListener();
-    widget.loopa.updateState();
-    setState(() {
-      isBeingPressed = false;
-    });
+    setState(() => isBeingPressed = false);
+
+    mGetIt.get<ToolBarAnimationBloc>()
+        .add(ToolBarAnimationLongPressEndedEvent());
   }
 
   void _handlePanCancel() {
-    widget.loopa.cancelLongPressListener();
-    setState(() {
-      isBeingPressed = false;
-    });
+    setState(() => isBeingPressed = false);
+
+    mGetIt.get<ToolBarAnimationBloc>()
+        .add(ToolBarAnimationLongPressEndedEvent(isCancelEvent: true));
   }
 }

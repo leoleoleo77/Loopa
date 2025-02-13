@@ -1,18 +1,14 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 
 /// source: https://stackoverflow.com/a/78452373/14656077
 
 class AppLog {
   ///Method for log as error
-  static void error(Object e, StackTrace s, [dynamic message]) {
+  static void error(dynamic message) {
     if (kDebugMode) {
       debugPrint(
         '\x1B[31mAppError: ${message == null ? '' : message.toString()}\x1B[0m',
       );
-
-      Completer<void>().completeError(e, s);
     }
   }
 

@@ -149,12 +149,12 @@ class LoopaBorders {
   static const Border savedButtonBorders = Border(
     top: BorderSide(color: Colors.black, width: 4),
     left: BorderSide(color: Colors.black, width: 4),
-    right: BorderSide(color: Color.fromRGBO(26, 26, 26, 1), width: 1),
+    right: BorderSide(color: Colors.black, width: 4),
     bottom: BorderSide(color: Color.fromRGBO(26, 26, 26, 1), width: 1));
   static const Border saveButtonBorders = Border(
-      top: BorderSide(color: Color.fromRGBO(26, 26, 26, 1), width: 1),
+      top: BorderSide(color: Color.fromRGBO(24, 24, 24, 1), width: 4),
       left: BorderSide(color: Color.fromRGBO(32, 32, 32, 1), width: 1),
-      right: BorderSide(color: Colors.black, width: 4),
+      right: BorderSide(color: Color.fromRGBO(32, 32, 32, 1), width: 1),
       bottom: BorderSide(color: Colors.black, width: 4));
 }
 
@@ -164,6 +164,9 @@ class LoopaDuration {
   static const Duration zero = Duration.zero;
   static const Duration loopClearAnimationFadeDuration = Duration(milliseconds: 200);
   static const Duration loopClearFlashAnimationDuration = Duration(milliseconds: 300);
+  static const int longPressDurationSeconds = 2;
+  static const int longPressDurationMilliseconds =
+      longPressDurationSeconds * 1000;
 }
 
 class LoopaFontSize {
@@ -201,4 +204,8 @@ class LoopaSemantics {
 
 class LoopaJson {
   static const String name = "name";
+}
+
+class LoopaKeys {
+  static const String lastVisited = "last_visited";
 }

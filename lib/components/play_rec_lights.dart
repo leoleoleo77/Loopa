@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
+import 'package:loopa/utils/general_utils/service_locator.dart';
 import 'package:loopa/utils/loopa_utils/loopa.dart';
 
 class PlayRecLights extends StatelessWidget {
-  final ValueNotifier<LoopaState> loopaStateNotifier;
+  // final ValueNotifier<LoopaState> loopaStateNotifier;
 
   const PlayRecLights({
     super.key,
-    required this.loopaStateNotifier
+    // required this.loopaStateNotifier
   });
 
   @override
@@ -39,7 +40,7 @@ class PlayRecLights extends StatelessWidget {
       children: [
         _getCircleAvatarBackground(),
         ValueListenableBuilder<LoopaState>(
-          valueListenable: loopaStateNotifier,
+          valueListenable: mGetIt.get<ValueNotifier<Loopa>>().value.getStateNotifier(),
           builder: (context, loopaState, child) {
             Color redAccent;
             if (loopaState == LoopaState.recording) {
@@ -76,7 +77,7 @@ class PlayRecLights extends StatelessWidget {
       children: [
         _getCircleAvatarBackground(),
         ValueListenableBuilder<LoopaState>(
-          valueListenable: loopaStateNotifier,
+          valueListenable: mGetIt.get<ValueNotifier<Loopa>>().value.getStateNotifier(),
           builder: (context, loopaState, child) {
             Color greenAccent;
             if (loopaState == LoopaState.playing) {

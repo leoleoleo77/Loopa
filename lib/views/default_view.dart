@@ -2,16 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:loopa/components/loop_button.dart';
 import 'package:loopa/components/tool_bar/tool_bar_item.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
-import 'package:loopa/utils/loopa_utils/loopa.dart';
 
 class DefaultView extends StatefulWidget {
   final VoidCallback onToolbarPressed;
-  final Loopa loopa;
 
   const DefaultView({
     super.key,
     required this.onToolbarPressed,
-    required this.loopa
   });
 
   @override
@@ -19,12 +16,13 @@ class DefaultView extends StatefulWidget {
 }
 
 class _DefaultViewState extends State<DefaultView> {
-  late bool _isKeyboardActive;
+  // TODO: register this as a singleton
+  //late bool _isKeyboardActive;
 
   @override
   void initState() {
     super.initState();
-    _isKeyboardActive = false;
+    //_isKeyboardActive = false;
   }
 
   @override
@@ -32,14 +30,12 @@ class _DefaultViewState extends State<DefaultView> {
     return Column(
       children: [
         ToolBar(
-          loopa: widget.loopa,
           onToolbarPressed: widget.onToolbarPressed,
-          toggleKeyboardNotifier: _toggleKeyboardNotifier,
+          // toggleKeyboardNotifier: _toggleKeyboardNotifier
         ),
         _getLoopaInstructions(),
         LoopButton(
-            loopa: widget.loopa,
-            isKeyboardActive: _isKeyboardActive
+            // isKeyboardActive: _isKeyboardActive
         ),
       ],
     );
@@ -80,9 +76,9 @@ class _DefaultViewState extends State<DefaultView> {
     );
   }
 
-  void _toggleKeyboardNotifier() {
-    setState(() {
-      _isKeyboardActive = !_isKeyboardActive;
-    });
-  }
+  // void _toggleKeyboardNotifier() {
+  //   setState(() {
+  //     _isKeyboardActive = !_isKeyboardActive;
+  //   });
+  // }
 }

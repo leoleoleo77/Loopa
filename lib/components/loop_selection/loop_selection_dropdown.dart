@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:loopa/components/loop_selection/loop_selection_dropdown_item.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
+import 'package:loopa/utils/general_utils/service_locator.dart';
 import 'package:loopa/utils/loopa_utils/loopa.dart';
 
 class LoopSelectionDropdown extends StatelessWidget {
-  final ValueNotifier<LoopaState> loopaStateNotifier;
-  final Widget dropdownBuilder;
+  final Widget dropdownContainer;
 
   const LoopSelectionDropdown({
     super.key,
-    required this.dropdownBuilder,
-    required this.loopaStateNotifier,
+    required this.dropdownContainer,
   });
 
   // Basically what's going here is that the drop down list
@@ -27,13 +26,13 @@ class LoopSelectionDropdown extends StatelessWidget {
   Widget build(BuildContext context) {
     return DropdownButtonHideUnderline(
       child: ValueListenableBuilder<LoopaState>(
-          valueListenable: loopaStateNotifier,
+          valueListenable: mGetIt.get<ValueNotifier<Loopa>>().value.getStateNotifier(),
           builder: (context, loopaState, child) {
             // this shit works for some reason
             List<LoopSelectionItem> itemList = _getLoopSelectionItemList();
 
             return DropdownButton2(
-                customButton: dropdownBuilder,
+                customButton: dropdownContainer,
                 items: _getListOfDropdownMenuItems(itemList),
                 onChanged: (id) => _handleLoopaChange(id, itemList),
                 dropdownStyleData: _getDropdownStyleData(),

@@ -1,22 +1,17 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:loopa/components/loop_button.dart';
-import 'package:loopa/components/loop_selection/loop_selection_view.dart';
+import 'package:loopa/components/loop_selection/loop_selection_item/view/loop_selection_item_view.dart';
 import 'package:loopa/components/play_rec_lights.dart';
-import 'package:loopa/components/play_span_slider.dart';
-import 'package:loopa/components/save_loopa_button.dart';
-import 'package:loopa/components/tool_bar/tool_bar_animation.dart';
+import 'package:loopa/components/save_loopa_button/view/save_loopa_button_view.dart';
+import 'package:loopa/components/tool_bar/tool_bar_animation/view/tool_bar_animation.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
-import 'package:loopa/utils/loopa_utils/loopa.dart';
 
 class ExpandedView extends StatelessWidget {
   final VoidCallback onToolbarPressed;
-  final Loopa loopa;
 
   const ExpandedView({
     super.key,
     required this.onToolbarPressed,
-    required this.loopa
   });
 
   @override
@@ -25,11 +20,7 @@ class ExpandedView extends StatelessWidget {
       children: [
         _getExpandedMenu(),
         const SizedBox(height: LoopaSpacing.spacing8),
-        LoopButton(
-          largeState: false,
-          loopa: loopa,
-          isKeyboardActive: false,
-        )
+        const LoopButton(largeState: false)
       ],
     );
   }
@@ -47,7 +38,7 @@ class ExpandedView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _getPlayRecLightsAndLoopaSelection(),
-                    RangeSliderExample(),// temp
+                    // RangeSliderExample(),// temp
                     _getToggleExpandButton()
                   ],
                 ),
@@ -59,13 +50,12 @@ class ExpandedView extends StatelessWidget {
   }
 
   Widget _getPlayRecLightsAndLoopaSelection() {
-    return Stack(
+    return const Stack(
       children: [
         SizedBox(
           height: 96,
             child: ToolBarAnimation(
-                animationController: loopa.getToolBarAnimationController(),
-            expandedState: true,)),
+            expandedState: true)),
         Padding(
           padding: LoopaPadding.expandedToolBarPadding,
           child: Column(
@@ -76,18 +66,12 @@ class ExpandedView extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    PlayRecLights(
-                        loopaStateNotifier: loopa.getStateNotifier()
-                    ),
-                    LoopSelectionView(
-                      loopa: loopa,
-                      compactView: false,
-                      toggleKeyboardNotifier: () {},
-                    )
+                    PlayRecLights(),
+                    LoopSelectionView(isCompactView: false )
                   ],
                 ),
               ),
-              SaveLoopaButton(loopa: loopa)
+              SaveLoopaButton()
             ],
           ),
         ),
