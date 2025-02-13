@@ -29,11 +29,14 @@ class SaveLoopaButton extends StatelessWidget {
             child: InkWell(
               onTap: () => mGetIt.get<SaveLoopaButtonBloc>()
                   .add(SaveLoopaButtonSaveLoopaEvent()),
-              child: Center(
-                child: Text(
-                    isLoopaSaved ? LoopaText.saved : LoopaText.save,
-                    style: isLoopaSaved
-                        ? LoopaTextStyle.savedLabel : LoopaTextStyle.saveLabel
+              child: Padding(
+                padding: isLoopaSaved ? LoopaPadding.top4 : LoopaPadding.zero ,
+                child: Center(
+                    child: Text(
+                        LoopaText.save,
+                        style: isLoopaSaved
+                            ? LoopaTextStyle.savedLabel : LoopaTextStyle.saveLabel
+                    )
                 ),
               ),
             ),
@@ -44,30 +47,31 @@ class SaveLoopaButton extends StatelessWidget {
   }
 
   BoxDecoration _getBordersDecoration(bool isSaved) {
+
+    LinearGradient getButtonGradient() {
+      if (isSaved) {
+        return const LinearGradient(
+            begin: Alignment.bottomRight,
+            end: Alignment.topLeft,
+            colors: LoopaColors.savedButtonGradient);
+      } else {
+        return const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: LoopaColors.saveButtonGradient);
+      }
+    }
+
+    Border getButtonBorders() {
+      if (isSaved) {
+        return LoopaBorders.savedButtonBorders;
+      } else {
+        return LoopaBorders.saveButtonBorders;
+      }
+    }
+
     return BoxDecoration(
-        gradient: _getButtonGradient(isSaved),
-        border: _getButtonBorders(isSaved));
-  }
-
-  LinearGradient _getButtonGradient(bool isSaved) {
-    if (isSaved) {
-      return const LinearGradient(
-          begin: Alignment.bottomRight,
-          end: Alignment.topLeft,
-          colors: LoopaColors.savedButtonGradient);
-    } else {
-      return const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: LoopaColors.saveButtonGradient);
-    }
-  }
-
-  Border _getButtonBorders(bool isSaved) {
-    if (isSaved) {
-      return LoopaBorders.savedButtonBorders;
-    } else {
-      return LoopaBorders.saveButtonBorders;
-    }
+        gradient: getButtonGradient(),
+        border: getButtonBorders());
   }
 }

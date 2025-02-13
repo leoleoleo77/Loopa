@@ -92,11 +92,11 @@ class LoopaTextStyle {
   );
   static const TextStyle saveLabel = TextStyle(
       color: LoopaColors.softGrey,
-      fontSize: 14
+      fontSize: 12
   );
   static TextStyle savedLabel = TextStyle(
       color: LoopaColors.softGreyFaded,
-      fontSize: 14
+      fontSize: 12
   );
 }
 
@@ -131,12 +131,16 @@ class LoopaSpacing {
 }
 
 class LoopaPadding {
+  static const EdgeInsets zero =  EdgeInsets.zero;
   static const EdgeInsets horizontal16 =  EdgeInsets.symmetric(horizontal: 16.0);
   static const EdgeInsets horizontal8 =  EdgeInsets.symmetric(horizontal: 8.0);
   static const EdgeInsets vertical12 =  EdgeInsets.symmetric(vertical: 12.0);
   static const EdgeInsets vertical16 =  EdgeInsets.symmetric(vertical: 16.0);
+  static const EdgeInsets top4 =  EdgeInsets.only(top: 4.0);
   static const EdgeInsets top8 =  EdgeInsets.only(top: 8.0);
+  static const EdgeInsets top12 =  EdgeInsets.only(top: 12.0);
   static const EdgeInsets top16 =  EdgeInsets.only(top: 16.0);
+  static const EdgeInsets bottom4 =  EdgeInsets.only(bottom: 4.0);
   static const EdgeInsets left4 =  EdgeInsets.only(left: 4.0);
   static const EdgeInsets left2 =  EdgeInsets.only(left: 2.0);
   static const EdgeInsets right4 =  EdgeInsets.only(right: 4.0);

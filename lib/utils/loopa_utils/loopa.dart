@@ -59,12 +59,14 @@ class Loopa {
     name = getNameFromMap(id);
     _wasLoopaCleared = true;
     _stateNotifier.value = LoopaState.initial;
+    AppLog.info("$name state: initial");
   }
 
   void updateState() {
 
     if (_wasLoopaCleared) {
       _wasLoopaCleared = false;
+      AppLog.info("$name state: ${stateNotifier.value}");
       return;
     }
 
@@ -74,18 +76,22 @@ class Loopa {
         _audioController.startRecording();
         mGetIt.get<LoopSelectionItemBloc>()
             .add(LoopSelectionItemStopFlashingEvent());
+        AppLog.info("$name state: initial -> recording");
         return;
       case LoopaState.recording:
         _stateNotifier.value = LoopaState.playing;
         _audioController.beginLooping();
+        AppLog.info("$name state: recording -> playing");
         return;
       case LoopaState.playing:
         _stateNotifier.value = LoopaState.idle;
         _audioController.stopPlayer();
+        AppLog.info("$name state: playing -> idle");
         return;
       case LoopaState.idle:
         _stateNotifier.value = LoopaState.playing;
         _audioController.startPlaying();
+        AppLog.info("$name state: idle -> playing");
         return;
     }
   }
@@ -115,7 +121,7 @@ class Loopa {
     name = (json[LoopaJson.name]);
   }
 
-  ValueNotifier<LoopaState> getStateNotifier() => _stateNotifier;
+  ValueNotifier<LoopaState> get stateNotifier => _stateNotifier;
 
   void setDefaultName() => name = _getDefaultName(id);
 
@@ -140,7 +146,7 @@ class Loopa {
   }
 
   static LoopaState getStateFromMap(int key) {
-    return _map[key]?.getStateNotifier().value ?? LoopaState.initial;
+    return _map[key]?.stateNotifier.value ?? LoopaState.initial;
   }
 
   static String getMemoryCountValueFromMap(int key) {

@@ -26,7 +26,7 @@ class LoopSelectionDropdown extends StatelessWidget {
   Widget build(BuildContext context) {
     return DropdownButtonHideUnderline(
       child: ValueListenableBuilder<LoopaState>(
-          valueListenable: mGetIt.get<ValueNotifier<Loopa>>().value.getStateNotifier(),
+          valueListenable: mGetIt.get<ValueNotifier<Loopa>>().value.stateNotifier,
           builder: (context, loopaState, child) {
             // this shit works for some reason
             List<LoopSelectionItem> itemList = _getLoopSelectionItemList();
