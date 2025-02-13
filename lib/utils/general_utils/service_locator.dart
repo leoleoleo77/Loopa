@@ -22,7 +22,7 @@ Future<void> setupLocator() async {
 
   // Register ValueNotifier<Loopa> as a singleton and initialize it with the last visited loopa key
   mGetIt.registerSingleton<ValueNotifier<Loopa>>(
-      ValueNotifier<Loopa>(Loopa.getLoopaFromMap(key: Loopa.getLastVisitedLoopaKey)));
+      ValueNotifier<Loopa>(Loopa.getLoopaFromMemory(key: Loopa.getLastVisitedLoopaKey)));
 
   mGetIt.registerSingleton<KeyboardController>(KeyboardController());
 }

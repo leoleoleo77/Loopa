@@ -4,14 +4,10 @@ class PermissionHandler {
   const PermissionHandler();
 
   static Future<void> _requestAudioPermissions() async {
-    // Request microphone permission
     PermissionStatus micStatus = await Permission.microphone.request();
-
-    // Check if permissions are granted
     if (micStatus.isGranted) {
       return;
     }
-
     // TODO: handle this better
     // Handle denied permissions
     if (micStatus.isPermanentlyDenied) {

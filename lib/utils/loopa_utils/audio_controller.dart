@@ -1,36 +1,42 @@
+import 'dart:io';
+
 import 'package:just_audio/just_audio.dart';
+import 'package:loopa/utils/loopa_utils/loopa.dart';
+import 'package:loopa/utils/misc_utils/app_log.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 
 class AudioController {
-  final String loopName;
-  late final AudioPlayer _audioPlayer;
-  late final AudioRecorder _audioRecorder;
-  late InitState _playerInitState; // might be redundant
-  late Future<String> audioPath;
-  static const nullPath = "NULL_PATH";
+  static const _nullPath = "NULL_PATH";
 
-  AudioController({
-    required this.loopName,
-  }) {
-    audioPath = _getAudioPath(); // might be redundant
+  final Loopa _loopa;
+  AudioPlayer? _audioPlayer;
+  AudioRecorder? _audioRecorder;
+  String? _path;
 
-    // temporary
-    _audioRecorder = AudioRecorder();
-    _audioPlayer = AudioPlayer();
+  AudioController(this._loopa) {
+    _initController();
   }
 
+  void _initController() async {
+    _path = await _getPath;
+    _audioRecorder = AudioRecorder();
+    _audioPlayer = AudioPlayer();
+    if (_useExternalStorage) _initPlayer();
+  }
+
+  bool get _useExternalStorage => _loopa.isSaved;
+
+  String? get path => _path;
+
   Future<void> startRecording() async {
-    // _audioRecorder = AudioRecorder();
     try {
-      await _audioRecorder.start(
-          const RecordConfig(
-            encoder: AudioEncoder.wav
-          ),
-          path: await audioPath,
+      await _audioRecorder?.start(
+          const RecordConfig(encoder: AudioEncoder.wav),
+          path: _path ?? _nullPath,
       );
     } catch(e) {
-      // TODO
+      AppLog.error(e);
     }
   }
 
@@ -41,52 +47,84 @@ class AudioController {
   }
 
   Future<void> clearRecording() async {
-    await _audioRecorder.stop();
+    await _audioRecorder?.stop();
     // _audioRecorder.dispose();
   }
 
   Future<void> _initPlayer() async {
-    _playerInitState = InitState.pending;
-    // _audioPlayer = AudioPlayer();
     try {
-      await _audioPlayer.setFilePath(await audioPath);
-      await _audioPlayer.setLoopMode(LoopMode.one);
-      _playerInitState = InitState.complete;
+      await _audioPlayer?.setFilePath(_path ?? _nullPath);
+      await _audioPlayer?.setLoopMode(LoopMode.one);
     } catch (e) {
-      // TODO: handle error case
-      _playerInitState = InitState.failed;
+      AppLog.error(e);
     }
   }
 
   void startPlaying() {
-    _audioPlayer.play();
+    _audioPlayer?.play();
   }
 
   void clearPlayer() {
-    _audioPlayer.stop();
-    // _audioPlayer.dispose();
+    _audioPlayer?.stop();
+    // _audioPlayer?.dispose();
   }
 
   void stopPlayer() {
-    _audioPlayer.stop();
-    _audioPlayer.seek(const Duration(seconds: 0)); // TODO
+    _audioPlayer?.stop();
+    _audioPlayer?.seek(const Duration(seconds: 0)); // TODO
   }
 
-  // TODO: get the temp or external dir
-  Future<String> _getAudioPath() async {
+  Future<void> updatePath() async {
+    _path = await _getPath;
+  }
+
+  Future<String?> get _getPath async {
+    if (_useExternalStorage) {
+      if (Platform.isAndroid) return _getPathFromDir(await _androidExternalDir);
+      if (Platform.isIOS) return _getPathFromDir(await _iOSExternalDir);
+    } else {
+      return _getPathFromDir(await _temporaryDir);
+    }
+    return null;
+  }
+
+
+  Future<Directory?> get _temporaryDir async {
     try {
-      return await getTemporaryDirectory()
-          .then((tempDir) => "${tempDir.path}/$loopName.wav");
+      return await getTemporaryDirectory();
     } catch (e) {
-      // TODO: handle error case
-      return nullPath;
+      AppLog.error(e);
+      return null;
     }
   }
-}
 
-enum InitState {
-  complete,
-  failed,
-  pending
+  Future<Directory?> get _androidExternalDir async {
+    try {
+      return await getExternalStorageDirectory();
+    } catch (e) {
+      AppLog.error(e);
+      return _temporaryDir;
+    }
+  }
+
+  Future<Directory?> get _iOSExternalDir async {
+    try {
+      return await getApplicationDocumentsDirectory();
+    } catch (e) {
+      AppLog.error(e);
+      return _temporaryDir;
+    }
+  }
+
+  String? _getPathFromDir(Directory? dir) {
+    if (dir == null) {
+      AppLog.warning("Failed to get Directory for ${_loopa.name}");
+      return null;
+    } else {
+      AppLog.info("${_loopa.name} saved at ${dir.path}/${_loopa.name}.wav");
+      return "${dir.path}/${_loopa.name}.wav";
+    }
+  }
+
 }
 

@@ -28,7 +28,18 @@ class Loopa {
     name = _getDefaultName(id);
     _stateNotifier = ValueNotifier(LoopaState.initial);
     _saveNotifier = ValueNotifier(false);
-    _audioController = AudioController(loopName: name);
+    _audioController = AudioController(this);
+    _map[id] = this;
+  }
+
+  Loopa.fromMemory({
+    required this.id,
+    required Map<String, dynamic> jsonData
+  }) {
+    name = (jsonData[LoopaJson.name]);
+    _stateNotifier = ValueNotifier(LoopaState.idle);
+    _saveNotifier = ValueNotifier(true);
+    _audioController = AudioController(this);
     _map[id] = this;
   }
 
@@ -39,12 +50,10 @@ class Loopa {
 
   bool get isStateInitial => _stateNotifier.value == LoopaState.initial;
 
-  bool _isRecording() {
-    return _stateNotifier.value == LoopaState.recording;
-  }
+  bool get isStateRecording => _stateNotifier.value == LoopaState.recording;
 
   void _cancelRecording() {
-    if (_isRecording()) {
+    if (isStateRecording) {
       _audioController.clearRecording();
       _stateNotifier.value = LoopaState.initial;
     }
@@ -110,15 +119,9 @@ class Loopa {
       _saveNotifier.value = !await MemoryManager.deleteLoopa(this);
       AppLog.info("Deleted Loopa $name = ${!_saveNotifier.value}");
     }
+    await _audioController.updatePath();
     mGetIt.get<LoopSelectionItemBloc>()
         .add(LoopSelectionItemToggleMemoryIdAsteriskEvent());
-  }
-
-  void setValuesFromMemory(String data) {
-    Map<String, dynamic> json = jsonDecode(data);
-    saveNotifier.value = true;
-
-    name = (json[LoopaJson.name]);
   }
 
   ValueNotifier<LoopaState> get stateNotifier => _stateNotifier;
@@ -156,14 +159,14 @@ class Loopa {
   static void handleOnLoopaChange(int? id) {
     if (id == null || id == mGetIt.get<ValueNotifier<Loopa>>().value.id) return;
 
+    // before changing
     mGetIt.get<ValueNotifier<Loopa>>().value._cancelRecording();
-
     mGetIt.get<LoopSelectionItemBloc>().add(LoopSelectionItemStopFlashingEvent());
 
-    mGetIt.get<ValueNotifier<Loopa>>().value = getLoopaFromMap(key: id);
+    mGetIt.get<ValueNotifier<Loopa>>().value = getLoopaFromMap(key: id); // change
 
+    // after changing
     mGetIt.get<SaveLoopaButtonBloc>().add(SaveLoopaButtonLoopaChangedEvent());
-
     MemoryManager.saveLastVisitedKey(id.toString()); // todo: temp
   }
 
@@ -171,11 +174,22 @@ class Loopa {
     return _map[key] ?? Loopa(id: key);
   }
 
-  static void initializeLoopas() {
+  static Loopa getLoopaFromMemory({required int key}) {
+    String? loopaInfo = MemoryManager.getLoopaInfo(key);
+    if (loopaInfo != null) {
+      return Loopa.fromMemory(
+          id: key,
+          jsonData: jsonDecode(loopaInfo));
+    } else {
+      return Loopa(id: key);
+    }
+  }
+
+  static void initializeLoopasFromMemory() {
     for (int key = 0; key < LoopaConstants.maxNumberOfLoopas; key++) {
       String? loopaInfo = MemoryManager.getLoopaInfo(key);
-      if (loopaInfo != null) {
-        Loopa(id: key).setValuesFromMemory(loopaInfo);
+      if (loopaInfo != null && key != getLastVisitedLoopaKey) {
+        getLoopaFromMemory(key: key);
       }
     }
   }

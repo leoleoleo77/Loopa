@@ -46,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     PermissionHandler.requestPermissions();
-    Loopa.initializeLoopas();
+    Loopa.initializeLoopasFromMemory();
   }
 
   @override
