@@ -116,7 +116,8 @@ class LoopSelectionItemBloc extends Bloc<LoopSelectionItemEvent, LoopSelectionIt
       }
     } else {
       emit(state.copyWith(
-          displayName: mGetIt.get<ValueNotifier<Loopa>>().value.name));
+          displayName: mGetIt.get<ValueNotifier<Loopa>>().value.name,
+          displayMemoryCount: mGetIt.get<ValueNotifier<Loopa>>().value.memoryCountValue));
     }
   }
 

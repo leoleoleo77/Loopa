@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:loopa/components/loop_button.dart';
 import 'package:loopa/components/loop_selection/loop_selection_item/view/loop_selection_item_view.dart';
 import 'package:loopa/components/play_rec_lights.dart';
-import 'package:loopa/components/save_loopa_button.dart';
+import 'package:loopa/components/save_loopa_button/view/save_loopa_button_view.dart';
 import 'package:loopa/components/tool_bar/tool_bar_animation/view/tool_bar_animation.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
 

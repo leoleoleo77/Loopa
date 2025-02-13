@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:loopa/components/loop_selection/loop_selection_item/bloc/loop_selection_item_bloc.dart';
 import 'package:loopa/components/loop_selection/loop_selection_item/bloc/loop_selection_item_event.dart';
+import 'package:loopa/components/save_loopa_button/bloc/save_loopa_button_bloc.dart';
+import 'package:loopa/components/save_loopa_button/bloc/save_loopa_button_event.dart';
 import 'package:loopa/utils/misc_utils/app_log.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
 import 'package:loopa/utils/general_utils/memory_manager.dart';
@@ -149,10 +151,13 @@ class Loopa {
     if (id == null || id == mGetIt.get<ValueNotifier<Loopa>>().value.id) return;
 
     mGetIt.get<ValueNotifier<Loopa>>().value._cancelRecording();
-    mGetIt.get<LoopSelectionItemBloc>()
-        .add(LoopSelectionItemStopFlashingEvent());
+
+    mGetIt.get<LoopSelectionItemBloc>().add(LoopSelectionItemStopFlashingEvent());
 
     mGetIt.get<ValueNotifier<Loopa>>().value = getLoopaFromMap(key: id);
+
+    mGetIt.get<SaveLoopaButtonBloc>().add(SaveLoopaButtonLoopaChangedEvent());
+
     MemoryManager.saveLastVisitedKey(id.toString()); // todo: temp
   }
 
