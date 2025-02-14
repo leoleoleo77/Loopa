@@ -18,7 +18,7 @@ Future<void> setupLocator() async {
 
   mGetIt.registerSingleton<LoopSelectionItemBloc>(LoopSelectionItemBloc());
 
-  mGetIt.registerSingleton<SaveLoopaButtonBloc>(SaveLoopaButtonBloc());
+  // mGetIt.registerSingleton<SaveLoopaButtonBloc>(SaveLoopaButtonBloc());
 
   // Register ValueNotifier<Loopa> as a singleton and initialize it with the last visited loopa key
   mGetIt.registerSingleton<ValueNotifier<Loopa>>(

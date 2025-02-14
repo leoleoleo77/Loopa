@@ -101,7 +101,7 @@ class LoopSelectionView extends StatelessWidget {
               ),
               _getGradientText(
                   state.displayMemoryCount
-                      ?? mGetIt.get<ValueNotifier<Loopa>>().value.memoryCountValue,
+                      ?? mGetIt.get<ValueNotifier<Loopa>>().value.id.toString(),
                   LoopaTextStyle.memoryCount),
             ],
           ),

@@ -22,10 +22,10 @@ class AudioController {
     _path = await _getPath;
     _audioRecorder = AudioRecorder();
     _audioPlayer = AudioPlayer();
-    if (_useExternalStorage) _initPlayer();
+    if (_loopa.isStateIdle) await _initPlayer();
   }
 
-  bool get _useExternalStorage => _loopa.isSaved;
+  // bool get _useExternalStorage => _loopa.isSaved;
 
   String? get path => _path;
 
@@ -79,7 +79,8 @@ class AudioController {
   }
 
   Future<String?> get _getPath async {
-    if (_useExternalStorage) {
+    // todo check permissions for android 9 and below
+    if (true) {
       if (Platform.isAndroid) return _getPathFromDir(await _androidExternalDir);
       if (Platform.isIOS) return _getPathFromDir(await _iOSExternalDir);
     } else {

@@ -117,7 +117,8 @@ class LoopSelectionItemBloc extends Bloc<LoopSelectionItemEvent, LoopSelectionIt
     } else {
       emit(state.copyWith(
           displayName: mGetIt.get<ValueNotifier<Loopa>>().value.name,
-          displayMemoryCount: mGetIt.get<ValueNotifier<Loopa>>().value.memoryCountValue));
+          // displayMemoryCount: mGetIt.get<ValueNotifier<Loopa>>().value.memoryCountValue
+      ));
     }
   }
 
@@ -126,7 +127,8 @@ class LoopSelectionItemBloc extends Bloc<LoopSelectionItemEvent, LoopSelectionIt
       Emitter<LoopSelectionItemState> emit
   ) {
     emit(state.copyWith(
-        displayMemoryCount: mGetIt.get<ValueNotifier<Loopa>>().value.memoryCountValue));
+        // displayMemoryCount: mGetIt.get<ValueNotifier<Loopa>>().value.memoryCountValue
+    ));
   }
 
   bool get isFlashingTimerActive => _flashingTimer?.isActive == true;
