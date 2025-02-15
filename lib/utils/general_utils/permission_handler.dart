@@ -13,17 +13,25 @@ class PermissionHandler {
     await _requestStoragePermissions();
   }
 
+  static Future<bool> get canUseExternalStorage async {
+    if (await _shouldHaveStoragePermissions) {
+      return Permission.storage.isGranted;
+    } else {
+      return true;
+    }
+  }
+
   static Future<void> _requestAudioPermissions() async {
     await Permission.microphone.request().then(
-            (status) => _handlePermissionRequest(status, LoopaText.microphone));
+            (status) => _handlePermissionRequest(status, LoopaConstants.microphone));
   }
 
   static Future<void> _requestStoragePermissions() async {
     if (await _shouldHaveStoragePermissions) {
       await Permission.storage.request().then(
-              (status) => _handlePermissionRequest(status, LoopaText.storage));
+              (status) => _handlePermissionRequest(status, LoopaConstants.storage));
     } else {
-      AppLog.info("no ${LoopaText.storage} permission needed");
+      AppLog.info("No ${LoopaConstants.storage} permission needed");
     }
   }
 
@@ -59,14 +67,6 @@ class PermissionHandler {
     final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
 
-    return androidInfo.version.sdkInt <= 28;
-  }
-
-  static Future<bool> get canUseExternalStorage async {
-    if (await _shouldHaveStoragePermissions) {
-      return Permission.storage.isGranted;
-    } else {
-      return true;
-    }
+    return androidInfo.version.sdkInt <= LoopaConstants.androidSdkVersionThreshold;
   }
 }

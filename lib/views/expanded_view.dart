@@ -5,14 +5,16 @@ import 'package:loopa/components/play_rec_lights.dart';
 import 'package:loopa/components/play_span_slider.dart';
 import 'package:loopa/components/save_loopa_button/view/save_loopa_button_view.dart';
 import 'package:loopa/components/tool_bar/tool_bar_animation/view/tool_bar_animation.dart';
+import 'package:loopa/main/bloc/main_bloc.dart';
+import 'package:loopa/main/bloc/main_event.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
+import 'package:loopa/utils/general_utils/service_locator.dart';
 
 class ExpandedView extends StatelessWidget {
-  final VoidCallback onToolbarPressed;
 
   const ExpandedView({
     super.key,
-    required this.onToolbarPressed,
+
   });
 
   @override
@@ -85,7 +87,8 @@ class ExpandedView extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: InkWell(
-        onTap: onToolbarPressed,
+        onTap: () => mGetIt.get<MainBloc>()
+            .add(MainToggleExpandedStateEvent()),
         child: SizedBox(
           height: 44,
           width: double.infinity,

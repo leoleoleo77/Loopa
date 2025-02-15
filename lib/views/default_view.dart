@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:loopa/components/loop_button.dart';
 import 'package:loopa/components/tool_bar/tool_bar_item.dart';
+import 'package:loopa/main/bloc/main_bloc.dart';
+import 'package:loopa/main/bloc/main_event.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
+import 'package:loopa/utils/general_utils/service_locator.dart';
 
 class DefaultView extends StatefulWidget {
-  final VoidCallback onToolbarPressed;
+
 
   const DefaultView({
     super.key,
-    required this.onToolbarPressed,
+
   });
 
   @override
@@ -30,13 +33,12 @@ class _DefaultViewState extends State<DefaultView> {
     return Column(
       children: [
         ToolBar(
-          onToolbarPressed: widget.onToolbarPressed,
+          onToolbarPressed: () =>
+              mGetIt.get<MainBloc>().add(MainToggleExpandedStateEvent()),
           // toggleKeyboardNotifier: _toggleKeyboardNotifier
         ),
         _getLoopaInstructions(),
-        LoopButton(
-            // isKeyboardActive: _isKeyboardActive
-        ),
+        const LoopButton(),
       ],
     );
   }

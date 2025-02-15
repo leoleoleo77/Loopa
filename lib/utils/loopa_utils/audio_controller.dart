@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:just_audio/just_audio.dart';
-import 'package:loopa/utils/general_utils/memory_manager.dart';
 import 'package:loopa/utils/general_utils/permission_handler.dart';
 import 'package:loopa/utils/loopa_utils/loopa.dart';
 import 'package:loopa/utils/misc_utils/app_log.dart';

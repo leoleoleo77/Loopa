@@ -58,10 +58,7 @@ class LoopaText {
   static const String noText = "";
   static const String memory = "Memory";
   static const String clearInstruction = "CLEAR: PRESS & HOLD";
-  static const String playStopInstruction = "START/STOP: PRESS ONCE";
-  static const String microphone = "microphone";
-  static const String storage = "storage";
-}
+  static const String playStopInstruction = "START/STOP: PRESS ONCE";}
 
 class LoopaFontFamily {
   static const String retro = 'Jersey25';
@@ -194,6 +191,9 @@ class LoopaConstants {
   static const int maxNumberOfLoopas = 100;
   static const double loopSelectionTextStretchY = 1.5;
   static const double dancingNoteStretchX = 1.3;
+  static const String microphone = "microphone";
+  static const String storage = "storage";
+  static const int androidSdkVersionThreshold = 28;
 }
 
 class LoopaSemantics {
