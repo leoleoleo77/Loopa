@@ -43,16 +43,13 @@ class Loopa {
     _map[id] = this;
   }
 
-  bool get isStateInitialOrRecording {
-    return _stateNotifier.value == LoopaState.initial
-        || _stateNotifier.value == LoopaState.recording;
-  }
-
   bool get isStateInitial => _stateNotifier.value == LoopaState.initial;
 
   bool get isStateRecording => _stateNotifier.value == LoopaState.recording;
 
   bool get isStateIdle => _stateNotifier.value == LoopaState.idle;
+
+  bool get isStateInitialOrRecording => isStateInitial || isStateRecording;
 
   void _cancelRecording() {
     if (isStateRecording) {
@@ -165,6 +162,10 @@ class Loopa {
     return _map[key]?.stateNotifier.value ?? LoopaState.initial;
   }
 
+  static Loopa getLoopaFromMap({required int key}) {
+    return _map[key] ?? Loopa(id: key);
+  }
+
   // static String getMemoryCountValueFromMap(int key) {
   //   return _map[key]?.memoryCountValue ?? key.toString();
   // }
@@ -183,12 +184,8 @@ class Loopa {
     MemoryManager.saveLastVisitedKey(id.toString()); // todo: temp
   }
 
-  static Loopa getLoopaFromMap({required int key}) {
-    return _map[key] ?? Loopa(id: key);
-  }
-
   static Loopa getLoopaFromMemory({required int key}) {
-    String? loopaInfo = MemoryManager.getLoopaInfo(key);
+    String? loopaInfo = MemoryManager.getLoopaData(key);
     if (loopaInfo != null) {
       return Loopa.fromMemory(
           id: key,
@@ -200,9 +197,11 @@ class Loopa {
 
   static void initializeLoopasFromMemory() {
     for (int key = 0; key < LoopaConstants.maxNumberOfLoopas; key++) {
-      String? loopaInfo = MemoryManager.getLoopaInfo(key);
+      String? loopaInfo = MemoryManager.getLoopaData(key);
       if (loopaInfo != null && key != getLastVisitedLoopaKey) {
-        getLoopaFromMemory(key: key);
+        Loopa.fromMemory(
+            id: key,
+            jsonData: jsonDecode(loopaInfo));
       }
     }
   }

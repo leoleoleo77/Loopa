@@ -11,7 +11,7 @@ class MemoryManager {
   static Future<bool> saveLoopa(Loopa loopa) async {
     int id = loopa.id;
     String jsonLoopa = jsonEncode(loopa.toJson());
-    if (jsonLoopa == getLoopaInfo(loopa.id)) return false;
+    if (jsonLoopa == getLoopaData(loopa.id)) return false;
 
     return await _prefs.setString(id.toString(), jsonLoopa);
   }
@@ -20,7 +20,7 @@ class MemoryManager {
     return await _prefs.remove(loopa.id.toString());
   }
 
-  static String? getLoopaInfo(int key) => _prefs.getString(key.toString());
+  static String? getLoopaData(int key) => _prefs.getString(key.toString());
 
   static Future<bool> saveLastVisitedKey(String key) async {
     return await _prefs.setString(LoopaKeys.lastVisited, key);

@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:just_audio/just_audio.dart';
+import 'package:loopa/utils/general_utils/memory_manager.dart';
+import 'package:loopa/utils/general_utils/permission_handler.dart';
 import 'package:loopa/utils/loopa_utils/loopa.dart';
 import 'package:loopa/utils/misc_utils/app_log.dart';
 import 'package:path_provider/path_provider.dart';
@@ -24,8 +26,6 @@ class AudioController {
     _audioPlayer = AudioPlayer();
     if (_loopa.isStateIdle) await _initPlayer();
   }
-
-  // bool get _useExternalStorage => _loopa.isSaved;
 
   String? get path => _path;
 
@@ -79,10 +79,10 @@ class AudioController {
   }
 
   Future<String?> get _getPath async {
-    // todo check permissions for android 9 and below
-    if (true) {
+    if (await PermissionHandler.canUseExternalStorage) {
       if (Platform.isAndroid) return _getPathFromDir(await _androidExternalDir);
       if (Platform.isIOS) return _getPathFromDir(await _iOSExternalDir);
+      AppLog.warning("Unsupported platform: ${Platform.operatingSystem}");
     } else {
       return _getPathFromDir(await _temporaryDir);
     }

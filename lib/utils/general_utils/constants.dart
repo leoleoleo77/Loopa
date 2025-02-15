@@ -59,6 +59,8 @@ class LoopaText {
   static const String memory = "Memory";
   static const String clearInstruction = "CLEAR: PRESS & HOLD";
   static const String playStopInstruction = "START/STOP: PRESS ONCE";
+  static const String microphone = "microphone";
+  static const String storage = "storage";
 }
 
 class LoopaFontFamily {
