@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:loopa/components/loop_selection/loop_selection_item/bloc/loop_selection_item_bloc.dart';
-import 'package:loopa/components/save_loopa_button/bloc/save_loopa_button_bloc.dart';
 import 'package:loopa/components/tool_bar/tool_bar_animation/bloc/tool_bar_animation_bloc.dart';
 import 'package:loopa/main/bloc/main_bloc.dart';
 import 'package:loopa/utils/general_utils/keyboard_controller.dart';
