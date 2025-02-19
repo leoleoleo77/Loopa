@@ -35,7 +35,6 @@ class Loopa {
   }) {
     name = (jsonData[LoopaJson.name]);
     _stateNotifier = ValueNotifier(LoopaState.idle);
-    // _saveNotifier = ValueNotifier(true);
     _audioController = AudioController(this);
     _map[id] = this;
   }
@@ -47,6 +46,8 @@ class Loopa {
   bool get isStateIdle => _stateNotifier.value == LoopaState.idle;
 
   bool get isStateInitialOrRecording => isStateInitial || isStateRecording;
+
+  String get audioPath => _audioController.path;
 
   void _cancelRecording() {
     if (isStateRecording) {

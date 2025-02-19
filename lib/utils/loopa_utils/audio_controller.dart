@@ -26,7 +26,7 @@ class AudioController {
     if (_loopa.isStateIdle) await _initPlayer();
   }
 
-  String? get path => _path;
+  String get path => _path ?? _nullPath;
 
   Future<void> startRecording() async {
     try {
@@ -52,7 +52,7 @@ class AudioController {
 
   Future<void> _initPlayer() async {
     try {
-      await _audioPlayer?.setFilePath(_path ?? _nullPath);
+      await _audioPlayer?.setFilePath(path);
       await _audioPlayer?.setLoopMode(LoopMode.one);
     } catch (e) {
       DebugLog.error(e);
