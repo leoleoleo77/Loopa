@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
-import 'package:loopa/utils/misc_utils/app_log.dart';
+import 'package:loopa/utils/log_utils/app_log.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class PermissionHandler {
@@ -31,7 +31,7 @@ class PermissionHandler {
       await Permission.storage.request().then(
               (status) => _handlePermissionRequest(status, LoopaConstants.storage));
     } else {
-      AppLog.info("No ${LoopaConstants.storage} permission needed");
+      DebugLog.info("No ${LoopaConstants.storage} permission needed");
     }
   }
 
@@ -41,23 +41,23 @@ class PermissionHandler {
   ) {
     switch (status) {
       case PermissionStatus.granted:
-        AppLog.info("$permissionName permission granted");
+        DebugLog.info("$permissionName permission granted");
         break;
       case PermissionStatus.denied:
-        AppLog.info("$permissionName permission denied");
+        DebugLog.info("$permissionName permission denied");
         break;
       case PermissionStatus.permanentlyDenied:
-        AppLog.info("$permissionName permission permanently denied");
+        DebugLog.info("$permissionName permission permanently denied");
         openAppSettings();
         break;
       case PermissionStatus.restricted:
-        AppLog.info("$permissionName permission restricted");
+        DebugLog.info("$permissionName permission restricted");
         break;
       case PermissionStatus.limited:
-        AppLog.info("$permissionName permission limited");
+        DebugLog.info("$permissionName permission limited");
         break;
       case PermissionStatus.provisional:
-        AppLog.info("$permissionName permission provisional");
+        DebugLog.info("$permissionName permission provisional");
     }
   }
 

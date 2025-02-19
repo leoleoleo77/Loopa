@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:just_audio/just_audio.dart';
 import 'package:loopa/utils/general_utils/permission_handler.dart';
 import 'package:loopa/utils/loopa_utils/loopa.dart';
-import 'package:loopa/utils/misc_utils/app_log.dart';
+import 'package:loopa/utils/log_utils/app_log.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 
@@ -35,7 +35,7 @@ class AudioController {
           path: _path ?? _nullPath,
       );
     } catch(e) {
-      AppLog.error(e);
+      DebugLog.error(e);
     }
   }
 
@@ -55,7 +55,7 @@ class AudioController {
       await _audioPlayer?.setFilePath(_path ?? _nullPath);
       await _audioPlayer?.setLoopMode(LoopMode.one);
     } catch (e) {
-      AppLog.error(e);
+      DebugLog.error(e);
     }
   }
 
@@ -81,7 +81,7 @@ class AudioController {
     if (await PermissionHandler.canUseExternalStorage) {
       if (Platform.isAndroid) return _getPathFromDir(await _androidExternalDir);
       if (Platform.isIOS) return _getPathFromDir(await _iOSExternalDir);
-      AppLog.warning("Unsupported platform: ${Platform.operatingSystem}");
+      DebugLog.warning("Unsupported platform: ${Platform.operatingSystem}");
     } else {
       return _getPathFromDir(await _temporaryDir);
     }
@@ -93,7 +93,7 @@ class AudioController {
     try {
       return await getTemporaryDirectory();
     } catch (e) {
-      AppLog.error(e);
+      DebugLog.error(e);
       return null;
     }
   }
@@ -102,7 +102,7 @@ class AudioController {
     try {
       return await getExternalStorageDirectory();
     } catch (e) {
-      AppLog.error(e);
+      DebugLog.error(e);
       return _temporaryDir;
     }
   }
@@ -111,17 +111,17 @@ class AudioController {
     try {
       return await getApplicationDocumentsDirectory();
     } catch (e) {
-      AppLog.error(e);
+      DebugLog.error(e);
       return _temporaryDir;
     }
   }
 
   String? _getPathFromDir(Directory? dir) {
     if (dir == null) {
-      AppLog.warning("Failed to get Directory for ${_loopa.name}");
+      DebugLog.warning("Failed to get Directory for ${_loopa.name}");
       return null;
     } else {
-      AppLog.info("${_loopa.name} saved at ${dir.path}/${_loopa.name}.wav");
+      DebugLog.info("${_loopa.name} saved at ${dir.path}/${_loopa.name}.wav");
       return "${dir.path}/${_loopa.name}.wav";
     }
   }

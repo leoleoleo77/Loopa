@@ -4,10 +4,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:loopa/components/loop_selection/loop_selection_item/bloc/loop_selection_item_bloc.dart';
 import 'package:loopa/components/loop_selection/loop_selection_item/bloc/loop_selection_item_event.dart';
-import 'package:loopa/utils/misc_utils/app_log.dart';
+import 'package:loopa/utils/log_utils/app_log.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
 import 'package:loopa/utils/general_utils/memory_manager.dart';
 import 'package:loopa/utils/general_utils/service_locator.dart';
+import 'package:loopa/utils/log_utils/log_helper.dart';
 import 'package:loopa/utils/loopa_utils/audio_controller.dart';
 
 class Loopa {
@@ -16,7 +17,6 @@ class Loopa {
   late final int id;
   late String name;
   late final ValueNotifier<LoopaState> _stateNotifier;
-  // late final ValueNotifier<bool> _saveNotifier;
   late final AudioController _audioController;
   bool _wasLoopaCleared = false;
 
@@ -25,7 +25,6 @@ class Loopa {
   }) {
     name = _getDefaultName(id);
     _stateNotifier = ValueNotifier(LoopaState.initial);
-    // _saveNotifier = ValueNotifier(false);
     _audioController = AudioController(this);
     _map[id] = this;
   }
@@ -65,7 +64,7 @@ class Loopa {
     name = getNameFromMap(id);
     _wasLoopaCleared = true;
     _stateNotifier.value = LoopaState.initial;
-    AppLog.info("$name state: initial");
+    DebugLog.info("$name state: initial");
     _deleteLoopa();
   }
 
@@ -73,7 +72,7 @@ class Loopa {
 
     if (_wasLoopaCleared) {
       _wasLoopaCleared = false;
-      AppLog.info("$name state: ${stateNotifier.value}");
+      DebugLog.info("$name state: ${stateNotifier.value}");
       return;
     }
 
@@ -83,23 +82,23 @@ class Loopa {
         _audioController.startRecording();
         mGetIt.get<LoopSelectionItemBloc>()
             .add(LoopSelectionItemStopFlashingEvent());
-        AppLog.info("$name state: initial -> recording");
+        DebugLog.info("$name state: initial -> recording");
         return;
       case LoopaState.recording:
         _stateNotifier.value = LoopaState.playing;
         _audioController.beginLooping();
-        AppLog.info("$name state: recording -> playing");
+        DebugLog.info("$name state: recording -> playing");
         _saveLoopa();
         return;
       case LoopaState.playing:
         _stateNotifier.value = LoopaState.idle;
         _audioController.stopPlayer();
-        AppLog.info("$name state: playing -> idle");
+        DebugLog.info("$name state: playing -> idle");
         return;
       case LoopaState.idle:
         _stateNotifier.value = LoopaState.playing;
         _audioController.startPlaying();
-        AppLog.info("$name state: idle -> playing");
+        DebugLog.info("$name state: idle -> playing");
         return;
     }
   }
@@ -112,37 +111,17 @@ class Loopa {
 
   Future<void> _saveLoopa() async {
     await MemoryManager.saveLoopa(this)
-        .then((result) =>AppLog.info("Saved Loopa $name: $result") );
+        .then((result) => DebugLog.info("Saved Loopa $name: $result") );
   }
 
   Future<void> _deleteLoopa() async {
     await MemoryManager.deleteLoopa(this)
-        .then((result) =>AppLog.info("Deleted Loopa $name: $result") );
+        .then((result) => DebugLog.info("Deleted Loopa $name: $result") );
   }
-  // Future<void> handleSave() async {
-  //   if (_saveNotifier.value == false) {
-  //     _saveNotifier.value = await MemoryManager.saveLoopa(this);
-  //     AppLog.info("Saved Loopa $name = ${_saveNotifier.value}");
-  //   } else {
-  //     _saveNotifier.value = !await MemoryManager.deleteLoopa(this);
-  //     AppLog.info("Deleted Loopa $name = ${!_saveNotifier.value}");
-  //   }
-  //   await _audioController.updatePath();
-  //   mGetIt.get<LoopSelectionItemBloc>()
-  //       .add(LoopSelectionItemToggleMemoryIdAsteriskEvent());
-  // }
 
   ValueNotifier<LoopaState> get stateNotifier => _stateNotifier;
 
   void setDefaultName() => name = _getDefaultName(id);
-
-  // ValueNotifier<bool> get saveNotifier => _saveNotifier;
-  //
-  // bool get isSaved => _saveNotifier.value;
-
-  // String get memoryCountValue {
-  //   return isSaved ? "$id*" : "$id";
-  // }
 
   bool get wasLoopaCleared => _wasLoopaCleared;
 
@@ -164,22 +143,17 @@ class Loopa {
     return _map[key] ?? Loopa(id: key);
   }
 
-  // static String getMemoryCountValueFromMap(int key) {
-  //   return _map[key]?.memoryCountValue ?? key.toString();
-  // }
-
   static void handleOnLoopaChange(int? id) {
     if (id == null || id == mGetIt.get<ValueNotifier<Loopa>>().value.id) return;
 
-    // before changing
     mGetIt.get<ValueNotifier<Loopa>>().value._cancelRecording();
     mGetIt.get<LoopSelectionItemBloc>().add(LoopSelectionItemStopFlashingEvent());
-
     mGetIt.get<ValueNotifier<Loopa>>().value = getLoopaFromMap(key: id); // change
-
-    // after changing
-    // mGetIt.get<SaveLoopaButtonBloc>().add(SaveLoopaButtonLoopaChangedEvent());
     MemoryManager.saveLastVisitedKey(id.toString()); // todo: temp
+    Log.logLoopaChange(
+      loopaId: id, 
+      loopaState: getStateFromMap(id)
+    );
   }
 
   static Loopa getLoopaFromMemory({required int key}) {
@@ -211,7 +185,7 @@ class Loopa {
       try {
         return int.parse(MemoryManager.getLastVisitedKey as String);
       } catch (e) {
-        AppLog.error(e);
+        DebugLog.error(e);
         return 0;
       }
     }

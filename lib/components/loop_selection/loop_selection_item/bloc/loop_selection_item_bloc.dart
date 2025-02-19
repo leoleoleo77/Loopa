@@ -33,7 +33,7 @@ class LoopSelectionItemBloc extends Bloc<LoopSelectionItemEvent, LoopSelectionIt
       Emitter<LoopSelectionItemState> emit
   ) {
     _textFieldFocusNode = FocusNode()..requestFocus();
-    mGetIt.get<KeyboardController>().isKeyboardActive = true;
+    KeyboardController.isKeyboardActive = true;
 
     emit(state.copyWith(textFieldFocusNode: _textFieldFocusNode));
   }
@@ -45,7 +45,7 @@ class LoopSelectionItemBloc extends Bloc<LoopSelectionItemEvent, LoopSelectionIt
     final loopa = mGetIt.get<ValueNotifier<Loopa>>().value;
 
     if (loopa.name == LoopaText.noText) loopa.setDefaultName();
-    mGetIt.get<KeyboardController>().isKeyboardActive = false;
+    KeyboardController.isKeyboardActive = false;
     _textFieldFocusNode?.unfocus();
     _nameNotChanged = true;
 

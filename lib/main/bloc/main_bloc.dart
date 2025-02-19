@@ -1,9 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:loopa/firebase_options.dart';
 import 'package:loopa/main/bloc/main_event.dart';
 import 'package:loopa/main/bloc/main_state.dart';
 import 'package:loopa/utils/general_utils/permission_handler.dart';
+import 'package:loopa/utils/log_utils/log_helper.dart';
 import 'package:loopa/utils/loopa_utils/loopa.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class MainBloc extends Bloc<MainEvent, MainState> {
   bool _expandedState = false;
@@ -13,9 +16,11 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     on<MainToggleExpandedStateEvent>(_handleExpandedStateEvent);
   }
 
-  void init()  {
+  void init() async {
     PermissionHandler.requestPermissions();
     Loopa.initializeLoopasFromMemory();
+    Log.initializeFirebase();
+
     add(MainToggleFinishLoadingEvent());
   }
 

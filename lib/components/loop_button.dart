@@ -53,7 +53,7 @@ class _LoopButtonState extends State<LoopButton> {
       child: Semantics.fromProperties(
         properties: LoopaSemantics.loopButtonSemantics,
         child: ValueListenableBuilder<bool>(
-          valueListenable: mGetIt.get<KeyboardController>().keyboardNotifier,
+          valueListenable: KeyboardController.keyboardNotifier,
           builder: (context, isKeyboardActive, child) {
             return AbsorbPointer(
               absorbing: isKeyboardActive,
