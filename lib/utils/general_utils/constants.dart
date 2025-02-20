@@ -133,6 +133,7 @@ class LoopaPadding {
   static const EdgeInsets zero =  EdgeInsets.zero;
   static const EdgeInsets horizontal16 =  EdgeInsets.symmetric(horizontal: 16.0);
   static const EdgeInsets horizontal8 =  EdgeInsets.symmetric(horizontal: 8.0);
+  static const EdgeInsets vertical8 =  EdgeInsets.symmetric(vertical: 8.0);
   static const EdgeInsets vertical12 =  EdgeInsets.symmetric(vertical: 12.0);
   static const EdgeInsets vertical16 =  EdgeInsets.symmetric(vertical: 16.0);
   static const EdgeInsets top4 =  EdgeInsets.only(top: 4.0);

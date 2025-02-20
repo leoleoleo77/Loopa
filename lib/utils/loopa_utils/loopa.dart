@@ -2,8 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:just_waveform/just_waveform.dart';
 import 'package:loopa/components/loop_selection/loop_selection_item/bloc/loop_selection_item_bloc.dart';
 import 'package:loopa/components/loop_selection/loop_selection_item/bloc/loop_selection_item_event.dart';
+import 'package:loopa/components/waveform_item/bloc/waveform_bloc.dart';
+import 'package:loopa/components/waveform_item/bloc/waveform_event.dart';
 import 'package:loopa/utils/log_utils/app_log.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
 import 'package:loopa/utils/general_utils/memory_manager.dart';
@@ -35,7 +38,6 @@ class Loopa {
   }) {
     name = (jsonData[LoopaJson.name]);
     _stateNotifier = ValueNotifier(LoopaState.idle);
-    // _saveNotifier = ValueNotifier(true);
     _audioController = AudioController(this);
     _map[id] = this;
   }
@@ -47,6 +49,8 @@ class Loopa {
   bool get isStateIdle => _stateNotifier.value == LoopaState.idle;
 
   bool get isStateInitialOrRecording => isStateInitial || isStateRecording;
+
+  String get audioPath => _audioController.path;
 
   void _cancelRecording() {
     if (isStateRecording) {
@@ -66,6 +70,8 @@ class Loopa {
     _stateNotifier.value = LoopaState.initial;
     DebugLog.info("$name state: initial");
     _deleteLoopa();
+    mGetIt.get<WaveformBloc>()
+        .add(WaveformLoopaStateChangedEvent(loopaState: _stateNotifier.value));
   }
 
   void updateState() {
@@ -83,24 +89,27 @@ class Loopa {
         mGetIt.get<LoopSelectionItemBloc>()
             .add(LoopSelectionItemStopFlashingEvent());
         DebugLog.info("$name state: initial -> recording");
-        return;
+        break;
       case LoopaState.recording:
         _stateNotifier.value = LoopaState.playing;
         _audioController.beginLooping();
         DebugLog.info("$name state: recording -> playing");
         _saveLoopa();
-        return;
+        break;
       case LoopaState.playing:
         _stateNotifier.value = LoopaState.idle;
         _audioController.stopPlayer();
         DebugLog.info("$name state: playing -> idle");
-        return;
+        break;
       case LoopaState.idle:
         _stateNotifier.value = LoopaState.playing;
         _audioController.startPlaying();
         DebugLog.info("$name state: idle -> playing");
-        return;
+        break;
     }
+
+    mGetIt.get<WaveformBloc>()
+        .add(WaveformLoopaStateChangedEvent(loopaState: _stateNotifier.value));
   }
 
   Map<String, dynamic> toJson() {
@@ -149,6 +158,7 @@ class Loopa {
     mGetIt.get<ValueNotifier<Loopa>>().value._cancelRecording();
     mGetIt.get<LoopSelectionItemBloc>().add(LoopSelectionItemStopFlashingEvent());
     mGetIt.get<ValueNotifier<Loopa>>().value = getLoopaFromMap(key: id); // change
+    mGetIt.get<WaveformBloc>().add(WaveformInitializeEvent());
     MemoryManager.saveLastVisitedKey(id.toString()); // todo: temp
     Log.logLoopaChange(
       loopaId: id, 

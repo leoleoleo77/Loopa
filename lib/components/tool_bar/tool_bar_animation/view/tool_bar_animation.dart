@@ -5,6 +5,7 @@ import 'package:loopa/components/tool_bar/tool_bar_animation/bloc/tool_bar_anima
 import 'package:loopa/components/tool_bar/tool_bar_animation/bloc/tool_bar_animation_event.dart';
 import 'package:loopa/components/tool_bar/tool_bar_animation/bloc/tool_bar_animation_state.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
+import 'package:loopa/utils/general_utils/screen_size.dart';
 import 'package:loopa/utils/general_utils/service_locator.dart';
 
 class ToolBarAnimation extends StatelessWidget {
@@ -17,20 +18,15 @@ class ToolBarAnimation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // todo: remove layout builder
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return BlocProvider.value(
-          value: mGetIt.get<ToolBarAnimationBloc>()
-              ..add(ToolBarAnimationInitialEvent(
-                  maxWidth: constraints.maxWidth)),
-          child: BlocBuilder<ToolBarAnimationBloc, ToolBarAnimationState>(
-            builder: (context, state) {
-              return _getAnimationContainer(state);
-            },
-          ),
-        );
-      }
+    return BlocProvider.value(
+      value: mGetIt.get<ToolBarAnimationBloc>()
+          ..add(ToolBarAnimationInitialEvent(
+              maxWidth: ScreenDimensions.width - 16)), // todo
+      child: BlocBuilder<ToolBarAnimationBloc, ToolBarAnimationState>(
+        builder: (context, state) {
+          return _getAnimationContainer(state);
+        },
+      ),
     );
   }
 

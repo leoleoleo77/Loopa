@@ -3,6 +3,7 @@ import 'package:loopa/components/loop_button.dart';
 import 'package:loopa/components/loop_selection/loop_selection_item/view/loop_selection_item_view.dart';
 import 'package:loopa/components/play_rec_lights.dart';
 import 'package:loopa/components/tool_bar/tool_bar_animation/view/tool_bar_animation.dart';
+import 'package:loopa/components/waveform_item/view/waveform_view.dart';
 import 'package:loopa/main/bloc/main_bloc.dart';
 import 'package:loopa/main/bloc/main_event.dart';
 import 'package:loopa/utils/general_utils/constants.dart';
@@ -36,7 +37,7 @@ class ExpandedView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _getPlayRecLightsAndLoopaSelection(),
-                    // RangeSliderExample(),
+                    const WaveFormView(),
                     _getToggleExpandButton()
                   ],
                 ),
