@@ -20,5 +20,6 @@ class WaveformDisplayState extends WaveformState{
 enum EmptyState {
   noAudio,
   loading,
+  listening,
   error
 }

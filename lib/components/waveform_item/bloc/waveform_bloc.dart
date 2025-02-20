@@ -15,38 +15,43 @@ import 'package:path_provider/path_provider.dart';
 class WaveformBloc extends Bloc<WaveformEvent, WaveformState> {
 
   WaveformBloc() : super(WaveformEmptyState(emptyState: EmptyState.noAudio)) {
+    on<WaveformInitializeEvent>(_handleInitializeEvent);
     on<WaveformErrorEvent>(_handleErrorEvent);
-    on<WaveformUpdateEvent>(_handleUpdateEvent);
+    on<WaveformDisplayEvent>(_handleDisplayEvent);
+    on<WaveformLoopaStateChangedEvent>(_handleLoopaStateChangedEvent);
   }
 
-  void init() async {
+  void _handleInitializeEvent(
+      WaveformInitializeEvent event,
+      Emitter<WaveformState> emit,
+  ) async  {
     final File audioFile = File(mGetIt.get<ValueNotifier<Loopa>>().value.audioPath);
 
     try {
       final Uint8List audioBytes = await audioFile.readAsBytes()
           .then((bytes) => bytes = bytes.buffer.asUint8List());
 
-      final File audioFileAsBytes = await getTemporaryDirectory()
+      final File audioAsBytesFile = await getTemporaryDirectory()
           .then((dir) => File("${dir.path}/bytes.txt"));
 
-      await audioFileAsBytes.writeAsBytes(audioBytes);
+      await audioAsBytesFile.writeAsBytes(audioBytes);
 
       final File waveFile = await getTemporaryDirectory()
           .then((dir) => File("${dir.path}/waveform.wave"));
 
       final Stream<WaveformProgress> progressStream =
-        JustWaveform.extract(audioInFile: audioFileAsBytes, waveOutFile: waveFile);
+        JustWaveform.extract(audioInFile: audioAsBytesFile, waveOutFile: waveFile);
 
       progressStream.listen(
-        (waveformSnapshot) {
-          if (waveformSnapshot.waveform != null) {
-            add(WaveformUpdateEvent(waveform: waveformSnapshot.waveform));
+          (waveformSnapshot) {
+            if (waveformSnapshot.waveform != null) {
+              add(WaveformDisplayEvent(waveform: waveformSnapshot.waveform));
+            }
+          },
+          onError: (e) {
+            DebugLog.error(e);
+            add(WaveformErrorEvent());
           }
-        },
-        onError: (e) {
-          DebugLog.error(e);
-          add(WaveformErrorEvent());
-        }
       );
     } catch (e) {
       DebugLog.error(e);
@@ -54,8 +59,8 @@ class WaveformBloc extends Bloc<WaveformEvent, WaveformState> {
     }
   }
 
-  void _handleUpdateEvent(
-      WaveformUpdateEvent event,
+  void _handleDisplayEvent(
+      WaveformDisplayEvent event,
       Emitter<WaveformState> emit,
   ) {
     final List<int>? waveformData = event.waveform?.data;
@@ -65,6 +70,23 @@ class WaveformBloc extends Bloc<WaveformEvent, WaveformState> {
       final List<double> byteArray =
         waveformData.map((e) => e.toDouble()).toList();
       emit(WaveformDisplayState(byteArray: byteArray));
+    }
+  }
+
+  void _handleLoopaStateChangedEvent(
+      WaveformLoopaStateChangedEvent event,
+      Emitter<WaveformState> emit,
+  ) {
+    switch(event.loopaState) {
+      case LoopaState.initial:
+        emit(WaveformEmptyState(emptyState: EmptyState.noAudio));
+        return;
+      case LoopaState.recording:
+        emit(WaveformEmptyState(emptyState: EmptyState.listening));
+        return;
+      case LoopaState.playing || LoopaState.idle:
+        add(WaveformInitializeEvent());
+        return;
     }
   }
 
